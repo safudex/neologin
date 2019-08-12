@@ -250,16 +250,25 @@ table td {
   text-align: center;
 }
 
-header>h1{
+h1{
   text-align: center;
 }
 
-h2.subtitle{
+blockquote{
+  border-left:none;
+}
+
+blockquote>p{
   text-align: center;
   margin-top:-1em;
   font-size:1.5em;
   color: #666666;
   margin-bottom: -0.75em;
+}
+
+div.sourceCode {
+  border-radius: 3px;
+  background-color: #eee;
 }
 
 @media only screen and (min-width: 480px) {
