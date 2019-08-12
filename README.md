@@ -44,4 +44,4 @@ The `headjack` object exposes a fully-compliant [NEP-12](https://github.com/nick
 ## What is headjack?
 Headjack is a semi-custodial web-wallet for NEO.
 
-It can also be viewed as a copy of Portis for the NEO blockchain or a generalized version of Switcheo Account. Also, compared to these other services, which only open source a small part of their system, Headjack is fully open-source.
+It can also be viewed as a copy of Portis for the NEO blockchain or a generalized version of Switcheo Account. Compared to these other services, which only open source a small part of their system, Headjack is fully open-source.
