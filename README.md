@@ -1,21 +1,21 @@
 # Headjack
 > Easy peasy NEO dAPI provider
 
-# Quickstart
+## Quickstart
 
-Install
+### Install
 ```bash
 npm i headjack
 ```
 
-Initialize
+### Initialize
 ```js
 import Headjack from 'headjack';
 
 const headjack = new Headjack('mainnet');
 ```
 
-Use
+### Use
 ```js
 headjack.getAccount()
 .then((account: Account) => {
@@ -41,7 +41,7 @@ headjack.getAccount()
 
 The `headjack` object exposes a fully-compliant [NEP-12](https://github.com/nickfujita/proposals/blob/dapp-api/nep-12.mediawiki) API so it can be used with anything that supports the standard.
 
-# What is headjack?
+## What is headjack?
 Headjack is a semi-custodial web-wallet for NEO.
 
 It can also be viewed as a copy of Portis for the NEO blockchain or a generalized version of Switcheo Account. Also, compared to these other services, which only open source a small part of their system, Headjack is fully open-source.
