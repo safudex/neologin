@@ -30,10 +30,10 @@ headjack.getAccount()
 .catch(({type: string, description: string, data: any}) => {
   switch(type) {
     case NO_PROVIDER:
-      console.log('No provider available.');
+      console.log('No provider available');
       break;
     case CONNECTION_DENIED:
-      console.log('The user rejected the request to connect with your dApp');
+      console.log('The user rejected the request');
       break;
   }
 });
