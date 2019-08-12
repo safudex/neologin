@@ -1,0 +1,22 @@
+language: node_js
+node_js:
+  - "11"
+
+before_install:
+  - sudo apt-get update -qq
+  - wget https://github.com/jgm/pandoc/releases/download/2.7.2/pandoc-2.7.2-1-amd64.deb && sudo dpkg -i pandoc-2.7.2-1-amd64.deb
+
+
+script:
+  - cd website && pandoc -t html -f gfm --css "pandoc.css" -s ../README.md -o index.html -V header-includes:"<link rel='shortcut icon' href='favicon.png' />" --fail-if-warnings
+
+before_deploy:
+  - mv widget website
+
+deploy:
+  provider: pages
+  local_dir: website
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  on:
+    branch: master
