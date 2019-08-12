@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/corollari/headjack#readme",
   "dependencies": {
+    "@cityofzion/neon-js": "^4.7.0",
     "penpal": "^4.1.1"
   },
   "devDependencies": {
