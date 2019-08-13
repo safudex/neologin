@@ -18,7 +18,7 @@ const headjack = new Headjack('mainnet');
 ### Use
 ```js
 headjack.getAccount()
-.then((account: Account) => {
+.then((account) => {
   const {
     address,
     label
@@ -27,12 +27,12 @@ headjack.getAccount()
   console.log('Provider address: ' + address);
   console.log('Provider account label (Optional): ' + label);
 })
-.catch(({type: string, description: string, data: any}) => {
+.catch(({type, description, data}) => {
   switch(type) {
-    case NO_PROVIDER:
+    case 'NO_PROVIDER':
       console.log('No provider available');
       break;
-    case CONNECTION_DENIED:
+    case 'CONNECTION_DENIED':
       console.log('The user rejected the request');
       break;
   }
