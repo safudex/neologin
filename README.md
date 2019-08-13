@@ -59,6 +59,12 @@ Because I wanted to use a semi-custodial wallet for SafuDEX but couln't find any
 
 Still, if Portis, Switcheo or any other company wants to develop a general semi-custodial wallet for NEO I'd love to collaborate on it, just send me an email.
 
+## Convenience benefits
+Compared to traditional software wallets, Headjack appears as a standard centralized login system from the point of view of users, offering a experience similar to logging into Facebook or Google. This provides the following benefits in terms of convenience:
+- Doesn't require installation
+- Can be used from multiple devices without any friction
+- Device loss doesn't lead to private key loss
+
 ## Security analysis
 
 The biggest attack vector is without a doubt the webpage that serves the code that handles the login and decryption of the password. This webpage is directly served from the github repository using Github Pages, which means that if either Github or the repository maintainers were to turn malicious or get hacked it'd be possible to change the website to another one that could capture user login details (such as password and email) and the decrypted private keys and send them to a 3rd party server, effectively stealing all user funds and login details. Fortunately, if this attack were to be carried, it would affect all the wallet logins and the change would be public on Github (unless the attackers managed to get complete control over the github infrastructure and performed an attack especially targeted at Headjack, which seems unlikely considering the fact that there's many more profitable targets to attack if Github is hacked), so it'd be possible to detect the attack quickly an act on it. Still, all the users that logged in during the attack would have their wallet compromised.  
