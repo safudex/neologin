@@ -75,4 +75,11 @@ It is possible to mitigate both the first and second attack vectors through the 
 In combination, these two changes would make it possible to fully audit the whole system from outside while making it impossible to alter any part of it due to the TEE's hardware isolation. Therefore, neither the service providers nor any hackers could get access to private key's without going through the standard procedure (user login & 2FA).
 Implementation of such a system is non-trivial and would require a substantial development effort, which is the reason it's not implemented in the current version. Also, the maintenance costs of such systems would be way higher than the costs of the current one.
 
-Overall, Headjack trades security for convenience when compared with traditional wallets
+Overall, Headjack trades security for convenience when compared with traditional wallets. Following is a simple comparison of security attack vectors between wallets:
+
+|           Wallet                 | First attack | Second attack | Third attack |
+|----------------------------------|--------------|---------------|--------------|
+| Non-updatable traditional wallet |              |               |              |
+| Updatabale traditional wallet    |      ⚰️       |               |              |
+| non-TEE-based Headjack (current) |      ⚰️       |       ⚰️       |       ⚰️      |
+| TEE-based Headjack (future)      |              |               |              |
