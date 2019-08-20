@@ -89,3 +89,32 @@ Overall, Headjack trades security for convenience when compared with traditional
 | Updatabale traditional wallet    |      ⚰️       |               |              |
 | non-TEE-based Headjack (current) |      ⚰️       |       ⚰️       |       ⚰️      |
 | TEE-based Headjack (future)      |              |               |              |
+
+## Development
+
+### Widget
+
+```bash
+cd widget
+npm install
+npm run build
+```
+
+### Provider
+
+```bash
+cd provider
+npm install
+```
+
+### Back-end
+
+Uses Amazon Cognito.
+
+### Landing page
+
+Install a recent version of pandoc and build the landing page by running:
+```bash
+wget https://github.com/jgm/pandoc/releases/download/2.7.2/pandoc-2.7.2-1-amd64.deb && sudo dpkg -i pandoc-2.7.2-1-amd64.deb
+(cd landing && pandoc -t html -f gfm --css "pandoc.css" -s ../README.md -o index.html -V header-includes:"<link rel='shortcut icon' href='favicon.png' />" --metadata pagetitle="Headjack" --fail-if-warnings)
+```

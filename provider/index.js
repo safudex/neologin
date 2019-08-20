@@ -37,6 +37,8 @@ function removeEventListener(ev){
 
 connection.promise.then(child => {
 	console.log(child);
+	child.addEventListener = addEventListener;
+	child.removeEventListener = removeEventListener;
 	export child;
 	//child.multiply(2, 6).then(total => console.log(total));
 });

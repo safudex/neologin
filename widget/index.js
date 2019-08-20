@@ -55,7 +55,8 @@ function signIn(){
 	return Promise.resolve();
 }
 
-const providerInfo = {};
+const providerInfo = {
+};
 
 function getProvider(){
 	console.log('b');
