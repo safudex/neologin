@@ -60,7 +60,7 @@ function login(email, password){
 				}
 				for (i = 0; i < result.length; i++) {
 					console.log('attribute ' + result[i].getName() + ' has value ' + result[i].getValue());
-					if(result[i].getName()=="privkey"){
+					if(result[i].getName()=="custom:privkey"){
 						//Decrypt
 						let privkey=decrypt(result[i].getValue(), password);
 						//Send
@@ -91,7 +91,7 @@ function register(email, password){
 	let privkey = encrypt(generateEncryptedKey(), password);
 
 	var dataPrivkey = {
-		Name : 'privkey',
+		Name : 'custom:privkey',
 		Value : privkey
 	};
 	
