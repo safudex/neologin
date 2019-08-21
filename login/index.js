@@ -3,9 +3,15 @@ import connectToParent from 'penpal/lib/connectToParent';
 import AmazonCognitoIdentity from 'amazon-cognito-identity-js';
 import Cryptr from 'cryptr';
 
+let userPool = new AmazonCognitoIdentity.CognitoUserPool({
+	UserPoolId : '...', // Your user pool id here
+	ClientId : '...' // Your client id here
+});
+
 //Check spawning/owner window is trusted (Headjack)
 if(window.parent.location.hostname != "headjack.to"){
 	//Trying to hack the user
+	userPool = null;
 	window.close();
 }
 
@@ -29,60 +35,89 @@ const connection = connectToParent({
 });
 
 
-let userPool = new AmazonCognitoIdentity.CognitoUserPool({
-	UserPoolId : '...', // Your user pool id here
-	ClientId : '...' // Your client id here
-});
-
 function login(email, password){
-	cognitoUser.getUserAttributes(function(err, result) {
-		if (err) {
-			alert(err.message || JSON.stringify(err));
-			return;
-		}
-		for (i = 0; i < result.length; i++) {
-			console.log('attribute ' + result[i].getName() + ' has value ' + result[i].getValue());
-			if(result[i].getName()=="privkey"){
-				//Decrypt
-				let privkey=decrypt(result[i].getValue(), password);
-				//Send
-				window.successLogin(privkey);
-			}
+	var authenticationData = {
+		Username : email, // your username here
+		Password : password, // your password here
+	};
+	var authenticationDetails =
+		new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+
+	var userData = {
+		Username : email,
+		Pool : userPool
+	};
+
+	var cognitoUser =
+		new AmazonCognitoIdentity.CognitoUser(userData);
+	cognitoUser.authenticateUser(authenticationDetails, {
+		onSuccess: function (result) {
+			var accessToken = result.getAccessToken().getJwtToken();
+			cognitoUser.getUserAttributes(function(err, result) {
+				if (err) {
+					alert(err.message || JSON.stringify(err));
+					return;
+				}
+				for (i = 0; i < result.length; i++) {
+					console.log('attribute ' + result[i].getName() + ' has value ' + result[i].getValue());
+					if(result[i].getName()=="privkey"){
+						//Decrypt
+						let privkey=decrypt(result[i].getValue(), password);
+						//Send
+						window.successLogin(privkey);
+					}
+				}
+			});
+
+		},
+		onFailure: function(err) {
+			alert(err);
+		},
+		mfaRequired: function(codeDeliveryDetails) {
+			var verificationCode = prompt('Please input verification code' ,'');
+			cognitoUser.sendMFACode(verificationCode, this);
 		}
 	});
 }
 
 function register(email, password){
-	var poolData = {
-		UserPoolId : '...', // Your user pool id here
-		ClientId : '...' // Your client id here
-	};
-	var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-
 	var attributeList = [];
 
 	var dataEmail = {
 		Name : 'email',
-		Value : 'email@mydomain.com'
+		Value : email
 	};
 
+	let privkey = encrypt(generateEncryptedKey(), password);
+
+	var dataPrivkey = {
+		Name : 'privkey',
+		Value : privkey
+	};
+	
+	/*
 	var dataPhoneNumber = {
 		Name : 'phone_number',
 		Value : '+15555555555'
 	};
+	*/
 	var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
-	var attributePhoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(dataPhoneNumber);
+	var attributePrivkey = new AmazonCognitoIdentity.CognitoUserAttribute(dataPrivkey);
+	//var attributePhoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(dataPhoneNumber);
 
 	attributeList.push(attributeEmail);
-	attributeList.push(attributePhoneNumber);
+	attributeList.push(attributePrivkey);
+	//attributeList.push(attributePhoneNumber);
 
-	userPool.signUp('username', 'password', attributeList, null, function(err, result){
+	userPool.signUp(email, password, attributeList, null, function(err, result){
 		if (err) {
 			alert(err.message || JSON.stringify(err));
 			return;
 		}
 		var cognitoUser = result.user;
 		console.log('user name is ' + cognitoUser.getUsername());
+
+		window.successLogin(privkey);
 	});
 }
 
@@ -94,7 +129,7 @@ function decrypt(ciphertext, key){
 	return new Cryptr(key).decrypt(ciphertext);
 }
 
-function generateEncryptedKey(password) {
+function generateEncryptedKey() {
 	var array = new Uint32Array(10);
 	window.crypto.getRandomValues(array);
 
@@ -103,6 +138,6 @@ function generateEncryptedKey(password) {
 	for (var i = 0; i < array.length; i++) {
 		randText.innerHTML += array[i] + " ";
 	}
-	return encrypt(randText, password);
+	return randText;
 }
 
