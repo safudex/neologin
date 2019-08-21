@@ -4,8 +4,8 @@ import AmazonCognitoIdentity from 'amazon-cognito-identity-js';
 import Cryptr from 'cryptr';
 
 let userPool = new AmazonCognitoIdentity.CognitoUserPool({
-	UserPoolId : '...', // Your user pool id here
-	ClientId : '...' // Your client id here
+	UserPoolId : 'eu-west-1_SN8JpQrzS', // Your user pool id here
+	ClientId : '2r79pmi7f4msr8mgbnssgnq2uv' // Your client id here
 });
 
 //Check spawning/owner window is trusted (Headjack)
