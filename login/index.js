@@ -2,6 +2,7 @@ import connectToParent from 'penpal/lib/connectToParent';
 //import { CognitoUserPool, CognitoUserAttribute, CognitoUser } from 'amazon-cognito-identity-js';
 import AmazonCognitoIdentity from 'amazon-cognito-identity-js';
 import Cryptr from 'cryptr';
+import zxcvbn from 'zxcvbn';
 
 let userPool = new AmazonCognitoIdentity.CognitoUserPool({
 	UserPoolId : 'eu-west-1_SN8JpQrzS', // Your user pool id here
@@ -88,7 +89,7 @@ function register(email, password){
 		Value : email
 	};
 
-	let privkey = encrypt(generateEncryptedKey(), password);
+	let privkey = encrypt(generatePrivateKey(), password);
 
 	var dataPrivkey = {
 		Name : 'custom:privkey',
@@ -129,7 +130,7 @@ function decrypt(ciphertext, key){
 	return new Cryptr(key).decrypt(ciphertext);
 }
 
-function generateEncryptedKey() {
+function generatePrivateKey() {
 	var array = new Uint32Array(10);
 	window.crypto.getRandomValues(array);
 
@@ -141,3 +142,8 @@ function generateEncryptedKey() {
 	return randText;
 }
 
+// See https://github.com/dropbox/zxcvbn for docs
+// TODO: This must be imporved to use zxcvbn suggestion & warning system
+function checkPasswordStrength(password){ //Returns true or false depending on if the password is strong enough
+	return zxcvbn(password).score >= 3; // A score superior to 3 means that the password offers "moderate protection from offline slow-hash scenario. (guesses < 10^10)"
+}
