@@ -1,6 +1,6 @@
 import connectToParent from 'penpal/lib/connectToParent';
 //import { CognitoUserPool, CognitoUserAttribute, CognitoUser } from 'amazon-cognito-identity-js';
-import AmazonCognitoIdentity from 'amazon-cognito-identity-js';
+const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 import Cryptr from 'cryptr';
 import zxcvbn from 'zxcvbn';
 

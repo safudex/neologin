@@ -5,17 +5,16 @@ node_js:
 before_install:
   - sudo apt-get update -qq
   - wget https://github.com/jgm/pandoc/releases/download/2.7.2/pandoc-2.7.2-1-amd64.deb && sudo dpkg -i pandoc-2.7.2-1-amd64.deb
-
+  - npm install
 
 script:
-  - (cd landing && pandoc -t html -f gfm --css "pandoc.css" -s ../README.md -o index.html -V header-includes:"<link rel='shortcut icon' href='favicon.png' />" --metadata pagetitle="Headjack" --fail-if-warnings)
+  - ./build.sh
 
 before_deploy:
-  - mv widget landing
 
 deploy:
   provider: pages
-  local_dir: landing
+  local_dir: dist
   skip_cleanup: true
   github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
   on:

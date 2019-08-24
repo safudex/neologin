@@ -1,18 +1,21 @@
 const path = require('path');
 
 module.exports = {
-  entry: './index.js',
+  entry: {
+	  login: './login/index.js',
+	  widget: './widget/index.js',
+  },
   mode: 'development',
   output: {
-    filename: 'main.js',
+    filename: '[name]/bundle.js',
     path: path.resolve(__dirname, 'dist')
   },
-  module: {
+  /*module: {
     rules: [
       {
         test: /\.json$/,
         loader: 'json-loader'
       }
     ]
-  }
+  }*/
 };

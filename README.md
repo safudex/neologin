@@ -92,10 +92,9 @@ Overall, Headjack trades security for convenience when compared with traditional
 
 ## Development
 
-### Widget
+### Widget & Login 
 
 ```bash
-cd widget
 npm install
 npm run build
 ```
