@@ -6,13 +6,29 @@
   <body>
   <div class="container">
     <label for="uname"><b>Username</b></label>
-    <input type="text" placeholder="Enter Username" name="uname" required>
+    <input type="text" placeholder="Enter Username" name="uname" id="uname-login" required>
+    <br>
 
     <label for="psw"><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name="psw" required>
+    <input type="password" placeholder="Enter Password" name="psw" id="psw-login" required>
+    <br>
 
-    <button>Login</button>
-    <button>Register</button>
+    <button id="login">Login</button>
+  </div>
+  <hr>
+  <div class="container">
+    <label for="uname"><b>Username</b></label>
+    <input type="text" placeholder="Enter Username" name="uname" id="uname-register" required>
+    <br>
+
+    <label for="psw"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="psw" id="psw-register" required>
+    <br>
+
+    <input type="checkbox" id="2fa"> Use 2FA
+    <br>
+
+    <button id="register">Register</button>
   </div>
 
     <script src="./bundle.js"></script>

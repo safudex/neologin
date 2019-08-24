@@ -1,9 +1,9 @@
-import connectToParent from 'penpal/lib/connectToParent';
 //import { CognitoUserPool, CognitoUserAttribute, CognitoUser } from 'amazon-cognito-identity-js';
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 import Cryptr from 'cryptr';
 import zxcvbn from 'zxcvbn';
-import { hostname } from '../config';
+import { server } from '../config';
+import Neon from "@cityofzion/neon-js";
 
 let userPool = new AmazonCognitoIdentity.CognitoUserPool({
 	UserPoolId : 'eu-west-1_SN8JpQrzS', // Your user pool id here
@@ -11,31 +11,16 @@ let userPool = new AmazonCognitoIdentity.CognitoUserPool({
 });
 
 //Check spawning/owner window is trusted (Headjack)
-if(!window.parent || !window.parent.location || !window.parent.location.hostname || window.parent.location.hostname != hostname){
+if(!window.opener || !window.opener.location || window.opener.location.href != server+"/widget/index.html"){
 	//Trying to hack the user
 	userPool = null;
 	window.close();
 }
 
-//Set up communication with owner window
-const connection = connectToParent({
-	// Methods child is exposing to parent
-	methods: {
-		getPrivateKey() {
-			// Return a promise if the value being returned requires asynchronous processing.
-			return new Promise((resolve, reject) => {
-				window.successLogin=resolve;
-				window.failLogin=reject;
-				/*
-				setTimeout(() => {
-					resolve(num1 / num2);
-				}, 1000);
-				*/
-			});
-		}
-	}
-});
-
+function sendPrivkeyAndClose(privkey){
+	window.opener.postMessage({privkey: privkey}, server);
+	window.close();
+}
 
 function login(email, password){
 	var authenticationData = {
@@ -60,13 +45,13 @@ function login(email, password){
 					alert(err.message || JSON.stringify(err));
 					return;
 				}
-				for (i = 0; i < result.length; i++) {
+				for (let i = 0; i < result.length; i++) {
 					console.log('attribute ' + result[i].getName() + ' has value ' + result[i].getValue());
 					if(result[i].getName()=="custom:privkey"){
 						//Decrypt
 						let privkey=decrypt(result[i].getValue(), password);
 						//Send
-						window.successLogin(privkey);
+						sendPrivkeyAndClose(privkey);
 					}
 				}
 			});
@@ -119,7 +104,7 @@ function register(email, password){
 		var cognitoUser = result.user;
 		console.log('user name is ' + cognitoUser.getUsername());
 
-		window.successLogin(privkey);
+		sendPrivkeyAndClose(privkey);
 	});
 }
 
@@ -132,15 +117,7 @@ function decrypt(ciphertext, key){
 }
 
 function generatePrivateKey() {
-	var array = new Uint32Array(10);
-	window.crypto.getRandomValues(array);
-
-	var randText = document.getElementById("myRandText");
-	randText.innerHTML = "The random numbers are: "
-	for (var i = 0; i < array.length; i++) {
-		randText.innerHTML += array[i] + " ";
-	}
-	return randText;
+	return Neon.create.privateKey();
 }
 
 // See https://github.com/dropbox/zxcvbn for docs
@@ -148,3 +125,12 @@ function generatePrivateKey() {
 function checkPasswordStrength(password){ //Returns true or false depending on if the password is strong enough
 	return zxcvbn(password).score >= 3; // A score superior to 3 means that the password offers "moderate protection from offline slow-hash scenario. (guesses < 10^10)"
 }
+
+// EVERYTHING ONWARDS HAS TO BE REMODELED TO IMPROVE THE USER INTERFACE
+
+function getVal(id){
+	return document.getElementById(id).value; 
+}
+
+document.getElementById("login").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login")));
+document.getElementById("register").addEventListener("click", ()=>register(getVal("uname-register"), getVal("psw-register")));

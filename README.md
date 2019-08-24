@@ -8,11 +8,9 @@
 npm i headjack
 ```
 
-### Initialize
+### Import
 ```js
-import Headjack from 'headjack';
-
-const headjack = new Headjack('MainNet');
+import headjack from 'headjack';
 ```
 
 ### Use
