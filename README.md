@@ -12,7 +12,7 @@ npm i headjack
 ```js
 import Headjack from 'headjack';
 
-const headjack = new Headjack('mainnet');
+const headjack = new Headjack('MainNet');
 ```
 
 ### Use
