@@ -3,6 +3,7 @@ import connectToParent from 'penpal/lib/connectToParent';
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 import Cryptr from 'cryptr';
 import zxcvbn from 'zxcvbn';
+import { hostname } from '../config';
 
 let userPool = new AmazonCognitoIdentity.CognitoUserPool({
 	UserPoolId : 'eu-west-1_SN8JpQrzS', // Your user pool id here
@@ -10,7 +11,7 @@ let userPool = new AmazonCognitoIdentity.CognitoUserPool({
 });
 
 //Check spawning/owner window is trusted (Headjack)
-if(window.parent.location.hostname != "headjack.to"){
+if(!window.parent || !window.parent.location || !window.parent.location.hostname || window.parent.location.hostname != hostname){
 	//Trying to hack the user
 	userPool = null;
 	window.close();
@@ -20,7 +21,7 @@ if(window.parent.location.hostname != "headjack.to"){
 const connection = connectToParent({
 	// Methods child is exposing to parent
 	methods: {
-		getPrivateKey(num1, num2) {
+		getPrivateKey() {
 			// Return a promise if the value being returned requires asynchronous processing.
 			return new Promise((resolve, reject) => {
 				window.successLogin=resolve;
