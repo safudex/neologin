@@ -1,7 +1,9 @@
 import connectToParent from 'penpal/lib/connectToParent';
+import connectToChild from 'penpal/lib/connectToChild';
 import Neon from "@cityofzion/neon-js";
 
 let acct = null; //Neon.create.Account("ALq7AWrhAueN6mJNqk6FHJjnsEoPRytLdW");
+let currentNetwork = "MainNet";
 
 let rawMethods = {
 	getProvider,
@@ -51,22 +53,51 @@ connection.promise.then(parent => {
 });
 
 function signIn(){
-	console.log('a');
-	return Promise.resolve();
+	let loginWindow = window.open("/login/index.html");
+	const connection = connectToChild({
+		// The iframe to which a connection should be made
+		loginWindow,
+		// Methods the parent is exposing to the child
+		methods: {}
+	});
+
+	return connection.promise.then(child => {
+		return child.getPrivateKey().then(privkey => acct = Neon.create.account(privkey));
+	});
 }
 
 const providerInfo = {
+  name: 'Headjack',
+  website: 'https://headjack.to',
+  version: 'v0.1',
+  compatibility: [],
+  extra: {}
 };
 
 function getProvider(){
-	console.log('b');
+	return Promise.resolve(providerInfo);
 }
 
-function getNetworks(){}
+function getNetworks(){
+	return Promise.resolve({
+		networks: ["MainNet", "TestNet"],
+		defaultNetwork: currentNetwork
+	});
+}
 
-function getAccount(){}
+function getAccount(){
+	return Promise.resolve({
+		address: acct.address,
+		label: 'My Spending Wallet'
+	});
+}
 
-function getPublicKey(){}
+function getPublicKey(){
+	return Promise.resolve({
+		address: acct.address,
+		publicKey: acct.publicKey
+	});
+}
 
 function getBalance(balanceArgs){}
 
