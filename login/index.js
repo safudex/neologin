@@ -75,11 +75,13 @@ function register(email, password){
 		Value : email
 	};
 
-	let privkey = encrypt(generatePrivateKey(), password);
+	const privkey = generatePrivateKey();
+
+	const encryptedPrivkey = encrypt(privkey, password);
 
 	var dataPrivkey = {
 		Name : 'custom:privkey',
-		Value : privkey
+		Value : encryptedPrivkey
 	};
 	
 	/*
