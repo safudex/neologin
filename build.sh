@@ -16,7 +16,8 @@ cp widget/index.html dist/widget
 
 mkdir -p dist/example
 cp example/index.html dist/example
-cp provider/index.js example/headjack.js
+echo "//DON'T MODIFY THIS FILE!1! IT'S AUTOMATICALLY BUILT FROM provider/index.js" > example/headjack.js
+cat provider/index.js >> example/headjack.js
 sed -i 's/https:\/\/headjack.to/../' example/headjack.js 
 
 npm run build
