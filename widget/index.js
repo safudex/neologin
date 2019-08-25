@@ -64,7 +64,7 @@ function signIn(){
 			},
 			false
 		);
-		window.open("../login/index.html", "Headjack - Login", "width=300,height=200");
+		showLoginButton();
 	});
 }
 
@@ -88,7 +88,6 @@ function getNetworks(){
 }
 
 function getAccount(...args){
-	console.log(args);
 	return Promise.resolve({
 		address: acct.address,
 		label: 'My Spending Wallet'
@@ -118,13 +117,20 @@ function getTransaction(txArgs){}
 
 function getApplicationLog(appLogArgs){}
 
-function send(sendArgs){}
+function send(sendArgs){
+	requestAcceptance(JSON.stringify(sendArgs)).then(()=>alert('sent!'));
+}
 
-function invoke(invokeArgs){}
+function invoke(invokeArgs){
+	requestAcceptance(JSON.stringify(invokeArgs)).then(()=>alert('sent!'));
+}
 
-function invokeMulti(invokeMultiArgs){}
+function invokeMulti(invokeMultiArgs){
+	requestAcceptance(JSON.stringify(invokeMultiArgs)).then(()=>alert('sent!'));
+}
 
 function signMessage(signArgs){
+	requestAcceptance(JSON.stringify(signArgs)).then(()=>alert('sent!'));
 	/*
 	const salt = random(); 
 	return {
@@ -136,6 +142,21 @@ function signMessage(signArgs){
 	*/
 }
 
-function deploy(deployArgs){}
+function deploy(deployArgs){
+	requestAcceptance(JSON.stringify(deployArgs)).then(()=>alert('sent!'));
+}
 
+// EVERYTHING ONWARDS HAS TO BE REMODELED TO IMPROVE THE USER INTERFACE
 
+function showLoginButton(){
+	document.write("<button id='login-button'>Login</button>");
+	document.getElementById("login-button").addEventListener("click", ()=>window.open("../login/index.html", "Headjack - Login", "width=300,height=200"));
+}
+
+function requestAcceptance(message){
+	return new Promise((resolve, reject) => {
+		document.write(message+"<br><button id='accept-button'>Accept</button><br><button id='reject-button'>Reject</button>");
+		document.getElementById("accept-button").addEventListener("click", resolve);
+		document.getElementById("reject-button").addEventListener("click", reject);
+	});
+}
