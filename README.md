@@ -71,19 +71,19 @@ Overall, Headjack trades security for convenience when compared with traditional
 
 ## Development
 
-### Widget & Login 
+### Front-end
 
+To build the whole system:
 ```bash
-npm install
-npm run build
+bash build.sh
 ```
 
-### Provider
-
-```bash
-cd provider
-npm install
+To start a development server:
 ```
+npm start
+```
+
+**Note**: The development server only watches and rebuilds javascript files, so if any other type of file (like html) is changed, `bash build.sh` will have to be run for the changes to be applied.
 
 ### Back-end
 
@@ -92,11 +92,3 @@ When creating the user pool the following things must be taken into account:
 - In order for the SDK to work, an "App Client" must be added. Furthermore, when creating the App client the checkbox "Generate client secret" must not be checked.
 - A custom attribute with type "string", name "privkey" and length "2000" must be added.
 - Login by email (instead of by username, which is the default) must be enabled.
-
-### Landing page
-
-Install a recent version of pandoc and build the landing page by running:
-```bash
-wget https://github.com/jgm/pandoc/releases/download/2.7.2/pandoc-2.7.2-1-amd64.deb && sudo dpkg -i pandoc-2.7.2-1-amd64.deb
-(cd landing && pandoc -t html -f gfm --css "pandoc.css" -s ../README.md -o index.html -V header-includes:"<link rel='shortcut icon' href='favicon.png' />" --metadata pagetitle="Headjack" --fail-if-warnings)
-```
