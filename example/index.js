@@ -1,6 +1,6 @@
-import Headjack from 'headjack';
+import headjack from './headjack';
 
-const headjack = new Headjack('MainNet');
+console.log(headjack);
 
 headjack.getAccount()
 .then((account) => {
@@ -22,3 +22,5 @@ headjack.getAccount()
       break;
   }
 });
+
+headjack.getProvider().then(console.log);
