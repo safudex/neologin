@@ -148,14 +148,18 @@ function deploy(deployArgs){
 
 // EVERYTHING ONWARDS HAS TO BE REMODELED TO IMPROVE THE USER INTERFACE
 
+function write(html){
+	document.getElementById("content").innerHTML = html;
+}
+
 function showLoginButton(){
-	document.write("<button id='login-button'>Login</button>");
+	write("<button id='login-button'>Login</button>");
 	document.getElementById("login-button").addEventListener("click", ()=>window.open("../login/index.html", "Headjack - Login", "width=300,height=200"));
 }
 
 function requestAcceptance(message){
 	return new Promise((resolve, reject) => {
-		document.write(message+"<br><button id='accept-button'>Accept</button><br><button id='reject-button'>Reject</button>");
+		write(message+"<br><button id='accept-button'>Accept</button><br><button id='reject-button'>Reject</button>");
 		document.getElementById("accept-button").addEventListener("click", resolve);
 		document.getElementById("reject-button").addEventListener("click", reject);
 	});
