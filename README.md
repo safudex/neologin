@@ -8,13 +8,10 @@
 npm i headjack
 ```
 
-### Import
-```js
-import headjack from 'headjack';
-```
-
 ### Use
 ```js
+import headjack from 'headjack';
+
 headjack.getAccount()
 .then((account) => {
   console.log('Provider address: ' + account.address);
