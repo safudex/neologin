@@ -106,7 +106,17 @@ function register(email, password){
 		var cognitoUser = result.user;
 		console.log('user name is ' + cognitoUser.getUsername());
 
-		sendPrivkeyAndClose(privkey);
+		//Email verification
+		let verificationCode=prompt("Input the verification code received in your email");
+		cognitoUser.confirmRegistration(verificationCode, true, function(err, result) {
+			if (err) {
+				alert(err.message || JSON.stringify(err));
+				return;
+			}
+			console.log('call result: ' + result);
+			sendPrivkeyAndClose(privkey);
+		});
+
 	});
 }
 
