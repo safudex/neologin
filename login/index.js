@@ -4,6 +4,7 @@ import Cryptr from 'cryptr';
 import zxcvbn from 'zxcvbn';
 import { server } from '../config';
 import Neon from "@cityofzion/neon-js";
+import QRCode from 'qrcode';
 
 let userPool = new AmazonCognitoIdentity.CognitoUserPool({
 	UserPoolId : 'eu-west-1_SN8JpQrzS', // Your user pool id here
@@ -22,7 +23,7 @@ function sendPrivkeyAndClose(privkey){
 	window.close();
 }
 
-function login(email, password){
+function login(email, password, enableTOTP=false){
 	var authenticationData = {
 		Username : email, // your username here
 		Password : password, // your password here
@@ -39,26 +40,58 @@ function login(email, password){
 		new AmazonCognitoIdentity.CognitoUser(userData);
 	cognitoUser.authenticateUser(authenticationDetails, {
 		onSuccess: function (result) {
+			if(enableTOTP){
+				cognitoUser.associateSoftwareToken(this);
+				return;
+			}
 			var accessToken = result.getAccessToken().getJwtToken();
 			cognitoUser.getUserAttributes(function(err, result) {
 				if (err) {
 					alert(err.message || JSON.stringify(err));
 					return;
 				}
-				for (let i = 0; i < result.length; i++) {
-					console.log('attribute ' + result[i].getName() + ' has value ' + result[i].getValue());
-					if(result[i].getName()=="custom:privkey"){
-						//Decrypt
-						let privkey=decrypt(result[i].getValue(), password);
-						//Send
-						sendPrivkeyAndClose(privkey);
-					}
-				}
+				getPrivKey(cognitoUser, password).then(sendPrivkeyAndClose);
 			});
 
 		},
 		onFailure: function(err) {
-			alert(err);
+			alert(err.message || JSON.stringify(err));
+		},
+		mfaSetup: function(challengeName, challengeParameters) {
+			cognitoUser.associateSoftwareToken(this);
+		},
+		associateSecretCode : function(secretCode) {
+			console.log(secretCode);
+			drawQR(secretCode, email).then(()=>{
+				var challengeAnswer = prompt('Please input the TOTP code.' ,'');
+				cognitoUser.verifySoftwareToken(challengeAnswer, 'My TOTP device', {
+					onSuccess: function (result) {
+						const totpMfaSettings = {
+							PreferredMfa : true,
+							Enabled : true
+						};
+						cognitoUser.setUserMfaPreference(null, totpMfaSettings, function(err, result) {
+							if (err) {
+								alert(err.message || JSON.stringify(err));
+								return;
+							}
+							console.log('call result ' + result);
+							getPrivKey(cognitoUser, password).then(sendPrivkeyAndClose);
+						});
+					},
+					onFailure: function(err) {
+						alert(err.message || JSON.stringify(err));
+					},
+				});
+			});
+		},
+		selectMFAType : function(challengeName, challengeParameters) {
+			var mfaType = prompt('Please select the MFA method.', ''); // valid values for mfaType is "SMS_MFA", "SOFTWARE_TOKEN_MFA"
+			cognitoUser.sendMFASelectionAnswer(mfaType, this);
+		},
+		totpRequired : function(secretCode) {
+			var challengeAnswer = prompt('Please input the TOTP code.' ,'');
+			cognitoUser.sendMFACode(challengeAnswer, this, 'SOFTWARE_TOKEN_MFA');
 		},
 		mfaRequired: function(codeDeliveryDetails) {
 			var verificationCode = prompt('Please input verification code' ,'');
@@ -67,7 +100,7 @@ function login(email, password){
 	});
 }
 
-function register(email, password){
+function register(email, password, twofa){
 	var attributeList = [];
 
 	var dataEmail = {
@@ -83,7 +116,7 @@ function register(email, password){
 		Name : 'custom:privkey',
 		Value : encryptedPrivkey
 	};
-	
+
 	/*
 	var dataPhoneNumber = {
 		Name : 'phone_number',
@@ -114,9 +147,49 @@ function register(email, password){
 				return;
 			}
 			console.log('call result: ' + result);
-			sendPrivkeyAndClose(privkey);
+			if (twofa===true) {
+				login(email, password, true);
+			} else {
+				sendPrivkeyAndClose(privkey);
+			}
 		});
 
+	});
+}
+
+function drawQR(secret, email){
+	return new Promise((resolve, reject) => {
+		let canvas = document.getElementById('canvas')
+		let code = "otpauth://totp/Headjack:"+email+"?secret="+secret+"&issuer=Headjack";
+
+		QRCode.toCanvas(canvas, code, function (error) {
+			if (error){
+				console.error(error);
+				reject(error);
+			} else {
+				setTimeout(resolve, 100);
+			}
+		});
+	});
+}
+
+function getPrivKey(cognitoUser, password){
+	return new Promise((resolve, reject) => {
+		cognitoUser.getUserAttributes(function(err, result) {
+			if (err) {
+				alert(err.message || JSON.stringify(err));
+				return;
+			}
+			for (let i = 0; i < result.length; i++) {
+				console.log('attribute ' + result[i].getName() + ' has value ' + result[i].getValue());
+				if(result[i].getName()=="custom:privkey"){
+					//Decrypt
+					let privkey=decrypt(result[i].getValue(), password);
+					//Send
+					resolve(privkey);
+				}
+			}
+		});
 	});
 }
 
@@ -145,4 +218,4 @@ function getVal(id){
 }
 
 document.getElementById("login").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login")));
-document.getElementById("register").addEventListener("click", ()=>register(getVal("uname-register"), getVal("psw-register")));
+document.getElementById("register").addEventListener("click", ()=>register(getVal("uname-register"), getVal("psw-register"), document.getElementById("2fa").checked));
