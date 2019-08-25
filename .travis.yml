@@ -6,6 +6,7 @@ before_install:
   - sudo apt-get update -qq
   - wget https://github.com/jgm/pandoc/releases/download/2.7.2/pandoc-2.7.2-1-amd64.deb && sudo dpkg -i pandoc-2.7.2-1-amd64.deb
   - npm install
+  - echo 'export const server = "https://headjack.to";' > config.js
 
 script:
   - ./build.sh
