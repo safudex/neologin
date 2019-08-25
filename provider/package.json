@@ -1,6 +1,6 @@
 {
   "name": "headjack",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Easy peasy NEO dAPI provider",
   "main": "index.js",
   "scripts": {
