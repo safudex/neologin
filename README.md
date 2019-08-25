@@ -1,6 +1,10 @@
 # Headjack
 > Easy peasy NEO dAPI provider
 
+## Try it
+
+Check out [a live example of a Dapp using Headjack](https://headjack.to/example/)!
+
 ## Quickstart
 
 ### Install
