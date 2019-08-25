@@ -85,6 +85,8 @@ npm start
 
 **Note**: The development server only watches and rebuilds javascript files, so if any other type of file (like html) is changed, `bash build.sh` will have to be run for the changes to be applied.
 
+Once the system has been built and the development server is running, go to <http://localhost:8080/example/> for a live version of the current system.
+
 ### Back-end
 
 Uses Amazon Cognito.  
