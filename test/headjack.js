@@ -35,15 +35,6 @@ const connection = connectToChild({
 	}
 });
 
-/*
-let  = connection.promise.then(child => {
-	//child.addEventListener = addEventListener;
-	//child.removeEventListener = removeEventListener;
-	return child;
-	//child.multiply(2, 6).then(total => console.log(total));
-});
-*/
-
 const promiseMethods = ["getProvider", "getNetworks", "getAccount", "getPublicKey", "getBalance", "getStorage", "invokeRead", "getBlock", "getBlockHeight", "getTransaction", "getApplicationLog", "send", "invoke", "invokeMulti", "signMessage", "deploy"]; //Doesn't include addEventListener nor removeEventListener as these don't return promises
 
 let headjack = {removeEventListener, addEventListener};

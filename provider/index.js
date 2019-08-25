@@ -1,17 +1,4 @@
 import connectToChild from 'penpal/lib/connectToChild';
- 
-const iframe = document.createElement('iframe');
-iframe.src = 'https://headjack.to/widget/index.html';
-document.body.appendChild(iframe);
- 
-const connection = connectToChild({
-  // The iframe to which a connection should be made
-  iframe,
-  // Methods the parent is exposing to the child
-  methods: {
-    sendEvent
-  }
-});
 
 function sendEvent(ev, data){ //{type, data}
 	registeredEvents[ev].map((cb)=>cb(data));
@@ -35,10 +22,28 @@ function removeEventListener(ev){
 	registeredEvents[ev] = [];
 }
 
-connection.promise.then(child => {
-	console.log(child);
-	child.addEventListener = addEventListener;
-	child.removeEventListener = removeEventListener;
-	export child;
-	//child.multiply(2, 6).then(total => console.log(total));
+const iframe = document.createElement('iframe');
+iframe.src = 'https://headjack.to/widget/index.html';
+document.body.appendChild(iframe);
+
+const connection = connectToChild({
+	// The iframe to which a connection should be made
+	iframe,
+	// Methods the parent is exposing to the child
+	methods: {
+		sendEvent
+	}
 });
+
+const promiseMethods = ["getProvider", "getNetworks", "getAccount", "getPublicKey", "getBalance", "getStorage", "invokeRead", "getBlock", "getBlockHeight", "getTransaction", "getApplicationLog", "send", "invoke", "invokeMulti", "signMessage", "deploy"]; //Doesn't include addEventListener nor removeEventListener as these don't return promises
+
+let headjack = {removeEventListener, addEventListener};
+
+for(let i=0; i<promiseMethods.length; i++){
+	let method = promiseMethods[i];
+	headjack[method] = function(...args){
+		return connection.promise.then((child) => child[method](...args));
+	};
+}
+
+export default headjack;
