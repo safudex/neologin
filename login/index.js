@@ -46,20 +46,18 @@ function login(email, password, enableTOTP=false, verifyEmail=false){ //Only one
 					return;
 				}
 				if(verifyEmail){
-					cognitoUser.resendConfirmationCode(function(err, result) {
-						if (err) {
-							alert(err.message || JSON.stringify(err));
-							return;
-						}
-						//Email verification
-						let verificationCode=prompt("Input the verification code received in your email");
-						cognitoUser.confirmRegistration(verificationCode, true, function(err, result) {
-							if (err) {
-								alert(err.message || JSON.stringify(err));
-								return;
-							}
+					cognitoUser.getAttributeVerificationCode('email', {
+						onSuccess: function (result) {
+							console.log('call result: ' + result);
 							resolve();
-						});
+						},
+						onFailure: function(err) {
+							alert(err.message || JSON.stringify(err));
+						},
+						inputVerificationCode: function() {
+							var verificationCode = prompt('Please input verification code: ' ,'');
+							cognitoUser.verifyAttribute('email', verificationCode, this);
+						}
 					});
 					return;
 				}
