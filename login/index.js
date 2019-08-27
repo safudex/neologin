@@ -23,80 +23,100 @@ function sendPrivkeyAndClose(privkey){
 	window.close();
 }
 
-function login(email, password, enableTOTP=false){
-	var authenticationData = {
-		Username : email, // your username here
-		Password : password, // your password here
-	};
-	var authenticationDetails =
-		new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+function login(email, password, enableTOTP=false, verifyEmail=false){ //Only one of the extra options (the ones that default to false) should be set to true at a time
+	return new Promise((resolve, reject) => {
+		var authenticationData = {
+			Username : email, // your username here
+			Password : password, // your password here
+		};
+		var authenticationDetails =
+			new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
 
-	var userData = {
-		Username : email,
-		Pool : userPool
-	};
+		var userData = {
+			Username : email,
+			Pool : userPool
+		};
 
-	var cognitoUser =
-		new AmazonCognitoIdentity.CognitoUser(userData);
-	cognitoUser.authenticateUser(authenticationDetails, {
-		onSuccess: function (result) {
-			if(enableTOTP){
-				cognitoUser.associateSoftwareToken(this);
-				return;
-			}
-			var accessToken = result.getAccessToken().getJwtToken();
-			cognitoUser.getUserAttributes(function(err, result) {
-				if (err) {
-					alert(err.message || JSON.stringify(err));
+		var cognitoUser =
+			new AmazonCognitoIdentity.CognitoUser(userData);
+		cognitoUser.authenticateUser(authenticationDetails, {
+			onSuccess: function (result) {
+				if(enableTOTP){
+					cognitoUser.associateSoftwareToken(this);
 					return;
 				}
-				getPrivKey(cognitoUser, password).then(sendPrivkeyAndClose);
-			});
-
-		},
-		onFailure: function(err) {
-			alert(err.message || JSON.stringify(err));
-		},
-		mfaSetup: function(challengeName, challengeParameters) {
-			cognitoUser.associateSoftwareToken(this);
-		},
-		associateSecretCode : function(secretCode) {
-			console.log(secretCode);
-			drawQR(secretCode, email).then(()=>{
-				var challengeAnswer = prompt('Please input the TOTP code.' ,'');
-				cognitoUser.verifySoftwareToken(challengeAnswer, 'My TOTP device', {
-					onSuccess: function (result) {
-						const totpMfaSettings = {
-							PreferredMfa : true,
-							Enabled : true
-						};
-						cognitoUser.setUserMfaPreference(null, totpMfaSettings, function(err, result) {
+				if(verifyEmail){
+					cognitoUser.resendConfirmationCode(function(err, result) {
+						if (err) {
+							alert(err.message || JSON.stringify(err));
+							return;
+						}
+						//Email verification
+						let verificationCode=prompt("Input the verification code received in your email");
+						cognitoUser.confirmRegistration(verificationCode, true, function(err, result) {
 							if (err) {
 								alert(err.message || JSON.stringify(err));
 								return;
 							}
-							console.log('call result ' + result);
-							getPrivKey(cognitoUser, password).then(sendPrivkeyAndClose);
+							resolve();
 						});
-					},
-					onFailure: function(err) {
+					});
+					return;
+				}
+				var accessToken = result.getAccessToken().getJwtToken();
+				cognitoUser.getUserAttributes(function(err, result) {
+					if (err) {
 						alert(err.message || JSON.stringify(err));
-					},
+						return;
+					}
+					getPrivKey(cognitoUser, password).then(resolve);
 				});
-			});
-		},
-		selectMFAType : function(challengeName, challengeParameters) {
-			var mfaType = prompt('Please select the MFA method.', ''); // valid values for mfaType is "SMS_MFA", "SOFTWARE_TOKEN_MFA"
-			cognitoUser.sendMFASelectionAnswer(mfaType, this);
-		},
-		totpRequired : function(secretCode) {
-			var challengeAnswer = prompt('Please input the TOTP code.' ,'');
-			cognitoUser.sendMFACode(challengeAnswer, this, 'SOFTWARE_TOKEN_MFA');
-		},
-		mfaRequired: function(codeDeliveryDetails) {
-			var verificationCode = prompt('Please input verification code' ,'');
-			cognitoUser.sendMFACode(verificationCode, this);
-		}
+
+			},
+			onFailure: function(err) {
+				alert(err.message || JSON.stringify(err));
+			},
+			mfaSetup: function(challengeName, challengeParameters) {
+				cognitoUser.associateSoftwareToken(this);
+			},
+			associateSecretCode : function(secretCode) {
+				console.log(secretCode);
+				drawQR(secretCode, email).then(()=>{
+					var challengeAnswer = prompt('Please input the TOTP code.' ,'');
+					cognitoUser.verifySoftwareToken(challengeAnswer, 'My TOTP device', {
+						onSuccess: function (result) {
+							const totpMfaSettings = {
+								PreferredMfa : true,
+								Enabled : true
+							};
+							cognitoUser.setUserMfaPreference(null, totpMfaSettings, function(err, result) {
+								if (err) {
+									alert(err.message || JSON.stringify(err));
+									return;
+								}
+								console.log('call result ' + result);
+								getPrivKey(cognitoUser, password).then(resolve);
+							});
+						},
+						onFailure: function(err) {
+							alert(err.message || JSON.stringify(err));
+						},
+					});
+				});
+			},
+			selectMFAType : function(challengeName, challengeParameters) {
+				var mfaType = prompt('Please select the MFA method.', ''); // valid values for mfaType is "SMS_MFA", "SOFTWARE_TOKEN_MFA"
+				cognitoUser.sendMFASelectionAnswer(mfaType, this);
+			},
+			totpRequired : function(secretCode) {
+				var challengeAnswer = prompt('Please input the TOTP code.' ,'');
+				cognitoUser.sendMFACode(challengeAnswer, this, 'SOFTWARE_TOKEN_MFA');
+			},
+			mfaRequired: function(codeDeliveryDetails) {
+				var verificationCode = prompt('Please input verification code' ,'');
+				cognitoUser.sendMFACode(verificationCode, this);
+			}
+		});
 	});
 }
 
@@ -138,22 +158,6 @@ function register(email, password, twofa){
 		}
 		var cognitoUser = result.user;
 		console.log('user name is ' + cognitoUser.getUsername());
-/*
-		//Email verification
-		let verificationCode=prompt("Input the verification code received in your email");
-		cognitoUser.confirmRegistration(verificationCode, true, function(err, result) {
-			if (err) {
-				alert(err.message || JSON.stringify(err));
-				return;
-			}
-			console.log('call result: ' + result);
-			if (twofa===true) {
-				login(email, password, true);
-			} else {
-				sendPrivkeyAndClose(privkey);
-			}
-		});
-*/
 	});
 }
 
@@ -217,5 +221,7 @@ function getVal(id){
 	return document.getElementById(id).value; 
 }
 
-document.getElementById("login").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login")));
+document.getElementById("login").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login")).then(sendPrivkeyAndClose));
+document.getElementById("verify-email").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login"), false, true).then(()=>alert('Verified')));
+document.getElementById("add-totp").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login"), true, false).then(()=>alert('Setup completed')));
 document.getElementById("register").addEventListener("click", ()=>register(getVal("uname-register"), getVal("psw-register"), document.getElementById("2fa").checked));
