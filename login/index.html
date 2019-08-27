@@ -5,17 +5,25 @@
   </head>
   <body>
   <div class="container">
-    <label for="uname"><b>Username</b></label>
-    <input type="text" placeholder="Enter Username" name="uname" id="uname-login" required>
+    <label for="uname"><b>Email</b></label>
+    <input type="text" placeholder="Enter email" name="uname" id="uname-login" required>
     <br>
 
     <label for="psw"><b>Password</b></label>
     <input type="password" placeholder="Enter Password" name="psw" id="psw-login" required>
     <br>
 
-    <button id="login">Login</button>
-    <button id="verify-email">Verify email</button>
-    <button id="add-totp">Add 2FA (TOTP)</button>
+    <button id="login">Login</button><br>
+    <button id="verify-email">Verify email</button><br>
+    <button id="add-totp">Add 2FA (TOTP)</button><br>
+
+    <label for="phone"><b>Phone number</b></label>
+    <input type="text" placeholder="Enter phone number" name="phone" id="phone-login" required>
+    <br>
+    <button id="add-phone">Add phone number</button><br>
+    <p>To add a phone number, fill the email, password and phone number fields then click the button above</p>
+    <button id="verify-phone">Verify phone number</button>
+
   </div>
   <hr>
   <div class="container">

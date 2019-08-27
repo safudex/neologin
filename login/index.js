@@ -23,7 +23,23 @@ function sendPrivkeyAndClose(privkey){
 	window.close();
 }
 
-function login(email, password, enableTOTP=false, verifyEmail=false){ //Only one of the extra options (the ones that default to false) should be set to true at a time
+function verifyAttribute(attribute, cognitoUser, resolve){
+	cognitoUser.getAttributeVerificationCode(attribute, {
+		onSuccess: function (result) {
+			console.log('call result: ' + result);
+			resolve();
+		},
+		onFailure: function(err) {
+			alert(err.message || JSON.stringify(err));
+		},
+		inputVerificationCode: function() {
+			var verificationCode = prompt('Please input verification code: ' ,'');
+			cognitoUser.verifyAttribute('email', verificationCode, this);
+		}
+	});
+}
+
+function login(email, password, enableTOTP=false, verifyEmail=false, verifyPhone=false, phone=""){ //Only one of the extra options (the ones that default to false) should be set to true at a time
 	return new Promise((resolve, reject) => {
 		var authenticationData = {
 			Username : email, // your username here
@@ -46,18 +62,28 @@ function login(email, password, enableTOTP=false, verifyEmail=false){ //Only one
 					return;
 				}
 				if(verifyEmail){
-					cognitoUser.getAttributeVerificationCode('email', {
-						onSuccess: function (result) {
-							console.log('call result: ' + result);
-							resolve();
-						},
-						onFailure: function(err) {
+					verifyAttribute('email', cognitoUser, resolve);
+					return;
+				}
+				if(verifyPhone){
+					verifyAttribute("phone_number", cognitoUser, resolve);
+					return;
+				}
+				if(phone != ""){
+					var attributeList = [];
+					var dataPhoneNumber = {
+						Name : 'phone_number',
+						Value : phone //Style: '+15555555555'
+					};
+					var attributePhoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(dataPhoneNumber);
+					attributeList.push(attributePhoneNumber);
+					cognitoUser.updateAttributes(attributeList, function(err, result) {
+						if (err) {
 							alert(err.message || JSON.stringify(err));
-						},
-						inputVerificationCode: function() {
-							var verificationCode = prompt('Please input verification code: ' ,'');
-							cognitoUser.verifyAttribute('email', verificationCode, this);
+							return;
 						}
+						console.log('call result: ' + result);
+						resolve();
 					});
 					return;
 				}
@@ -119,6 +145,7 @@ function login(email, password, enableTOTP=false, verifyEmail=false){ //Only one
 }
 
 function register(email, password, twofa){
+
 	var attributeList = [];
 
 	var dataEmail = {
@@ -127,7 +154,6 @@ function register(email, password, twofa){
 	};
 
 	const privkey = generatePrivateKey();
-
 	const encryptedPrivkey = encrypt(privkey, password);
 
 	var dataPrivkey = {
@@ -135,19 +161,11 @@ function register(email, password, twofa){
 		Value : encryptedPrivkey
 	};
 
-	/*
-	var dataPhoneNumber = {
-		Name : 'phone_number',
-		Value : '+15555555555'
-	};
-	*/
 	var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
 	var attributePrivkey = new AmazonCognitoIdentity.CognitoUserAttribute(dataPrivkey);
-	//var attributePhoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(dataPhoneNumber);
 
 	attributeList.push(attributeEmail);
 	attributeList.push(attributePrivkey);
-	//attributeList.push(attributePhoneNumber);
 
 	userPool.signUp(email, password, attributeList, null, function(err, result){
 		if (err) {
@@ -220,6 +238,8 @@ function getVal(id){
 }
 
 document.getElementById("login").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login")).then(sendPrivkeyAndClose));
+document.getElementById("add-totp").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login"), true).then(()=>alert('Setup completed')));
 document.getElementById("verify-email").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login"), false, true).then(()=>alert('Verified')));
-document.getElementById("add-totp").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login"), true, false).then(()=>alert('Setup completed')));
+document.getElementById("add-phone").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login"), false, false, false, getVal("phone-login")).then(()=>alert('Added')));
+document.getElementById("verify-phone").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login"), false, false, true).then(()=>alert('Verified')));
 document.getElementById("register").addEventListener("click", ()=>register(getVal("uname-register"), getVal("psw-register"), document.getElementById("2fa").checked));
