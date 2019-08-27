@@ -97,4 +97,5 @@ Uses Amazon Cognito.
 When creating the user pool the following things must be taken into account:
 - In order for the SDK to work, an "App Client" must be added. Furthermore, when creating the App client the checkbox "Generate client secret" must not be checked.
 - A custom attribute with type "string", name "privkey" and length "2000" must be added.
-- Login by email (instead of by username, which is the default) must be enabled.
+- Login by email (instead of by username, which is the default) must be enabled, along with no verification.
+- The lambda function stored in `backend/autoConfirmUser.lambda.js` must be created and set as the trigger for the `pre sign-up` event.
