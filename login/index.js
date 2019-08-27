@@ -138,7 +138,7 @@ function register(email, password, twofa){
 		}
 		var cognitoUser = result.user;
 		console.log('user name is ' + cognitoUser.getUsername());
-
+/*
 		//Email verification
 		let verificationCode=prompt("Input the verification code received in your email");
 		cognitoUser.confirmRegistration(verificationCode, true, function(err, result) {
@@ -153,7 +153,7 @@ function register(email, password, twofa){
 				sendPrivkeyAndClose(privkey);
 			}
 		});
-
+*/
 	});
 }
 
