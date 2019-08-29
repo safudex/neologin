@@ -1,15 +1,7 @@
-//import { CognitoUserPool, CognitoUserAttribute, CognitoUser } from 'amazon-cognito-identity-js';
-const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
-import Cryptr from 'cryptr';
 import zxcvbn from 'zxcvbn';
 import { server } from '../config';
-import Neon from "@cityofzion/neon-js";
 import QRCode from 'qrcode';
-
-let userPool = new AmazonCognitoIdentity.CognitoUserPool({
-	UserPoolId : 'eu-west-1_SN8JpQrzS', // Your user pool id here
-	ClientId : '2r79pmi7f4msr8mgbnssgnq2uv' // Your client id here
-});
+import { register, login } from './loginAPI';
 
 //Check spawning/owner window is trusted (Headjack)
 if(!window.opener || !window.opener.location || window.opener.location.href != server+"/widget/index.html"){
@@ -21,160 +13,6 @@ if(!window.opener || !window.opener.location || window.opener.location.href != s
 function sendPrivkeyAndClose(privkey){
 	window.opener.postMessage({privkey: privkey}, server);
 	window.close();
-}
-
-function verifyAttribute(attribute, cognitoUser, resolve){
-	cognitoUser.getAttributeVerificationCode(attribute, {
-		onSuccess: function (result) {
-			console.log('call result: ' + result);
-			resolve();
-		},
-		onFailure: function(err) {
-			alert(err.message || JSON.stringify(err));
-		},
-		inputVerificationCode: function() {
-			var verificationCode = prompt('Please input verification code: ' ,'');
-			cognitoUser.verifyAttribute('email', verificationCode, this);
-		}
-	});
-}
-
-function login(email, password, enableTOTP=false, verifyEmail=false, verifyPhone=false, phone=""){ //Only one of the extra options (the ones that default to false) should be set to true at a time
-	return new Promise((resolve, reject) => {
-		var authenticationData = {
-			Username : email, // your username here
-			Password : password, // your password here
-		};
-		var authenticationDetails =
-			new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
-
-		var userData = {
-			Username : email,
-			Pool : userPool
-		};
-
-		var cognitoUser =
-			new AmazonCognitoIdentity.CognitoUser(userData);
-		cognitoUser.authenticateUser(authenticationDetails, {
-			onSuccess: function (result) {
-				if(enableTOTP){
-					cognitoUser.associateSoftwareToken(this);
-					return;
-				}
-				if(verifyEmail){
-					verifyAttribute('email', cognitoUser, resolve);
-					return;
-				}
-				if(verifyPhone){
-					verifyAttribute("phone_number", cognitoUser, resolve);
-					return;
-				}
-				if(phone != ""){
-					var attributeList = [];
-					var dataPhoneNumber = {
-						Name : 'phone_number',
-						Value : phone //Style: '+15555555555'
-					};
-					var attributePhoneNumber = new AmazonCognitoIdentity.CognitoUserAttribute(dataPhoneNumber);
-					attributeList.push(attributePhoneNumber);
-					cognitoUser.updateAttributes(attributeList, function(err, result) {
-						if (err) {
-							alert(err.message || JSON.stringify(err));
-							return;
-						}
-						console.log('call result: ' + result);
-						resolve();
-					});
-					return;
-				}
-				var accessToken = result.getAccessToken().getJwtToken();
-				cognitoUser.getUserAttributes(function(err, result) {
-					if (err) {
-						alert(err.message || JSON.stringify(err));
-						return;
-					}
-					getPrivKey(cognitoUser, password).then(resolve);
-				});
-
-			},
-			onFailure: function(err) {
-				alert(err.message || JSON.stringify(err));
-			},
-			mfaSetup: function(challengeName, challengeParameters) {
-				cognitoUser.associateSoftwareToken(this);
-			},
-			associateSecretCode : function(secretCode) {
-				console.log(secretCode);
-				drawQR(secretCode, email).then(()=>{
-					var challengeAnswer = prompt('Please input the TOTP code.' ,'');
-					cognitoUser.verifySoftwareToken(challengeAnswer, 'My TOTP device', {
-						onSuccess: function (result) {
-							const totpMfaSettings = {
-								PreferredMfa : true,
-								Enabled : true
-							};
-							cognitoUser.setUserMfaPreference(null, totpMfaSettings, function(err, result) {
-								if (err) {
-									alert(err.message || JSON.stringify(err));
-									return;
-								}
-								console.log('call result ' + result);
-								getPrivKey(cognitoUser, password).then(resolve);
-							});
-						},
-						onFailure: function(err) {
-							alert(err.message || JSON.stringify(err));
-						},
-					});
-				});
-			},
-			selectMFAType : function(challengeName, challengeParameters) {
-				var mfaType = prompt('Please select the MFA method.', ''); // valid values for mfaType is "SMS_MFA", "SOFTWARE_TOKEN_MFA"
-				cognitoUser.sendMFASelectionAnswer(mfaType, this);
-			},
-			totpRequired : function(secretCode) {
-				var challengeAnswer = prompt('Please input the TOTP code.' ,'');
-				cognitoUser.sendMFACode(challengeAnswer, this, 'SOFTWARE_TOKEN_MFA');
-			},
-			mfaRequired: function(codeDeliveryDetails) {
-				var verificationCode = prompt('Please input verification code' ,'');
-				cognitoUser.sendMFACode(verificationCode, this);
-			}
-		});
-	});
-}
-
-function register(email, password, twofa){
-
-	var attributeList = [];
-
-	var dataEmail = {
-		Name : 'email',
-		Value : email
-	};
-
-	const privkey = generatePrivateKey();
-	const encryptedPrivkey = encrypt(privkey, password);
-
-	var dataPrivkey = {
-		Name : 'custom:privkey',
-		Value : encryptedPrivkey
-	};
-
-	var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
-	var attributePrivkey = new AmazonCognitoIdentity.CognitoUserAttribute(dataPrivkey);
-
-	attributeList.push(attributeEmail);
-	attributeList.push(attributePrivkey);
-
-	userPool.signUp(email, password, attributeList, null, function(err, result){
-		if (err) {
-			alert(err.message || JSON.stringify(err));
-			return;
-		}
-		var cognitoUser = result.user;
-		console.log('user name is ' + cognitoUser.getUsername());
-	});
 }
 
 function drawQR(secret, email){
@@ -193,36 +31,11 @@ function drawQR(secret, email){
 	});
 }
 
-function getPrivKey(cognitoUser, password){
+function getCode(message){
 	return new Promise((resolve, reject) => {
-		cognitoUser.getUserAttributes(function(err, result) {
-			if (err) {
-				alert(err.message || JSON.stringify(err));
-				return;
-			}
-			for (let i = 0; i < result.length; i++) {
-				console.log('attribute ' + result[i].getName() + ' has value ' + result[i].getValue());
-				if(result[i].getName()=="custom:privkey"){
-					//Decrypt
-					let privkey=decrypt(result[i].getValue(), password);
-					//Send
-					resolve(privkey);
-				}
-			}
-		});
+		var verificationCode = prompt('Please input verification code' ,'');
+		resolve(verificationCode);
 	});
-}
-
-function encrypt(plaintext, key){
-	return new Cryptr(key).encrypt(plaintext);
-}
-
-function decrypt(ciphertext, key){
-	return new Cryptr(key).decrypt(ciphertext);
-}
-
-function generatePrivateKey() {
-	return Neon.create.privateKey();
 }
 
 // See https://github.com/dropbox/zxcvbn for docs
@@ -237,9 +50,11 @@ function getVal(id){
 	return document.getElementById(id).value; 
 }
 
-document.getElementById("login").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login")).then(sendPrivkeyAndClose));
+document.getElementById("login").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login"), getCode).then((res) => sendPrivkeyAndClose(res.privkey)));
+document.getElementById("register").addEventListener("click", ()=>register(getVal("uname-register"), getVal("psw-register")).then((res) => sendPrivkeyAndClose(res.privkey)));
+/*
 document.getElementById("add-totp").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login"), true).then(()=>alert('Setup completed')));
 document.getElementById("verify-email").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login"), false, true).then(()=>alert('Verified')));
 document.getElementById("add-phone").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login"), false, false, false, getVal("phone-login")).then(()=>alert('Added')));
 document.getElementById("verify-phone").addEventListener("click", ()=>login(getVal("uname-login"), getVal("psw-login"), false, false, true).then(()=>alert('Verified')));
-document.getElementById("register").addEventListener("click", ()=>register(getVal("uname-register"), getVal("psw-register"), document.getElementById("2fa").checked));
+*/

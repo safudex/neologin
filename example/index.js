@@ -1,6 +1,6 @@
 import headjack from './headjack';
 
-document.getElementById("register").addEventListener("click", ()=>{ 
+document.getElementById("getAccount").addEventListener("click", ()=>{ 
 	headjack.getAccount()
 		.then((account) => {
 			const {
