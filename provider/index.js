@@ -14,12 +14,25 @@ let registeredEvents = {
 	'TRANSACTION_CONFIRMED':[]
 };
 
+function checkEvent(ev){
+	if(Object.keys(registeredEvents).includes(ev)){
+		return true;
+	} else {
+		console.error(`The event used ("${ev}") is not supported. The only events supported are ${Object.keys(registeredEvents)}.`);
+		return false;
+	}
+}
+
 function addEventListener(ev, cb){
-	registeredEvents[ev].push(cb);
+	if(checkEvent(ev)){
+		registeredEvents[ev].push(cb);
+	}
 }
 
 function removeEventListener(ev){
-	registeredEvents[ev] = [];
+	if(checkEvent(ev)){
+		registeredEvents[ev] = [];
+	}
 }
 
 const iframe = document.createElement('iframe');
