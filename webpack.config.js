@@ -8,7 +8,7 @@ module.exports = [
 			example: './example/index.js',
 		},
 		mode: 'development',
-		devtool: 'inline-source-map',
+		devtool: 'eval-source-map',
 		output: {
 			filename: '[name]/bundle.js',
 			path: path.resolve(__dirname, 'dist')
