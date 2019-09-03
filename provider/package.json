@@ -1,6 +1,6 @@
 {
   "name": "headjack",
-  "version": "1.0.1",
+  "version": "1.0.6",
   "description": "Easy peasy NEO dAPI provider",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,7 @@
   "bugs": {
     "url": "https://github.com/corollari/headjack/issues"
   },
-  "homepage": "https://github.com/corollari/headjack#readme",
+  "homepage": "https://headjack.to",
   "dependencies": {
     "penpal": "^4.1.1"
   }
