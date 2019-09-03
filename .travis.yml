@@ -9,7 +9,7 @@ before_install:
   - echo 'export const server = "https://headjack.to";' > config.js
 
 script:
-  - ./build.sh
+  - ./build.sh production
 
 before_deploy:
 

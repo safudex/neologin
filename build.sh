@@ -20,6 +20,8 @@ echo "//DON'T MODIFY THIS FILE!1! IT'S AUTOMATICALLY BUILT FROM provider/index.j
 cat provider/index.js >> example/headjack.js
 sed -i 's/https:\/\/headjack.to/../' example/headjack.js 
 
-sed -i "s/mode: 'development'/mode: 'production'/" webpack.config.js
-sed -i "/devtool: '/d" webpack.config.js
+if [ $1 == "production" ]; then
+	sed -i "s/mode: 'development'/mode: 'production'/" webpack.config.js
+	sed -i "/devtool: '/d" webpack.config.js
+fi
 npm run build
