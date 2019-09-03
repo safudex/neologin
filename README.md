@@ -12,7 +12,6 @@ Install it via npm and import it directly:
 ```bash
 npm i headjack
 ```
-
 ```js
 import headjack from 'headjack';
 ```
@@ -21,7 +20,7 @@ Or add it as a script tag to your html pages:
 ```html
 <script src="https://headjack.to/headjack.js"></script>
 ```
-which exposes the `headjack` object in `window.headjack`.
+which will expose the `headjack` object in `window.headjack`.
 
 ### Use
 ```
