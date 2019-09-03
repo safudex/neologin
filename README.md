@@ -7,15 +7,24 @@ Check out [a live example of a Dapp using Headjack](https://headjack.to/example/
 
 ## Quickstart
 
-### Install
+### Install and import
+Install it via npm and import it directly:
 ```bash
 npm i headjack
 ```
 
-### Use
 ```js
 import headjack from 'headjack';
+```
 
+Or add it as a script tag to your html pages:
+```html
+<script src="https://headjack.to/headjack.js"></script>
+```
+which exposes the `headjack` object in `window.headjack`.
+
+### Use
+```
 headjack.getAccount()
 .then((account) => {
   console.log('Provider address: ' + account.address);
