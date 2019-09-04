@@ -5,7 +5,7 @@ mkdir -p dist
 
 #Build landing
 cp -r landing/* dist
-(cd dist && pandoc -t html -f gfm --css "pandoc.css" -s ../README.md -o index.html -V header-includes:"<link rel='shortcut icon' href='favicon.png' />" --metadata pagetitle="Headjack" --fail-if-warnings)
+(cd dist && pandoc -t html -f gfm --css "pandoc.css" -s ../README.md -o index.html --metadata pagetitle="Headjack" --fail-if-warnings)
 
 # Build widget, login & example
 mkdir -p dist/login
