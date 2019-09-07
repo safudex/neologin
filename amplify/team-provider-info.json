@@ -1,0 +1,22 @@
+{
+    "web": {
+        "awscloudformation": {
+            "AuthRoleName": "neologin-web-20190908065601-authRole",
+            "UnauthRoleArn": "arn:aws:iam::207627709836:role/neologin-web-20190908065601-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::207627709836:role/neologin-web-20190908065601-authRole",
+            "Region": "eu-west-1",
+            "DeploymentBucketName": "neologin-web-20190908065601-deployment",
+            "UnauthRoleName": "neologin-web-20190908065601-unauthRole",
+            "StackName": "neologin-web-20190908065601",
+            "StackId": "arn:aws:cloudformation:eu-west-1:207627709836:stack/neologin-web-20190908065601/aaaf3320-d1c2-11e9-b471-0ac6bcaf6240"
+        },
+        "categories": {
+            "function": {
+                "neologinAuthPreSignup": {}
+            },
+            "auth": {
+                "neologinAuth": {}
+            }
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "trigger": true,
+    "modules": [
+        "custom"
+    ],
+    "parentResource": "neologinAuth",
+    "functionName": "neologinAuthPreSignup",
+    "parentStack": "auth",
+    "triggerEnvs": "[]",
+    "triggerDir": "/home/corollari/.nvm/versions/node/v11.10.1/lib/node_modules/@aws-amplify/cli/node_modules/amplify-category-auth/provider-utils/awscloudformation/utils/../triggers/PreSignup",
+    "roleName": "neologinAuthPreSignup",
+    "triggerTemplate": "PreSignup.json.ejs",
+    "triggerEventPath": "PreSignup.event.json",
+    "skipEdit": true,
+    "resourceName": "neologinAuthPreSignup"
+}
