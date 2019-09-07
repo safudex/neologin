@@ -1,33 +1,48 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Headjack - Login</title>
-  </head>
-  <body>
-  <div class="container">
-    <label for="uname"><b>Email</b></label>
-    <input type="text" placeholder="Enter email" name="uname" id="uname-login" required>
-    <br>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="styles.css"/>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+		<title>Headjack - Login</title>
+	</head>
+	<body class="vertical-center container">
+		<div class="main">
+		<h2>One account. Many dApps.</h2>
+		<form class="login">
+			<label for="uname"><b>Email</b></label>
+			<input type="text" placeholder="Enter email" name="uname" id="uname-login" required>
+			<br>
 
-    <label for="psw"><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name="psw" id="psw-login" required>
-    <br>
+			<label for="psw"><b>Password</b></label>
+			<input type="password" placeholder="Enter Password" name="psw" id="psw-login" required>
+			<br>
 
-    <button id="login">Login</button><br>
-  </div>
-  <hr>
-  <div class="container">
-    <label for="uname"><b>Username</b></label>
-    <input type="text" placeholder="Enter Username" name="uname" id="uname-register" required>
-    <br>
+			<button id="login">Login</button><br>
+		</form>
+		<form class="2fa" style="display:none">
+			<p>Input your 2FA code</p>
+			<label for="uname"><b>Email</b></label>
+			<input type="text" placeholder="Enter email" name="uname" id="uname-login" required>
+			<br>
 
-    <label for="psw"><b>Password</b></label>
-    <input type="password" placeholder="Enter Password" name="psw" id="psw-register" required>
-    <br>
-    <b>Password tips:</b> <p id="psw-tips"></p>
+			<button id="login">Submit</button><br>
+		</form>
+		<form class="register" style="display:none">
+			<label for="uname"><b>Username</b></label>
+			<input type="text" placeholder="Enter Username" name="uname" id="uname-register" required>
+			<br>
 
-    <button id="register">Register</button>
-  </div>
-    <script src="./bundle.js"></script>
-  </body>
+			<label for="psw"><b>Password</b></label>
+			<input type="password" placeholder="Enter Password" name="psw" id="psw-register" required>
+			<label for="psw"><b>Confirm Password</b></label>
+			<input type="password" placeholder="Enter Password" name="psw" id="psw-register" required>
+			<br>
+			<b>Password tips:</b> <p id="psw-tips"></p>
+
+			<button id="register">Register</button>
+		</form>
+		<script src="./bundle.js"></script>
+		</div>
+	</body>
 </html>
