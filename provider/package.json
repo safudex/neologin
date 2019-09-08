@@ -3,7 +3,11 @@
   "version": "1.0.6",
   "description": "Easy peasy NEO dAPI provider",
   "main": "index.js",
+  "files": [
+    "index.js"
+  ],
   "scripts": {
+    "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,5 +26,9 @@
   "homepage": "https://headjack.to",
   "dependencies": {
     "penpal": "^4.1.1"
+  },
+  "devDependencies": {
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.8"
   }
 }
