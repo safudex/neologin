@@ -3,9 +3,7 @@
     "allowUnauthenticatedIdentities": false,
     "resourceNameTruncated": "neolog61cc6c78",
     "userPoolName": "neologin-userpool",
-    "autoVerifiedAttributes": [
-        "email"
-    ],
+    "autoVerifiedAttributes": [],
     "mfaConfiguration": "OPTIONAL",
     "mfaTypes": [
         "SMS Text Message",

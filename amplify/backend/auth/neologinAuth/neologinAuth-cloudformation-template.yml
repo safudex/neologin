@@ -173,7 +173,7 @@ Resources:
           Mutable: true
           Name: privkey
           StringAttributeConstraints:
-            MaxLength: 256
+            MaxLength: 2000
             MinLength: 1
         
       
@@ -192,8 +192,10 @@ Resources:
         
       
       
-      AutoVerifiedAttributes: !Ref autoVerifiedAttributes
       
+      EmailConfiguration:
+        EmailSendingAccount: "DEVELOPER"
+        SourceArn: "arn:aws:ses:eu-west-1:207627709836:identity/hello@headjack.to"
       
       EmailVerificationMessage: !Ref emailVerificationMessage
       EmailVerificationSubject: !Ref emailVerificationSubject
