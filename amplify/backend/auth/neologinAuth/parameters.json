@@ -23,10 +23,12 @@
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [
         "custom:privkey",
+        "custom:newsletter",
         "email"
     ],
     "userpoolClientReadAttributes": [
         "custom:privkey",
+        "custom:newsletter",
         "email"
     ],
     "userpoolClientLambdaRole": "neolog61cc6c78_userpoolclient_lambda_role",

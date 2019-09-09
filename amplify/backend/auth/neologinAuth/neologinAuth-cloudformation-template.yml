@@ -176,6 +176,13 @@ Resources:
             MaxLength: 2000
             MinLength: 1
         
+        -
+          AttributeDataType: "String"
+          Mutable: true
+          Name: newsletter
+          StringAttributeConstraints:
+            MaxLength: 30
+            MinLength: 1
       
       
       LambdaConfig:

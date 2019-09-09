@@ -14,6 +14,9 @@ class App extends React.Component {
 			lostPasswordScreen: false,
 		};
 	}
+	handleLogin(user){
+
+	}
 	render() {
 		if(this.state.loginScreen){
 			return <SignIn 
@@ -25,6 +28,7 @@ class App extends React.Component {
 					lostPasswordScreen: true,
 					loginScreen: false,
 				})} 
+				handleLogin={this.handleLogin}
 			/>;
 		}
 		if(this.state.lostPasswordScreen){
