@@ -9,7 +9,7 @@ cp -r landing/* dist
 
 if [ $1 == "production" ]; then
 	cd login
-	npm install
-	npm run build
+	yarn install
+	yarn build
 	mv build ../dist/login
 fi
