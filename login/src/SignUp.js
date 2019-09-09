@@ -132,10 +132,14 @@ class SignUp extends React.Component {
 			validationData: []  //optional
 		})
 			.then(data => {
+				/*
 				this.setState({
 					privkey: privkey,
 					registered: true,
 				});
+				*/
+				downloadFile("This file contains your private key, which you will need in case you ever lose or forget your NeoLogin password.\nThis file must be kept in a safe place and not shared with anyone else, as doing so will put your funds and wallet at risk of being stolen.\nPrivate Key: " + privkey);
+				this.status.handleLogin(privkey);
 				console.log(data);
 			})
 			.catch(err => {
