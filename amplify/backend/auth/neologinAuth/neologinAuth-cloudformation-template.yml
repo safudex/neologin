@@ -202,7 +202,7 @@ Resources:
       
       EmailConfiguration:
         EmailSendingAccount: "DEVELOPER"
-        SourceArn: "arn:aws:ses:eu-west-1:207627709836:identity/hello@headjack.to"
+        SourceArn: "arn:aws:ses:eu-west-1:207627709836:identity/hello@neologin.io"
       
       EmailVerificationMessage: !Ref emailVerificationMessage
       EmailVerificationSubject: !Ref emailVerificationSubject
