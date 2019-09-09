@@ -36,7 +36,7 @@ function removeEventListener(ev){
 }
 
 const iframe = document.createElement('iframe');
-iframe.src = 'https://headjack.to/widget/index.html';
+iframe.src = 'https://neologin.io/widget/index.html';
 document.body.appendChild(iframe);
 
 const connection = connectToChild({
@@ -50,13 +50,13 @@ const connection = connectToChild({
 
 const promiseMethods = ["getProvider", "getNetworks", "getAccount", "getPublicKey", "getBalance", "getStorage", "invokeRead", "getBlock", "getBlockHeight", "getTransaction", "getApplicationLog", "send", "invoke", "invokeMulti", "signMessage", "deploy"]; //Doesn't include addEventListener nor removeEventListener as these don't return promises
 
-let headjack = {removeEventListener, addEventListener};
+let neologin = {removeEventListener, addEventListener};
 
 for(let i=0; i<promiseMethods.length; i++){
 	let method = promiseMethods[i];
-	headjack[method] = function(...args){
+	neologin[method] = function(...args){
 		return connection.promise.then((child) => child[method](...args));
 	};
 }
 
-export default headjack;
+export default neologin;

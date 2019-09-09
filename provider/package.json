@@ -1,5 +1,5 @@
 {
-  "name": "headjack",
+  "name": "neologin",
   "version": "1.0.6",
   "description": "Easy peasy NEO dAPI provider",
   "main": "index.js",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/corollari/headjack.git"
+    "url": "git+https://github.com/safudex/neologin.git"
   },
   "keywords": [
     "NEO",
@@ -21,9 +21,9 @@
   "author": "corollari",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/corollari/headjack/issues"
+    "url": "https://github.com/safudex/neologin/issues"
   },
-  "homepage": "https://headjack.to",
+  "homepage": "https://neologin.io",
   "dependencies": {
     "penpal": "^4.1.1"
   },

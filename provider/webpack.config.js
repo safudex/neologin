@@ -5,9 +5,9 @@ module.exports = [
 		entry: "./index.js",
 		mode: 'production',
 		output: {
-			filename: 'headjack.js',
+			filename: 'neologin.js',
 			libraryTarget: 'window',
-			library: 'headjack',
+			library: 'neologin',
 			libraryExport: 'default',
 			path: path.resolve(__dirname, '../dist')
 		}
