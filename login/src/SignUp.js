@@ -13,9 +13,6 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
-import zxcvbn from 'zxcvbn';
-import Cryptr from 'cryptr';
-import Neon from "@cityofzion/neon-js";
 import Amplify, { Auth } from 'aws-amplify';
 import awsconfig from './aws-exports';
 Amplify.configure(awsconfig);
@@ -77,7 +74,7 @@ class SignUp extends React.Component {
 		}, ()=>this.validate());
 	}
 
-	validate(){
+	async validate(){
 		if(validateEmail(this.state.email) || !this.state.email){
 			this.setState({
 				wrongEmail: false 
@@ -88,17 +85,6 @@ class SignUp extends React.Component {
 			});
 		}
 
-		let pwdSecurity = zxcvbn(this.state.password1);
-		if(pwdSecurity.score < 3 && this.state.password1){
-			this.setState({
-				wrongPassword1: "Your password is too weak.\n"+pwdSecurity.feedback.suggestions.join('\n')
-			});
-
-		} else {
-			this.setState({
-				wrongPassword1: false
-			});
-		}
 		if(this.state.password1 !== this.state.password2 && this.state.password2){
 			this.setState({
 				wrongPassword2: "Passwords do not match"
@@ -109,18 +95,32 @@ class SignUp extends React.Component {
 			});
 		}
 
-		return (this.state.password1 === this.state.password2) && validateEmail(this.state.email) && (pwdSecurity.score >= 3) && this.state.privacyPolicy;
+		return import("zxcvbn").then(({zxcvbn})=>{
+			let pwdSecurity = zxcvbn(this.state.password1);
+			if(pwdSecurity.score < 3 && this.state.password1){
+				this.setState({
+					wrongPassword1: "Your password is too weak.\n"+pwdSecurity.feedback.suggestions.join('\n')
+				});
+
+			} else {
+				this.setState({
+					wrongPassword1: false
+				});
+			}
+
+			return (this.state.password1 === this.state.password2) && validateEmail(this.state.email) && (pwdSecurity.score >= 3) && this.state.privacyPolicy;
+		})
 	}
 
 	async handleSubmit(event){
 		event.preventDefault();
 		debugger;
-		if(!this.validate()){
+		if(!(await this.validate())){
 			return;
 		}
 
-		const privkey = generatePrivateKey();
-		const encryptedPrivkey = encrypt(privkey, this.state.password1);
+		const privkey = await generatePrivateKey();
+		const encryptedPrivkey = await encrypt(privkey, this.state.password1);
 		Auth.signUp({
 			username: this.state.email,
 			password: this.state.password1,
@@ -289,11 +289,17 @@ function validateEmail(email) {
 }
 
 function encrypt(plaintext, key){
-	return new Cryptr(key).encrypt(plaintext);
+	return import("cryptr")
+		.then(({ Cryptr }) => {
+			return new Cryptr(key).encrypt(plaintext);
+		});
 }
 
 function generatePrivateKey() {
-	return Neon.create.privateKey();
+	return import("@cityofzion/neon-js")
+		.then(({ Neon }) => {
+			return Neon.create.privateKey();
+		});
 }
 
 function downloadFile(data){

@@ -12,7 +12,6 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
-import Cryptr from 'cryptr';
 import Amplify, { Auth } from 'aws-amplify';
 import awsconfig from './aws-exports';
 Amplify.configure(awsconfig);
@@ -99,7 +98,7 @@ class SignIn extends React.Component {
 				this.state.MFACode,   // Confirmation code  
 				this.state.twoFA // MFA Type e.g. SMS_MFA, SOFTWARE_TOKEN_MFA
 			);
-			this.state.handleLogin(getPrivkey(loggedUser), this.state.password);
+			this.state.handleLogin(await getPrivkey(loggedUser), this.state.password);
 		} catch (err) {
 			if(err.code==="CodeMismatchException"){
 				this.setState({wrongMFACode:true});
@@ -147,7 +146,7 @@ class SignIn extends React.Component {
 				Auth.setupTOTP(user);
 			} else {
 				// The user directly signs in
-				this.state.handleLogin(getPrivkey(user), this.state.password);
+				this.state.handleLogin(await getPrivkey(user), this.state.password);
 				console.log(user);
 			}
 		} catch (err) {
@@ -275,7 +274,10 @@ function getPrivkey(user, password){
 }
 
 function decrypt(ciphertext, key){
-	return new Cryptr(key).decrypt(ciphertext);
+	return import("cryptr")
+		.then(({ Cryptr }) => {
+			return new Cryptr(key).decrypt(ciphertext);
+		});
 }
 
 SignIn.propTypes = {
