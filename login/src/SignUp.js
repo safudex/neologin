@@ -114,7 +114,6 @@ class SignUp extends React.Component {
 
 	async handleSubmit(event){
 		event.preventDefault();
-		debugger;
 		if(!(await this.validate())){
 			return;
 		}
