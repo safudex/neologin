@@ -7,7 +7,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -60,7 +59,7 @@ class SignUp extends React.Component {
 			newsletter: false,
 			privacyPolicy: false,
 			handleLogin: props.handleLogin,
-			registered: true,
+			registered: false,
 			privkey: null,
 		};
 
@@ -100,7 +99,7 @@ class SignUp extends React.Component {
 				wrongPassword1: false
 			});
 		}
-		if(this.state.password1 != this.state.password2 && this.state.password2){
+		if(this.state.password1 !== this.state.password2 && this.state.password2){
 			this.setState({
 				wrongPassword2: "Passwords do not match"
 			});
@@ -110,7 +109,7 @@ class SignUp extends React.Component {
 			});
 		}
 
-		return (this.state.password1 == this.state.password2) && validateEmail(this.state.email) && (pwdSecurity.score >= 3) && this.state.privacyPolicy;
+		return (this.state.password1 === this.state.password2) && validateEmail(this.state.email) && (pwdSecurity.score >= 3) && this.state.privacyPolicy;
 	}
 
 	async handleSubmit(event){
@@ -291,10 +290,6 @@ function validateEmail(email) {
 
 function encrypt(plaintext, key){
 	return new Cryptr(key).encrypt(plaintext);
-}
-
-function decrypt(ciphertext, key){
-	return new Cryptr(key).decrypt(ciphertext);
 }
 
 function generatePrivateKey() {

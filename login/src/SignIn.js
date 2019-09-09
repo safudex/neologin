@@ -7,29 +7,16 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
+import Cryptr from 'cryptr';
 import Amplify, { Auth } from 'aws-amplify';
 import awsconfig from './aws-exports';
 Amplify.configure(awsconfig);
 // https://aws-amplify.github.io/docs/js/authentication
-
-function Copyright() {
-	return (
-		<Typography variant="body2" color="textSecondary" align="center">
-			{'Copyright © '}
-			<Link color="inherit" href="https://material-ui.com/">
-				Your Website
-			</Link>{' '}
-			{new Date().getFullYear()}
-			{'.'}
-		</Typography>
-	);
-}
 
 const styles = (theme => ({
 	'@global': {
@@ -87,17 +74,17 @@ class SignIn extends React.Component {
 			[name]: value
 		});
 
-		if(name == "email" && this.state.wrongEmail){
+		if(name === "email" && this.state.wrongEmail){
 			this.setState({
 				wrongEmail: false
 			});
 		}
-		if(name == "password" && this.state.wrongPassword){
+		if(name === "password" && this.state.wrongPassword){
 			this.setState({
 				wrongPassword: false
 			});
 		}
-		if(name == "MFACode" && this.state.wrongMFACode){
+		if(name === "MFACode" && this.state.wrongMFACode){
 			this.setState({
 				wrongMFACode: false
 			});
@@ -112,9 +99,9 @@ class SignIn extends React.Component {
 				this.state.MFACode,   // Confirmation code  
 				this.state.twoFA // MFA Type e.g. SMS_MFA, SOFTWARE_TOKEN_MFA
 			);
-			this.state.handleLogin(loggedUser);
+			this.state.handleLogin(getPrivkey(loggedUser), this.state.password);
 		} catch (err) {
-			if(err.code=="CodeMismatchException"){
+			if(err.code==="CodeMismatchException"){
 				this.setState({wrongMFACode:true});
 			} else {
 				window.alert("Session expired, refresh the window to start again");
@@ -137,11 +124,11 @@ class SignIn extends React.Component {
 					user: user,
 				});
 			} else if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
+				/*
 				const {requiredAttributes} = user.challengeParam; // the array of required attributes, e.g ['email', 'phone_number']
 				// You need to get the new password and required attributes from the UI inputs
 				// and then trigger the following function with a button click
 				// For example, the email and phone_number are required attributes
-				/*
 				const {username, email, phone_number} = getInfoFromUserInput();
 				const loggedUser = await Auth.completeNewPassword(
 					user,              // the Cognito User Object
@@ -160,6 +147,7 @@ class SignIn extends React.Component {
 				Auth.setupTOTP(user);
 			} else {
 				// The user directly signs in
+				this.state.handleLogin(getPrivkey(user), this.state.password);
 				console.log(user);
 			}
 		} catch (err) {
@@ -206,12 +194,12 @@ class SignIn extends React.Component {
 									fullWidth
 									key="MFACode"
 									id="MFACode"
-									label={this.state.twoFA=="SMS_MFA"?"SMS Code":"TOTP Code"}
+									label={this.state.twoFA==="SMS_MFA"?"SMS Code":"TOTP Code"}
 									name="MFACode"
 									autoFocus
 									value={this.state.MFACode}
 									error={this.state.wrongMFACode? true : null}
-									helperText={this.state.wrongMFACode? "Wrong code" : "Input the "+(this.state.twoFA=="SMS_MFA"?"SMS code that we sent you":"the time-based code from your authenticator App")}
+									helperText={this.state.wrongMFACode? "Wrong code" : "Input the "+(this.state.twoFA==="SMS_MFA"?"SMS code that we sent you":"the time-based code from your authenticator App")}
 									onChange={this.handleInputChange}
 								/>
 							]):([
@@ -282,6 +270,13 @@ class SignIn extends React.Component {
 	}
 }
 
+function getPrivkey(user, password){
+	return decrypt(user.attributes["custom:privkey"], password);
+}
+
+function decrypt(ciphertext, key){
+	return new Cryptr(key).decrypt(ciphertext);
+}
 
 SignIn.propTypes = {
 	classes: PropTypes.object.isRequired,
