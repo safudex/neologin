@@ -10,6 +10,6 @@ cp -r landing/* dist
 if [ $1 == "production" ]; then
 	cd login
 	yarn install
-	yarn build
+	CI=false yarn build
 	mv build ../dist/login
 fi
