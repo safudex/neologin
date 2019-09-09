@@ -1,44 +1,44 @@
-# Headjack
+# NeoLogin
 > Easy peasy NEO dAPI provider
 
 ## Try it
 
-Check out [a live example of a Dapp using Headjack](https://headjack.to/example/)!
+Check out [a live example of a Dapp using NeoLogin](https://neologin.io/example/)!
 
 ## Quickstart
 
 ### Install and import
 Install it via npm and import it directly:
 ```bash
-npm i headjack
+npm i neologin
 ```
 ```js
-import headjack from 'headjack';
+import neologin from 'neologin';
 ```
 
 Or add it as a script tag to your html pages:
 ```html
-<script src="https://headjack.to/headjack.js"></script>
+<script src="https://neologin.to/neologin.js"></script>
 ```
-which will expose the `headjack` object in `window.headjack`.
+which will expose the `neologin` object in `window.neologin`.
 
 ### Use
 ```
-headjack.getAccount()
+neologin.getAccount()
 .then((account) => {
   console.log('Provider address: ' + account.address);
 });
 ```
 
-The `headjack` object exposes a fully-compliant [NEP-12](https://github.com/nickfujita/proposals/blob/dapp-api/nep-12.mediawiki) API so it can be used with anything that supports the standard.
+The `neologin` object exposes a fully-compliant [NEP-12](https://github.com/nickfujita/proposals/blob/dapp-api/nep-12.mediawiki) API so it can be used with anything that supports the standard.
 
-## What is headjack?
-Headjack is a semi-custodial web-wallet for NEO. User's private keys are encrypted using user passwords and stored on the company's servers, making the keys available from any device with a simple login while also making sure that the service doesn't have access to the keys, making it so no user funds are lost if the service is hacked.
+## What is NeoLogin?
+NeoLogin is a semi-custodial web-wallet for NEO. User's private keys are encrypted using user passwords and stored on the company's servers, making the keys available from any device with a simple login while also making sure that the service doesn't have access to the keys, making it so no user funds are lost if the service is hacked.
 
-**How is headjack different from Portis?** Portis doesn't work on the NEO blockchain and has no plans to adopt it.  
+**How is NeoLogin different from Portis?** Portis doesn't work on the NEO blockchain and has no plans to adopt it.  
 **What about Switcheo Account?** Switcheo Account only works in the Switcheo exchange, therefore it can't support arbitrary dApps.
 
-Furthermore, Switcheo Account nor Portis are fully open-source, but Headjack is.
+Furthermore, Switcheo Account nor Portis are fully open-source, but NeoLogin is.
 
 ## How does it work?
 It works the same way Portis and Switcheo Account do, check out the explanations for their systems:
@@ -51,14 +51,14 @@ Because I wanted to use a semi-custodial wallet for SafuDEX but couln't find any
 Still, if Portis, Switcheo or any other company wants to develop a general semi-custodial wallet for NEO I'd love to collaborate on it, just send me an email.
 
 ## Convenience benefits
-Compared to traditional software wallets, Headjack appears as a standard centralized login system from the point of view of users, offering a experience similar to logging into Facebook or Google. This provides the following benefits in terms of convenience:
+Compared to traditional software wallets, NeoLogin appears as a standard centralized login system from the point of view of users, offering a experience similar to logging into Facebook or Google. This provides the following benefits in terms of convenience:
 - Doesn't require installation
 - Can be used from multiple devices without any friction
 - Device loss doesn't lead to private key loss
 
 ## Security analysis
 
-The biggest attack vector is without a doubt the webpage that serves the code that handles the login and decryption of the password. This webpage is directly served from the github repository using Github Pages, which means that if either Github or the repository maintainers were to turn malicious or get hacked it'd be possible to change the website to another one that could capture user login details (such as password and email) and the decrypted private keys and send them to a 3rd party server, effectively stealing all user funds and login details. Fortunately, if this attack were to be carried, it would affect all the wallet logins and the change would be public on Github (unless the attackers managed to get complete control over the github infrastructure and performed an attack especially targeted at Headjack, which seems unlikely considering the fact that there's many more profitable targets to attack if Github is hacked), so it'd be possible to detect the attack quickly an act on it. Still, all the users that logged in during the attack would have their wallet compromised.  
+The biggest attack vector is without a doubt the webpage that serves the code that handles the login and decryption of the password. This webpage is directly served from the github repository using Github Pages, which means that if either Github or the repository maintainers were to turn malicious or get hacked it'd be possible to change the website to another one that could capture user login details (such as password and email) and the decrypted private keys and send them to a 3rd party server, effectively stealing all user funds and login details. Fortunately, if this attack were to be carried, it would affect all the wallet logins and the change would be public on Github (unless the attackers managed to get complete control over the github infrastructure and performed an attack especially targeted at NeoLogin, which seems unlikely considering the fact that there's many more profitable targets to attack if Github is hacked), so it'd be possible to detect the attack quickly an act on it. Still, all the users that logged in during the attack would have their wallet compromised.  
 It's also worth noting that this attack vector is also present in any other wallet that has a self-updating mechanism, such as all the browser extensions (MetaMask, Teemo, Neoline), all web-based wallets and, finally, any wallets downloaded through an App store, which includes all the mobile wallets and O3 if downloaded through a 3rd party. In these other wallets this particular attack is even worse, as it could affect all users, not just those who have signed in during the attack.
 
 A second attack vector that is also quite important is the key database, which houses all the users' private keys encrypted. If the service operators were to turn malicious or this database was hacked, malicious entities could try to crack the encrypted keys using dictionary attacks or just plain brute force attacks. This means that, if a user's password is weak, it'd be possible to crack the private key's encryption and steal the user's funds. Because of the reliance on the strength of the user's password a simple mitigation for this attack is to use a strong password.
@@ -72,14 +72,14 @@ It is possible to mitigate both the first and second attack vectors through the 
 In combination, these two changes would make it possible to fully audit the whole system from outside while making it impossible to alter any part of it due to the TEE's hardware isolation. Therefore, neither the service providers nor any hackers could get access to private key's without going through the standard procedure (user login & 2FA).
 Implementation of such a system is non-trivial and would require a substantial development effort, which is the reason it's not implemented in the current version. Also, the maintenance costs of such systems would be way higher than the costs of the current one.
 
-Overall, Headjack trades security for convenience when compared with traditional wallets. Following is a simple comparison of security attack vectors between wallets:
+Overall, NeoLogin trades security for convenience when compared with traditional wallets. Following is a simple comparison of security attack vectors between wallets:
 
 |           Wallet                 | First attack | Second attack | Third attack |
 |----------------------------------|--------------|---------------|--------------|
 | Non-updatable traditional wallet |              |               |              |
 | Updatabale traditional wallet    |      ⚰️       |               |              |
-| non-TEE-based Headjack (current) |      ⚰️       |       ⚰️       |       ⚰️      |
-| TEE-based Headjack (future)      |              |               |              |
+| non-TEE-based NeoLogin (current) |      ⚰️       |       ⚰️       |       ⚰️      |
+| TEE-based NeoLogin (future)      |              |               |              |
 
 ## Development
 
