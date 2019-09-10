@@ -14,6 +14,13 @@ if [ $1 == "production" ]; then
 	webpack
 	cd ..
 
+	# Build API docs
+	cd dapi-docs
+	yarn install
+	yarn dist
+	mv build ../dist/api
+	cd ..
+
 	# Build login page
 	cd login
 	yarn install
