@@ -100,10 +100,22 @@ npm start
 Once the system has been built and the development server is running, go to <http://localhost:8080/example/> for a live version of the current system.
 
 ### Back-end
+It's based in the following AWS resources:
+- Cognito for the user authentication
+- SES for the email sending
+- SNS for the SMS sending
 
-Uses Amazon Cognito.  
-When creating the user pool the following things must be taken into account:
-- In order for the SDK to work, an "App Client" must be added. Furthermore, when creating the App client the checkbox "Generate client secret" must not be checked.
-- A custom attribute with type "string", name "privkey" and length "2000" must be added.
-- Login by email (instead of by username, which is the default) must be enabled, along with no verification.
-- The lambda function stored in `backend/autoConfirmUser.lambda.js` must be created and set as the trigger for the `pre sign-up` event.
+In order to use all of this, you must have to contact Amazon support in order to get:
+- The sandbox restrictions on SES lifted
+- Increased SMS spending limit on SNS
+- Verified the address and domain (in order to get DKIM) from where you plan to send the emails
+
+Once you've had everything sorted out, you can deploy the backend with:
+```bash
+npm install -g @aws-amplify/cli # Install Amplify CLI
+amplify configure # Configure Amplify to use your Amazon account
+sed -i 's/arn:aws:ses:eu-west-1:207627709836:identity\/hello@neologin.io/YOUR EMAIL ARN/' amplify/backend/auth/neologinAuth/neologinAuth-cloudformation-template.yml # Change the email adress from where emails will be sent 
+amplify push # Deploy the backend
+```
+
+After the backend has been deployed, you'll have to modify all the references to `neologin.io` present in the code to point to your own backend services.
