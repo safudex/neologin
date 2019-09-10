@@ -1,3 +1,5 @@
+**This is a fork of <https://github.com/corollari/o3-dapi/tree/master/packages/neo/docs/source>**, which is itself a fork of the now disappeared (or just that I haven't been able to find on github) git repo of the o3 documentation website.
+
 # O3 dAPI NEO Plugin Documents Generator
 
 This is the sub-repo to generate to interface documentation website for the O3 dAPI NEO plugin.
