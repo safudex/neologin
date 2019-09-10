@@ -38,7 +38,7 @@
       $toc.find(tocLinkSelector).each(function() {
         var targetId = $(this).attr('href');
         if (targetId[0] === "#") {
-          headerHeights[targetId] = $(targetId).offset().top;
+          headerHeights[targetId] = $(targetId).offset().top - 50;
         }
       });
     };
@@ -119,4 +119,8 @@
   }
 
   window.loadToc = loadToc;
+
+  window.addEventListener("hashchange", function () {
+    window.scrollTo(window.scrollX, window.scrollY - 50);
+  });
 })();

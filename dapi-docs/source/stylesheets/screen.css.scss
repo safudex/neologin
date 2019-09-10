@@ -34,6 +34,7 @@ html, body {
   background-color: $main-bg;
   height: 100%;
   -webkit-text-size-adjust: none; /* Never autoresize text */
+  font-size: 16px;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -79,10 +80,10 @@ html, body {
 //   }
 // }
 //
-// main {
-//   margin-top: 4rem;
-//   position: relative;
-// }
+main {
+  margin-top: 3rem;
+  position: relative;
+}
 //
 // .logo-container {
 //   color: white;
@@ -111,6 +112,175 @@ html, body {
 //   }
 // }
 
+.fixedHeaderContainer {
+  background: #2e3336;
+  color: #fff;
+  // min-height: 50px;
+  padding: 8px 0;
+  position: fixed;
+  width: 100%;
+  z-index: 9999;
+  transform: translateZ(0);
+  top: 0;
+
+  .wrapper {
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  header {
+    display: flex;
+    flex-flow: row nowrap;
+    position: relative;
+    text-align: left;
+    align-items: center;
+
+    img {
+      height: 100%;
+      margin-right: 10px;
+    }
+
+    .headerTitleWithLogo {
+      font-size: 1.25em;
+      line-height: 18px;
+      margin: 0;
+      position: relative;
+      z-index: 9999;
+      display: block;
+    }
+  }
+
+  a {
+    align-items: center;
+    border: 0;
+    color: #fff;
+    display: flex;
+    flex-flow: row nowrap;
+    height: 34px;
+    z-index: 10000;
+    text-decoration: none;
+  }
+
+  .navigationSlider .slidingNav {
+    bottom: auto;
+    box-sizing: border-box;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+
+    ul {
+      background: #218fff;
+      box-sizing: border-box;
+      color: #fff;
+      display: flex;
+      flex-wrap: nowrap;
+      list-style: none;
+      margin-top: 50px;
+      padding: 0;
+      width: 100%;
+
+      li {
+        flex: 1 1 auto;
+        margin: 0;
+        text-align: center;
+        white-space: nowrap;
+
+        a {
+          align-items: center;
+          box-sizing: border-box;
+          color: #2e3336;
+          color: inherit;
+          display: flex;
+          font-size: .9em;
+          height: auto;
+          height: 50px;
+          justify-content: center;
+          margin: 0;
+          padding: 10px;
+          transition: background-color .3s;
+        }
+
+        &.siteNavItemActive a {
+          background-color: #2e3336;
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 930px) {
+  .fixedHeaderContainer {
+    flex-shrink: 0;
+
+    .navigationSlider {
+      height: 34px;
+      margin-left: auto;
+      position: relative;
+    }
+
+    .navigationSlider nav.slidingNav {
+      background: none;
+      height: auto;
+      position: relative;
+      right: auto;
+      top: auto;
+      width: auto;
+    }
+
+    .navigationSlider .slidingNav ul {
+      background: none;
+      display: flex;
+      flex-flow: row nowrap;
+      margin: 0;
+      padding: 0;
+      width: auto;
+    }
+
+    .navigationSlider .slidingNav ul li a {
+      border: 0;
+      color: hsla(0,0%,100%,.8);
+      display: flex;
+      font-size: 16px;
+      font-size: 1em;
+      font-weight: 300;
+      height: 32px;
+      line-height: 1.2em;
+      margin: 0;
+      padding: 6px 10px;
+    }
+  }
+}
+
+@media only screen and (max-width: 735px) {
+  .navigationSlider .slidingNav ul {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .headerTitleWithLogo {
+    display: none!important;
+  }
+}
+
+@media only screen and (min-width: 930px) {
+  .navigationSlider .slidingNav ul li.siteNavGroupActive a, .navigationSlider .slidingNav ul li.siteNavItemActive a, .navigationSlider .slidingNav ul li a:hover {
+    color: #fff;
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 930px) {
+  body main {
+    margin-top: 6.25rem;
+  }
+
+  .toc-wrapper.open {
+    top: 6.25rem;
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // TABLE OF CONTENTS
 ////////////////////////////////////////////////////////////////////////////////
@@ -129,7 +299,7 @@ html, body {
   overflow-x: hidden;
   position: fixed;
   z-index: 30;
-  top: 0;
+  top: 3rem;
   left: 0;
   bottom: 0;
   width: $nav-width;
@@ -303,7 +473,7 @@ html, body {
   padding: 0 1.5em 5em 0; // increase touch size area
   display: none;
   position: fixed;
-  top: 0;
+  top: 6.25rem;
   left: 0;
   z-index: 100;
   color: #000;
@@ -420,8 +590,11 @@ html, body {
   }
 
   // the div is the tocify hidden div for placeholding stuff
-  &>h1, &>h2, &>div {
-    clear:both;
+  & > h1,
+  & > h2,
+  & > h3,
+  & > div {
+    clear: both;
   }
 
   h1 {
@@ -459,7 +632,7 @@ html, body {
     border-top: none;
   }
 
-  h3, h4, h5, h6 {
+  h4, h5, h6 {
     @extend %header-font;
     font-size: 15px;
     margin-top: 2.5em;
@@ -508,6 +681,10 @@ html, body {
 
     tr:nth-child(even)>td {
       background-color: lighten($main-bg,2.4%);
+    }
+
+    &:last-of-type {
+      margin-bottom: 10em;
     }
   }
 
@@ -720,4 +897,24 @@ html, body {
 
 .highlight, .highlight .w {
   background-color: $code-bg;
+}
+
+.toc-list-h3 {
+  display: none;
+  background-color: $nav-subitem-bg;
+}
+
+.toc-h3 {
+  padding-left: $nav-padding + $nav-padding + $nav-indent;
+  font-size: 12px;
+}
+
+h3 {
+  @extend %header-font;
+  font-size: 16px;
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  padding-top: 1.2em;
+  padding-bottom: 1.2em;
+  background-image: linear-gradient(to bottom, rgba(#fff, 0.2), rgba(#fff, 0));
 }
