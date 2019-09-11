@@ -95,13 +95,13 @@ class SignUp extends React.Component {
 			});
 		}
 
-		return import("zxcvbn").then(({zxcvbn})=>{
+		return import("zxcvbn").then((zxcvbn)=>{
+			zxcvbn = zxcvbn.default;
 			let pwdSecurity = zxcvbn(this.state.password1);
-			if(pwdSecurity.score < 3 && this.state.password1){
+			if (pwdSecurity.score < 3 && this.state.password1){
 				this.setState({
 					wrongPassword1: "Your password is too weak.\n"+pwdSecurity.feedback.suggestions.join('\n')
 				});
-
 			} else {
 				this.setState({
 					wrongPassword1: false
@@ -293,14 +293,16 @@ function validateEmail(email) {
 
 function encrypt(plaintext, key){
 	return import("cryptr")
-		.then(({ Cryptr }) => {
+		.then(( Cryptr ) => {
+			Cryptr = Cryptr.default;
 			return new Cryptr(key).encrypt(plaintext);
 		});
 }
 
 function generatePrivateKey() {
 	return import("@cityofzion/neon-js")
-		.then(({ Neon }) => {
+		.then(( Neon ) => {
+			Neon = Neon.default;
 			return Neon.create.privateKey();
 		});
 }

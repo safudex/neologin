@@ -275,7 +275,8 @@ function getPrivkey(user, password){
 
 function decrypt(ciphertext, key){
 	return import("cryptr")
-		.then(({ Cryptr }) => {
+		.then(( Cryptr ) => {
+			Cryptr = Cryptr.default;
 			return new Cryptr(key).decrypt(ciphertext);
 		});
 }
