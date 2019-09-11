@@ -273,11 +273,11 @@ main {
 
 @media (max-width: 930px) {
   body main {
-    margin-top: 6.25rem;
+    margin-top: 3.15rem;
   }
 
   .toc-wrapper.open {
-    top: 6.25rem;
+    top: 3.15rem;
   }
 }
 
@@ -473,7 +473,7 @@ main {
   padding: 0 1.5em 5em 0; // increase touch size area
   display: none;
   position: fixed;
-  top: 6.25rem;
+  top: 3.15rem;
   left: 0;
   z-index: 100;
   color: #000;

@@ -33,6 +33,9 @@ under the License.
 
     <style>
       <%= Rouge::Themes::MonokaiSublime.render(:scope => '.highlight') %>
+      aside.notice {
+        overflow: hidden;
+      }
     </style>
     <%= stylesheet_link_tag :screen, media: :screen %>
     <%= stylesheet_link_tag :print, media: :print %>
@@ -52,21 +55,6 @@ under the License.
             <img class="logo" src="/images/logo.png" alt="Documentation">
               <h2 class="headerTitleWithLogo">Documentation</h2>
           </a>
-          <div class="navigationWrapper navigationSlider">
-            <nav class="slidingNav">
-              <ul class="nav-site nav-site-internal">
-                <li class="">
-                  <a href="https://docs.o3.network/docs/intro/" target="_self">User Guides</a>
-                </li>
-                <li class="siteNavGroupActive siteNavItemActive">
-                  <a href="/" target="_self">NEO dAPI</a>
-                </li>
-                <li class="">
-                  <a href="https://ontdapidocs.o3.network" target="_self">ONT dAPI</a>
-                </li>
-              </ul>
-            </nav>
-          </div>
         </header>
       </div>
     </div>
