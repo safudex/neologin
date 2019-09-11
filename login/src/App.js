@@ -35,28 +35,34 @@ class App extends React.Component {
 	render() {
 		if(this.state.loginScreen){
 			return <SignIn 
-				signUpClick={()=>this.setState({
-					registerScreen: true,
-					loginScreen: false,
-				})} 
+					signUpClick={()=>this.setState({
+						registerScreen: true,
+						loginScreen: false,
+					})} 
 					passwordLostClick={()=>this.setState({
 						lostPasswordScreen: true,
 						loginScreen: false,
 					})} 
-						handleLogin={this.handleLogin}
-					/>;
+					handleLogin={this.handleLogin}
+				/>;
 		}
 		if(this.state.lostPasswordScreen){
-			return <LostPassword goBackClick={()=>this.setState({
-				lostPasswordScreen: false,
-				loginScreen: true,
-			})} />;
+			return <LostPassword 
+					goBackClick={()=>this.setState({
+						lostPasswordScreen: false,
+						loginScreen: true,
+					})} 
+					handleLogin={this.handleLogin}
+				/>;
 		}
 		if(this.state.registerScreen){
-			return <SignUp signInClick={()=>this.setState({
-				registerScreen: false,
-				loginScreen: true,
-			})} />;
+			return <SignUp 
+					signInClick={()=>this.setState({
+						registerScreen: false,
+						loginScreen: true,
+					})} 
+					handleLogin={this.handleLogin}
+				/>;
 		}
 	}
 }
