@@ -255,7 +255,7 @@ class SignUp extends React.Component {
 								<Grid item xs={12}>
 									<FormControlLabel
 										control={<Checkbox value="privacyPolicy" color="primary" name="privacyPolicy" checked={this.state.privacyPolicy} onChange={this.handleInputChange} />}
-										label={<span>I agree with <Link href="/privacy">NeoLogin's privacy policy</Link></span>}
+										label={<span>I agree with <Link href="/privacy-policy.pdf">NeoLogin's privacy policy</Link></span>}
 									/>
 									{this.state.privacyPolicy? null :
 									<FormHelperText error={true}>You must agree to the privacy policy</FormHelperText>
