@@ -146,7 +146,7 @@ class SignIn extends React.Component {
 				Auth.setupTOTP(user);
 			} else {
 				// The user directly signs in
-				this.state.handleLogin(await getPrivkey(user), this.state.password);
+				this.state.handleLogin(await getPrivkey(user, this.state.password));
 				console.log(user);
 			}
 		} catch (err) {
