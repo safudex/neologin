@@ -1,5 +1,6 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
+import { server } from '../config';
 
 import Button from '@material-ui/core/Button';
 
@@ -22,7 +23,7 @@ function LoginButton({ closeWidget }) {
             </Grid>
             <Grid item xs={12} style={{ width: '100%', height: '100%' }}>
               <Button variant="contained" color="primary" fullWidth onClick={() => {
-                window.open('http://localhost:3001/', 'Headjack - Login', 'width=400,height=620')
+                window.open(server, 'Headjack - Login', 'width=400,height=620')
               }}>
                 Continue
              </Button>
