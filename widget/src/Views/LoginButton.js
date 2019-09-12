@@ -23,7 +23,7 @@ function LoginButton({ closeWidget }) {
             </Grid>
             <Grid item xs={12} style={{ width: '100%', height: '100%' }}>
               <Button variant="contained" color="primary" fullWidth onClick={() => {
-                window.open(server, 'Headjack - Login', 'width=400,height=620')
+				  window.open(server.includes("localhost")? server : server+"/login/", 'NeoLogin - Login', 'width=400,height=620')
               }}>
                 Continue
              </Button>

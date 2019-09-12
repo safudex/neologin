@@ -40,7 +40,7 @@ if [ $1 == "dev" ]; then
 	PORT=3002 npm start &
 fi
 if [ $1 == "production" ]; then
-	sed -i 's/http:\/\/localhost:3001/https:\/\/neologin.io\/login\//g' src/config.js
+	sed -i 's/http:\/\/localhost:3001/https:\/\/neologin.io/g' src/config.js
 	CI=false npm run build
 	mv build ../dist/widget
 fi
