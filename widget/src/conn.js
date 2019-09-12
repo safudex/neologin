@@ -77,8 +77,8 @@ function signIn() {
 }
 
 const providerInfo = {
-	name: 'Headjack',
-	website: 'https://headjack.to',
+	name: 'NeoLogin',
+	website: 'https://neologin.io',
 	version: 'v0.1',
 	compatibility: [],
 	extra: {}

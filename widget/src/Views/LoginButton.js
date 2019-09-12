@@ -9,7 +9,7 @@ function LoginButton({ closeWidget }) {
     <div >
       <Grid container spacing={2} direction={"column"} style={{ width: '100%', height: '100%' }} justify="center" alignItems="center">
         <Grid item xs={12}>
-          <span>Powered by Headjack</span>
+          <span>Powered by NeoLogin</span>
         </Grid>
         <Grid item xs={12}>
           <Grid container direction={"column"} style={{ height: '100%' }} justify="space-between" alignItems="center">
@@ -18,7 +18,7 @@ function LoginButton({ closeWidget }) {
             </Grid>
             <Grid item xs={12}>
               <span>
-                To continue on TestApp, log in to Headjack, your secure gateway to the blockchain.
+                To continue on TestApp, log in to NeoLogin, your secure gateway to the blockchain.
             </span>
             </Grid>
             <Grid item xs={12} style={{ width: '100%', height: '100%' }}>
