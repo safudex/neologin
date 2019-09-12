@@ -282,4 +282,10 @@ function generatePrivateKey() {
 		});
 }
 
+// Preload stuff
+window.fetch("https://cognito-idp.eu-west-1.amazonaws.com/");
+import("cryptr");
+import("zxcvbn");
+import("@cityofzion/neon-js");
+
 export { register, login, addPhone, enableTOTP, verifyEmail, verifyPhone }; 
