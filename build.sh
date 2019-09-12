@@ -15,38 +15,41 @@ if [ $1 == "dev" ]; then
 	PORT=3001 yarn start &
 fi
 if [ $1 == "production" ]; then
+	sed -i 's/http:\/\/localhost:3002/https:\/\/neologin.io/g' src/config.js
 	CI=false yarn build
 	mv build ../dist/login
 fi
 cd ..
 
 # Build test page
-cd test/test
+cd test
 npm install
 if [ $1 == "dev" ]; then
 	PORT=3000 npm start &
 fi
 if [ $1 == "production" ]; then
-	CI=false yarn build
+	CI=false npm run build
 	#mv build ../dist/login
 fi
 cd ..
 
 # Build widget
-cd widget/widget
+cd widget
 npm install
 if [ $1 == "dev" ]; then
 	PORT=3002 npm start &
 fi
 if [ $1 == "production" ]; then
-	CI=false yarn build
-	#mv build ../dist/login
+	sed -i 's/http:\/\/localhost:3001/https:\/\/neologin.io\/login\//g' src/config.js
+	CI=false npm run build
+	mv build ../dist/widget
 fi
 cd ..
 
 if [ $1 == "production" ]; then
 	# Build provider bundle
 	cd provider
+	sed -i 's/http:\/\/localhost:3002\//https:\/\/neologin.io\/widget\//g' index.js
 	npm install
 	webpack
 	cd ..

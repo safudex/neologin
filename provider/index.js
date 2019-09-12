@@ -36,7 +36,7 @@ function removeEventListener(ev) {
 }
 
 const iframe = document.createElement('iframe');
-iframe.src = 'http://localhost:3002/'//'https://neologin.io/widget/index.html';
+iframe.src = 'http://localhost:3002/';
 
 document.body.appendChild(iframe);
 closeWidget()
