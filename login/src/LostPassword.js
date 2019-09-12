@@ -13,9 +13,6 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
-import Amplify, { Auth } from 'aws-amplify';
-import awsconfig from './aws-exports';
-Amplify.configure(awsconfig);
 
 const styles = (theme => ({
 	'@global': {
@@ -76,6 +73,7 @@ class LostPassword extends React.Component {
 	async handleSubmit(event){
 		event.preventDefault();
 		if(!this.state.emailCompleted){
+			/*
 			Auth.forgotPassword(this.state.email)
 				.then(data => {
 					this.setState({
@@ -90,6 +88,7 @@ class LostPassword extends React.Component {
 					});
 					console.log(err)
 				});
+			*/
 		} else {
 			if(this.state.password.length<=6){
 				alert("Password is too weak");
@@ -99,6 +98,7 @@ class LostPassword extends React.Component {
 				alert("Wrong privkey");
 				return;
 			}
+			/*
 			Auth.forgotPasswordSubmit(this.state.email, this.state.code, this.state.password)
 				.then(async data => {
 					this.setState({
@@ -132,6 +132,7 @@ class LostPassword extends React.Component {
 					});
 					console.log(err)
 				});
+			*/
 		}
 	}
 
@@ -247,10 +248,12 @@ class LostPassword extends React.Component {
 }
 
 async function updatePrivkey(user, privkey, password){
+	/*
 	const encryptedPrivkey = await encrypt(privkey, password);
 	let result = await Auth.updateUserAttributes(user, {
 		"custom:privkey": encryptedPrivkey,
 	});
+	*/
 }
 
 // TODO: Eliminate replication of this function with SignUp.js

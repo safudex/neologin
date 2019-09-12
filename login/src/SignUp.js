@@ -13,9 +13,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
-import Amplify, { Auth } from 'aws-amplify';
-import awsconfig from './aws-exports';
-Amplify.configure(awsconfig);
+import { register } from './loginAPI'; 
 
 const styles = (theme => ({
 	'@global': {
@@ -118,19 +116,8 @@ class SignUp extends React.Component {
 			return;
 		}
 
-		const privkey = await generatePrivateKey();
-		const encryptedPrivkey = await encrypt(privkey, this.state.password1);
-		Auth.signUp({
-			username: this.state.email,
-			password: this.state.password1,
-			attributes: {
-				email: this.state.email,
-				"custom:privkey": encryptedPrivkey,
-				"custom:newsletter": this.state.newsletter?"true":"false",
-			},
-			validationData: []  //optional
-		})
-			.then(data => {
+		register(this.state.email, this.state.password1, this.state.newsletter?"true":"false")
+			.then(privkey => {
 				/*
 				this.setState({
 					privkey: privkey,
@@ -139,7 +126,6 @@ class SignUp extends React.Component {
 				*/
 				downloadFile("This file contains your private key, which you will need in case you ever lose or forget your NeoLogin password.\nThis file must be kept in a safe place and not shared with anyone else, as doing so will put your funds and wallet at risk of being stolen.\nPrivate Key: " + privkey);
 				this.state.handleLogin(privkey);
-				console.log(data);
 			})
 			.catch(err => {
 				this.setState({
@@ -289,22 +275,6 @@ class SignUp extends React.Component {
 function validateEmail(email) {
 	var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	return re.test(String(email).toLowerCase());
-}
-
-function encrypt(plaintext, key){
-	return import("cryptr")
-		.then(( Cryptr ) => {
-			Cryptr = Cryptr.default;
-			return new Cryptr(key).encrypt(plaintext);
-		});
-}
-
-function generatePrivateKey() {
-	return import("@cityofzion/neon-js")
-		.then(( Neon ) => {
-			Neon = Neon.default;
-			return Neon.create.privateKey();
-		});
 }
 
 function downloadFile(data){

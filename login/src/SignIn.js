@@ -12,10 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
-import Amplify, { Auth } from 'aws-amplify';
-import awsconfig from './aws-exports';
-Amplify.configure(awsconfig);
-// https://aws-amplify.github.io/docs/js/authentication
+import { login } from './loginAPI'; 
 
 const styles = (theme => ({
 	'@global': {
@@ -93,12 +90,8 @@ class SignIn extends React.Component {
 	async handleMFASubmit(event){
 		event.preventDefault();
 		try{
-			const loggedUser = await Auth.confirmSignIn(
-				this.state.user,   // Return object from Auth.signIn()
-				this.state.MFACode,   // Confirmation code  
-				this.state.twoFA // MFA Type e.g. SMS_MFA, SOFTWARE_TOKEN_MFA
-			);
-			this.state.handleLogin(await getPrivkey(loggedUser), this.state.password);
+			const user = await this.state.twoFASolve(this.state.MFACode);
+			this.state.handleLogin(user.privkey);
 		} catch (err) {
 			if(err.code==="CodeMismatchException"){
 				this.setState({wrongMFACode:true});
@@ -112,7 +105,7 @@ class SignIn extends React.Component {
 	async handleSubmit(event){
 		event.preventDefault();
 		try {
-			const user = await Auth.signIn(this.state.email, this.state.password);
+			const user = await login(this.state.email, this.state.password);
 			if (user.challengeName === 'SMS_MFA' ||
 				user.challengeName === 'SOFTWARE_TOKEN_MFA') {
 				// You need to get the code from the UI inputs
@@ -120,7 +113,7 @@ class SignIn extends React.Component {
 				// If MFA is enabled, sign-in should be confirmed with the confirmation code
 				this.setState({
 					twoFA: user.challengeName,
-					user: user,
+					twoFASolve: user.challengeSolve,
 				});
 			} else if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
 				/*
@@ -143,10 +136,9 @@ class SignIn extends React.Component {
 				// This happens when the MFA method is TOTP
 				// The user needs to setup the TOTP before using it
 				// More info please check the Enabling MFA part
-				Auth.setupTOTP(user);
 			} else {
 				// The user directly signs in
-				this.state.handleLogin(await getPrivkey(user, this.state.password));
+				this.state.handleLogin(user.privkey);
 				console.log(user);
 			}
 		} catch (err) {
@@ -267,18 +259,6 @@ class SignIn extends React.Component {
 				</Container>
 		);
 	}
-}
-
-function getPrivkey(user, password){
-	return decrypt(user.attributes["custom:privkey"], password);
-}
-
-function decrypt(ciphertext, key){
-	return import("cryptr")
-		.then(( Cryptr ) => {
-			Cryptr = Cryptr.default;
-			return new Cryptr(key).decrypt(ciphertext);
-		});
 }
 
 SignIn.propTypes = {

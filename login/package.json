@@ -7,7 +7,7 @@
     "@cityofzion/neon-js": "^4.7.0",
     "@material-ui/core": "^4.4.0",
     "@material-ui/icons": "^4.2.1",
-    "aws-amplify": "^1.1.38",
+    "amazon-cognito-identity-js": "^3.0.15",
     "cryptr": "^4.0.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",

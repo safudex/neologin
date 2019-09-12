@@ -1,11 +1,10 @@
+import awsconfig from './aws-exports';
 //import { CognitoUserPool, CognitoUserAttribute, CognitoUser } from 'amazon-cognito-identity-js';
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
-import Cryptr from 'cryptr';
-import Neon from "@cityofzion/neon-js";
 
 let userPool = new AmazonCognitoIdentity.CognitoUserPool({
-	UserPoolId : 'eu-west-1_SN8JpQrzS', // Your user pool id here
-	ClientId : '2r79pmi7f4msr8mgbnssgnq2uv' // Your client id here
+	UserPoolId : awsconfig["aws_user_pools_id"], // Your user pool id here
+	ClientId : awsconfig["aws_user_pools_web_client_id"] // Your client id here
 });
 
 function verifyAttribute(attribute, cognitoUser, resolve){
@@ -24,7 +23,7 @@ function verifyAttribute(attribute, cognitoUser, resolve){
 	});
 }
 
-function login(email, password, get2FAcode){ 
+function login(email, password){ 
 	return new Promise((resolve, reject) => {
 		var authenticationData = {
 			Username : email, // your username here
@@ -41,25 +40,20 @@ function login(email, password, get2FAcode){
 		var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
 		cognitoUser.authenticateUser(authenticationDetails, {
 			onSuccess: function (result) {
-				var accessToken = result.getAccessToken().getJwtToken();
-				cognitoUser.getUserAttributes(function(err, result) {
-					if (err) {
-						alert(err.message || JSON.stringify(err));
-						return;
-					}
-					getPrivKey(cognitoUser, password).then((privkey)=>resolve({
-						privkey,
-						email,
-						password,
-						cognitoUser
-					}));
-				});
-
+				//var accessToken = result.getAccessToken().getJwtToken();
+				getPrivKey(cognitoUser, password).then((privkey)=>resolve({
+					privkey,
+					email,
+					password,
+					cognitoUser,
+					challengeName: null
+				}));
 			},
 			onFailure: function(err) {
-				alert(err.message || JSON.stringify(err));
+				reject(err);
 			},
 			mfaSetup: function(challengeName, challengeParameters) {
+				//Should never happen
 				cognitoUser.associateSoftwareToken(this);
 			},
 			selectMFAType : function(challengeName, challengeParameters) {
@@ -67,14 +61,59 @@ function login(email, password, get2FAcode){
 				cognitoUser.sendMFASelectionAnswer(mfaType, this);
 			},
 			totpRequired : function(secretCode) {
-				get2FAcode('Please input the TOTP code').then(challengeAnswer => cognitoUser.sendMFACode(challengeAnswer, this, 'SOFTWARE_TOKEN_MFA'));
+				resolve({
+					challengeName: 'SOFTWARE_TOKEN_MFA',
+					challengeSolve: (challengeAnswer) => {
+						return new Promise((resolve, reject) => {
+							cognitoUser.sendMFACode(
+								challengeAnswer, 
+								{
+									onSuccess: function (result) {
+										getPrivKey(cognitoUser, password).then((privkey)=>resolve({
+											privkey,
+											email,
+											password,
+											cognitoUser,
+											challengeName: null
+										}));
+									},
+									onFailure: function(err) {
+										reject(err);
+									},
+								},
+								'SOFTWARE_TOKEN_MFA')
+						});
+					}
+				});
 				/*
 				var challengeAnswer = await get2FAcode('Please input the TOTP code.');
 				cognitoUser.sendMFACode(challengeAnswer, this, 'SOFTWARE_TOKEN_MFA');
 				*/
 			},
 			mfaRequired: function(codeDeliveryDetails) {
-				get2FAcode('Please input verification code').then(verificationCode => cognitoUser.sendMFACode(verificationCode, this));
+				resolve({
+					challengeName: 'SMS_MFA',
+					challengeSolve: (challengeAnswer) => {
+						return new Promise((resolve, reject) => {
+							cognitoUser.sendMFACode(
+								challengeAnswer, 
+								{
+									onSuccess: function (result) {
+										getPrivKey(cognitoUser, password).then((privkey)=>resolve({
+											privkey,
+											email,
+											password,
+											cognitoUser,
+											challengeName: null
+										}));
+									},
+									onFailure: function(err) {
+										reject(err);
+									},
+								})
+						});
+					}
+				});
 				/*
 				var verificationCode = await get2FAcode('Please input verification code');
 				cognitoUser.sendMFACode(verificationCode, this);
@@ -82,6 +121,9 @@ function login(email, password, get2FAcode){
 			}
 		});
 	});
+}
+
+function resolveUser(cognitoUser, email, password, resolve, reject){
 }
 
 function enableTOTP(cognitoUser, email, drawQR){
@@ -154,8 +196,8 @@ function addPhone(phone, cognitoUser){
 	});
 }
 
-function register(email, password, twofa){
-	return new Promise((resolve, reject) => {
+function register(email, password, newsletter){
+	return new Promise(async (resolve, reject) => {
 		var attributeList = [];
 
 		var dataEmail = {
@@ -163,28 +205,35 @@ function register(email, password, twofa){
 			Value : email
 		};
 
-		const privkey = generatePrivateKey();
-		const encryptedPrivkey = encrypt(privkey, password);
+		const privkey = await generatePrivateKey();
+		const encryptedPrivkey = await encrypt(privkey, password);
 
 		var dataPrivkey = {
 			Name : 'custom:privkey',
 			Value : encryptedPrivkey
 		};
 
+		var dataNewsletter = {
+			Name : "custom:newsletter",
+			Value : newsletter
+		};
+
 		var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
 		var attributePrivkey = new AmazonCognitoIdentity.CognitoUserAttribute(dataPrivkey);
+		var attributeNewsletter = new AmazonCognitoIdentity.CognitoUserAttribute(dataNewsletter);
 
 		attributeList.push(attributeEmail);
 		attributeList.push(attributePrivkey);
+		attributeList.push(attributeNewsletter);
 
 		userPool.signUp(email, password, attributeList, null, function(err, result){
 			if (err) {
-				alert(err.message || JSON.stringify(err));
+				reject(err);
 				return;
 			}
 			var cognitoUser = result.user;
 			console.log('user name is ' + cognitoUser.getUsername());
-			resolve({privkey});
+			resolve(privkey);
 		});
 	});
 }
@@ -193,14 +242,14 @@ function getPrivKey(cognitoUser, password){
 	return new Promise((resolve, reject) => {
 		cognitoUser.getUserAttributes(function(err, result) {
 			if (err) {
-				alert(err.message || JSON.stringify(err));
+				reject(err);
 				return;
 			}
 			for (let i = 0; i < result.length; i++) {
 				console.log('attribute ' + result[i].getName() + ' has value ' + result[i].getValue());
 				if(result[i].getName()=="custom:privkey"){
 					//Decrypt
-					let privkey=decrypt(result[i].getValue(), password);
+					let privkey = decrypt(result[i].getValue(), password);
 					//Send
 					resolve(privkey);
 				}
@@ -209,16 +258,28 @@ function getPrivKey(cognitoUser, password){
 	});
 }
 
-function encrypt(plaintext, key){
-	return new Cryptr(key).encrypt(plaintext);
+function decrypt(ciphertext, key){
+	return import("cryptr")
+		.then(( Cryptr ) => {
+			Cryptr = Cryptr.default;
+			return new Cryptr(key).decrypt(ciphertext);
+		});
 }
 
-function decrypt(ciphertext, key){
-	return new Cryptr(key).decrypt(ciphertext);
+function encrypt(plaintext, key){
+	return import("cryptr")
+		.then(( Cryptr ) => {
+			Cryptr = Cryptr.default;
+			return new Cryptr(key).encrypt(plaintext);
+		});
 }
 
 function generatePrivateKey() {
-	return Neon.create.privateKey();
+	return import("@cityofzion/neon-js")
+		.then(( Neon ) => {
+			Neon = Neon.default;
+			return Neon.create.privateKey();
+		});
 }
 
 export { register, login, addPhone, enableTOTP, verifyEmail, verifyPhone }; 
