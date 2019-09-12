@@ -77,7 +77,7 @@ Overall, NeoLogin trades security for convenience when compared with traditional
 |           Wallet                 | First attack | Second attack | Third attack |
 |----------------------------------|--------------|---------------|--------------|
 | Non-updatable traditional wallet |              |               |              |
-| Updatabale traditional wallet    |      ⚰️       |               |              |
+| Updatable traditional wallet    |      ⚰️       |               |              |
 | non-TEE-based NeoLogin (current) |      ⚰️       |       ⚰️       |       ⚰️      |
 | TEE-based NeoLogin (future)      |              |               |              |
 
