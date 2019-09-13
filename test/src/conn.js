@@ -64,20 +64,26 @@ for (let i = 0; i < promiseMethods.length; i++) {
 }
 
 var iframeDeskStyle = {
-    boxShadow: '0px 0px 8px 1px rgba(0,0,0,0.75)',
-    position: 'absolute',
-    top: '1rem',
-    right: '1rem',
+    position: 'fixed',
+    top: '1.5rem',
+    right: '1.5rem',
+    boxShadow: '0 5px 40px rgba(0,0,0,.16)',
+    borderRadius: '8px',
     border: '0',
     width: '375px',
+    background:'white',
+    height: '300px'
 }
 
 var iframeMobileStyle = {
-    boxShadow: '0px 0px 8px 1px rgba(0,0,0,0.75)',
-    position: 'absolute',
+    position: 'fixed',
     bottom: '0',
+    boxShadow: '0 5px 40px rgba(0,0,0,.16)',
+    borderRadius: '0px',
     width: '100%',
-    border: '0'
+    border: '0',
+    background:'white',
+    height: '300px'
 }
 
 function setIframeStyle(w, h) {
