@@ -14,6 +14,15 @@ import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
 
+import { makeStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
+import InputBase from '@material-ui/core/InputBase';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import AccountCircle from '@material-ui/icons/EmailOutlined';
+import SearchIcon from '@material-ui/icons/Search';
+import DirectionsIcon from '@material-ui/icons/Directions';
+
 const styles = (theme => ({
 	'@global': {
 		body: {
@@ -28,7 +37,7 @@ const styles = (theme => ({
 	},
 	avatar: {
 		margin: theme.spacing(1),
-		backgroundColor: theme.palette.secondary.main,
+		backgroundColor: '#2e5aac',
 	},
 	form: {
 		width: '100%', // Fix IE 11 issue.
@@ -38,6 +47,53 @@ const styles = (theme => ({
 		margin: theme.spacing(3, 0, 2),
 	},
 }));
+
+const useStyles = makeStyles(theme => ({
+	root: {
+		padding: '2px 4px',
+		display: 'flex',
+		alignItems: 'center'
+	},
+	input: {
+		marginLeft: theme.spacing(1),
+		flex: 1,
+	},
+	iconButton: {
+		padding: 10,
+	},
+	divider: {
+		height: 28,
+		margin: 4,
+	},
+}));
+
+
+function ResetFormEmail({ handleInputChange, email, wrongEmail }) {
+	const classes = useStyles();
+
+	return (
+		<div>
+			<Paper className={classes.root} style={{margin: '1em 0'}} >
+				{/* <IconButton className={classes.iconButton} aria-label="menu"> */}
+				<AccountCircle style={{ margin: '0.3em', color: '#00369a' }} />
+				{/* </IconButton> */}
+				<InputBase
+					required
+					className={classes.input}
+					placeholder="Email Address"
+					id="email"
+					label="Email"
+					name="email"
+					value={email}
+					autoFocus
+					error={wrongEmail ? true : null}
+					helperText={wrongEmail}
+					onChange={handleInputChange}
+				/>
+			</Paper>
+		</div>
+	);
+}
 
 class LostPassword extends React.Component {
 	constructor(props) {
@@ -70,9 +126,9 @@ class LostPassword extends React.Component {
 		});
 	}
 
-	async handleSubmit(event){
+	async handleSubmit(event) {
 		event.preventDefault();
-		if(!this.state.emailCompleted){
+		if (!this.state.emailCompleted) {
 			/*
 			Auth.forgotPassword(this.state.email)
 				.then(data => {
@@ -90,11 +146,11 @@ class LostPassword extends React.Component {
 				});
 			*/
 		} else {
-			if(this.state.password.length<=6){
+			if (this.state.password.length <= 6) {
 				alert("Password is too weak");
 				return;
 			}
-			if(this.state.password.privkey<=100){
+			if (this.state.password.privkey <= 100) {
 				alert("Wrong privkey");
 				return;
 			}
@@ -136,11 +192,12 @@ class LostPassword extends React.Component {
 		}
 	}
 
-	render(){
+	render() {
 		let body = null;
-		if(!this.state.emailCompleted){
-			body=<div>
-				<TextField
+		if (!this.state.emailCompleted) {
+			body = <div>
+				<ResetFormEmail handleInputChange={(e) => this.handleInputChange(e)} email={this.state.email} wrongEmail={this.state.wrongEmail} />
+				{/* <TextField
 					variant="outlined"
 					margin="normal"
 					required
@@ -150,13 +207,13 @@ class LostPassword extends React.Component {
 					name="email"
 					value={this.state.email}
 					autoFocus
-					error={this.state.wrongEmail? true : null}
+					error={this.state.wrongEmail ? true : null}
 					helperText={this.state.wrongEmail}
 					onChange={this.handleInputChange}
-				/>
+				/> */}
 			</div>
 		} else {
-			body=<div>
+			body = <div>
 				<TextField
 					variant="outlined"
 					margin="normal"
@@ -167,8 +224,8 @@ class LostPassword extends React.Component {
 					name="code"
 					autoFocus
 					value={this.state.code}
-					error={this.state.wrongCode? true : null}
-					helperText={this.state.wrongCode? this.state.wrongCode : "Input the code received through email."}
+					error={this.state.wrongCode ? true : null}
+					helperText={this.state.wrongCode ? this.state.wrongCode : "Input the code received through email."}
 					onChange={this.handleInputChange}
 				/>
 				<TextField
@@ -181,7 +238,7 @@ class LostPassword extends React.Component {
 					name="privkey"
 					autoFocus
 					value={this.state.privkey}
-					helperText= "You can find the code for this field in the file that was downloaded when you registered for NeoLogin. Please make sure that the code you are inputting is effecively the same that you downloaded, as it will become the private key associated with this account."
+					helperText="You can find the code for this field in the file that was downloaded when you registered for NeoLogin. Please make sure that the code you are inputting is effecively the same that you downloaded, as it will become the private key associated with this account."
 					onChange={this.handleInputChange}
 				/>
 				<TextField
@@ -197,17 +254,20 @@ class LostPassword extends React.Component {
 					value={this.state.password}
 					onChange={this.handleInputChange}
 				/>
-					</div>
+			</div>
 		}
 
-		const goBackButton=<Button
-							fullWidth
-							variant="contained"
-							color="secondary"
-							onClick={this.state.goBackClick}
-						>
-							Go Back to Sign In
-						</Button>
+		const goBackButton = <button className='buttonContinue buttonBack' onClick={this.state.goBackClick}>
+			Go back to sign in
+	</button>
+	{/* <Button
+			fullWidth
+			variant="contained"
+			color="secondary"
+			onClick={this.state.goBackClick}
+		>
+			Go Back to Sign In
+						</Button> */}
 
 		const { classes } = this.props;
 		return (
@@ -217,29 +277,32 @@ class LostPassword extends React.Component {
 					<Avatar className={classes.avatar}>
 						<LockOutlinedIcon />
 					</Avatar>
-					<Typography component="h1" variant="h5">
-						Lost Password
+					<Typography component="h1" variant="h5" style={{ color: '#6A737D', marginTop: '3em'}}>
+						Reset password
 					</Typography>
-					{ this.state.codeCompleted?
-					<div>
-						<Typography component="h2" variant="h4">
-							Password recovery succeeded
+					{this.state.codeCompleted ?
+						<div>
+							<Typography component="h2" variant="h4">
+								Password recovery succeeded
 						</Typography>
-						{goBackButton}
-					</div> :
-					<form className={classes.form} onSubmit={this.handleSubmit}>
-						{body}
-						<Button
-							type="submit"
-							fullWidth
-							variant="contained"
-							color="primary"
-							className={classes.submit}
-						>
-							Reset password
-						</Button>
-						{goBackButton}
-					</form>
+							{goBackButton}
+						</div> :
+						<form className={classes.form} onSubmit={this.handleSubmit}>
+							{body}
+							{/* <Button
+								type="submit"
+								fullWidth
+								variant="contained"
+								color="primary"
+								className={classes.submit}
+							>
+								Reset password
+						</Button> */}
+							<button className='buttonContinue' type="submit" style={{ margin: '0.5rem 0' }}>
+								RESET PASSWORD
+							</button>
+							{goBackButton}
+						</form>
 					}
 				</div>
 			</Container>
@@ -247,7 +310,7 @@ class LostPassword extends React.Component {
 	}
 }
 
-async function updatePrivkey(user, privkey, password){
+async function updatePrivkey(user, privkey, password) {
 	/*
 	const encryptedPrivkey = await encrypt(privkey, password);
 	let result = await Auth.updateUserAttributes(user, {
@@ -257,9 +320,9 @@ async function updatePrivkey(user, privkey, password){
 }
 
 // TODO: Eliminate replication of this function with SignUp.js
-function encrypt(plaintext, key){
+function encrypt(plaintext, key) {
 	return import("cryptr")
-		.then(( Cryptr ) => {
+		.then((Cryptr) => {
 			Cryptr = Cryptr.default;
 			return new Cryptr(key).encrypt(plaintext);
 		});

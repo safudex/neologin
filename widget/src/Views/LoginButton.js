@@ -2,39 +2,15 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import { server } from '../config';
 
-import './LoginButton.css'
+import './styles.css'
 
-import logo from '../logo.svg';
-import logo2 from '../logo2.png';
+import logo from '../logobox.png';
+import Brand from './Brand'
 
 function LoginButton({ closeWidget }) {
   return (
     <div>
-      <Grid
-        container
-        direction="row"
-        justify="center"
-        alignItems="center"
-        style={{ textAlign: 'center', padding: '8px 0', background: '#fff' }}
-      >
-        <Grid item xs={1}></Grid>
-        <Grid item xs={10}>
-          <img src={logo2} style={{ height: '1em' }} />
-        </Grid>
-        <Grid item xs={1}>
-          <Grid
-            container
-            justify="flex-start"
-            alignItems="flex-start"
-          >
-            <Grid item>
-              <span className='closeButton' onClick={() => closeWidget()}>
-                ✖
-              </span>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid >
+      <Brand closeWidget={closeWidget}/>
       <Grid
         container
         direction="column"
@@ -50,7 +26,7 @@ function LoginButton({ closeWidget }) {
         </Grid>
         <Grid item xs style={{ width: '100%' }}>
           <button className='buttonContinue' onClick={() => {
-            window.open(server.includes("localhost") ? server : server + "/login/", 'NeoLogin - Login', 'width=400,height=620')
+            window.open(server.includes("localhost") ? server : server + "/login/", 'NeoLogin - Login', 'width=400,height=660')
           }}>
             Continue
           </button>

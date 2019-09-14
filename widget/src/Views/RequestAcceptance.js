@@ -1,39 +1,16 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import logo from '../logo.svg';
 import logo2 from '../logo2.png';
 
-import './LoginButton.css'
+import Brand from './Brand'
+
+import './styles.css'
 
 function RequestAcceptance({ message, resolve, reject, closeWidget }) {
   return (
     <div>
-      <Grid
-        container
-        direction="row"
-        justify="center"
-        alignItems="center"
-        style={{ textAlign: 'center', padding: '8px 0', background: '#fff' }}
-      >
-        <Grid item xs={1}></Grid>
-        <Grid item xs={10}>
-          <img src={logo2} style={{ height: '1em' }} />
-        </Grid>
-        <Grid item xs={1}>
-          <Grid
-            container
-            justify="flex-start"
-            alignItems="flex-start"
-          >
-            <Grid item>
-              <span className='closeButton' onClick={() => closeWidget()}>
-                ✖
-            </span>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid >
+      <Brand closeWidget={closeWidget}/>
       <Grid
         container
         direction="column"
@@ -41,9 +18,9 @@ function RequestAcceptance({ message, resolve, reject, closeWidget }) {
         alignItems="center"
         style={{ height: '100%', padding: '1em' }}
       >
-        <Grid item xs>
+        {/* <Grid item xs>
           <img src={logo} width='65px' />
-        </Grid>
+        </Grid> */}
         <Grid item xs>
           <p style={{ fontSize: '0.85em' }}>Do you accept this transacction?</p>
         </Grid>
@@ -56,7 +33,7 @@ function RequestAcceptance({ message, resolve, reject, closeWidget }) {
             spacing={2}
           >
             <Grid item xs>
-              <button className='buttonContinue' onClick={() => { resolve(); closeWidget() }}>
+              <button className='buttonContinue buttonAccept' onClick={() => { resolve(); closeWidget() }}>
                 Accept
             </button>
             </Grid>
