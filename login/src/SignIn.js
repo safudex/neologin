@@ -12,7 +12,19 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
-import { login } from './loginAPI'; 
+import { login } from './loginAPI';
+import logo from './logoboxtxt.png';
+import logo2 from './logo2.png';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
+
+import { makeStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
+import InputBase from '@material-ui/core/InputBase';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import AccountCircle from '@material-ui/icons/EmailOutlined';
+import SearchIcon from '@material-ui/icons/Search';
+import DirectionsIcon from '@material-ui/icons/Directions';
 
 const styles = (theme => ({
 	'@global': {
@@ -39,6 +51,107 @@ const styles = (theme => ({
 	},
 }));
 
+const useStyles = makeStyles(theme => ({
+	root: {
+		padding: '2px 4px',
+		display: 'flex',
+		alignItems: 'center'
+	},
+	input: {
+		marginLeft: theme.spacing(1),
+		flex: 1,
+	},
+	iconButton: {
+		padding: 10,
+	},
+	divider: {
+		height: 28,
+		margin: 4,
+	},
+}));
+
+function SimpleFormSignIn({ handleInputChange, email, wrongEmail, password, wrongPassword, rememberMe }) {
+	const classes = useStyles();
+
+	return (
+		<div>
+			<Paper className={classes.root} style={{ margin: '1rem 0' }}>
+				{/* <IconButton className={classes.iconButton} aria-label="menu"> */}
+				<AccountCircle style={{ margin: '0.3em', color: '#00369a' }} />
+				{/* </IconButton> */}
+				<InputBase
+					required
+					className={classes.input}
+					placeholder="Email Address"
+					key="email"
+					id="email"
+					label="Email Address"
+					name="email"
+					autoComplete="email"
+					autoFocus
+					value={email}
+					error={wrongEmail ? true : null}
+					helperText={wrongEmail ? "No user with this email" : null}
+					onChange={handleInputChange}
+				/>
+			</Paper>
+			<Paper className={classes.root}>
+				{/* <IconButton className={classes.iconButton} aria-label="menu"> */}
+				<LockOutlinedIcon style={{ margin: '0.3em', color: '#00369a' }} />
+				{/* </IconButton> */}
+				<InputBase
+					required
+					className={classes.input}
+					placeholder="Password"
+					name="password"
+					key="password"
+					label="Password"
+					type="password"
+					id="password"
+					autoComplete="current-password"
+					value={password}
+					error={wrongPassword ? true : null}
+					helperText={wrongPassword ? "Wrong password" : null}
+					onChange={handleInputChange}
+				/>
+			</Paper>
+			<FormControlLabel
+				control={<Checkbox value="remember" color="primary" name="rememberMe" checked={rememberMe} onChange={handleInputChange} />}
+				label="Remember me"
+			/>
+		</div>
+	);
+}
+
+function TwoFAFormSignIn({ handleInputChange, twoFA, MFACode, wrongMFACode }) {
+	const classes = useStyles();
+
+	return (
+		<div>
+			<Paper className={classes.root}>
+				{/* <IconButton className={classes.iconButton} aria-label="menu"> */}
+				<VpnKeyIcon style={{ margin: '0.3em', color: '#00369a' }} />
+				{/* </IconButton> */}
+				<InputBase
+					required
+					className={classes.input}
+					placeholder={twoFA === "SMS_MFA" ? "SMS Code" : "TOTP Code"}
+					key="MFACode"
+					id="MFACode"
+					label={twoFA === "SMS_MFA" ? "SMS Code" : "TOTP Code"}
+					name="MFACode"
+					autoFocus
+					value={MFACode}
+					error={wrongMFACode ? true : null}
+					helperText={wrongMFACode ? "Wrong code" : "Input the " + (twoFA === "SMS_MFA" ? "SMS code that we sent you" : "the time-based code from your authenticator App")}
+					onChange={handleInputChange}
+				/>
+			</Paper>
+		</div>
+	);
+}
+
+
 class SignIn extends React.Component {
 	constructor(props) {
 		super(props);
@@ -55,7 +168,7 @@ class SignIn extends React.Component {
 			wrongMFACode: '',
 			handleLogin: props.handleLogin,
 		};
-	
+
 		this.handleInputChange = this.handleInputChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleMFASubmit = this.handleMFASubmit.bind(this);
@@ -70,31 +183,31 @@ class SignIn extends React.Component {
 			[name]: value
 		});
 
-		if(name === "email" && this.state.wrongEmail){
+		if (name === "email" && this.state.wrongEmail) {
 			this.setState({
 				wrongEmail: false
 			});
 		}
-		if(name === "password" && this.state.wrongPassword){
+		if (name === "password" && this.state.wrongPassword) {
 			this.setState({
 				wrongPassword: false
 			});
 		}
-		if(name === "MFACode" && this.state.wrongMFACode){
+		if (name === "MFACode" && this.state.wrongMFACode) {
 			this.setState({
 				wrongMFACode: false
 			});
 		}
 	}
 
-	async handleMFASubmit(event){
+	async handleMFASubmit(event) {
 		event.preventDefault();
-		try{
+		try {
 			const user = await this.state.twoFASolve(this.state.MFACode);
 			this.state.handleLogin(user.privkey);
 		} catch (err) {
-			if(err.code==="CodeMismatchException"){
-				this.setState({wrongMFACode:true});
+			if (err.code === "CodeMismatchException") {
+				this.setState({ wrongMFACode: true });
 			} else {
 				window.alert("Session expired, refresh the window to start again");
 			}
@@ -102,7 +215,8 @@ class SignIn extends React.Component {
 		}
 	}
 
-	async handleSubmit(event){
+	async handleSubmit(event) {
+		console.log('dddd')
 		event.preventDefault();
 		try {
 			const user = await login(this.state.email, this.state.password);
@@ -152,111 +266,119 @@ class SignIn extends React.Component {
 				// Please check the Forgot Password part.
 			} else if (err.code === 'NotAuthorizedException') {
 				// The error happens when the incorrect password is provided
-				this.setState({wrongPassword: true});
+				this.setState({ wrongPassword: true });
 			} else if (err.code === 'UserNotFoundException') {
 				// The error happens when the supplied username/email does not exist in the Cognito user pool
-				this.setState({wrongEmail: true});
+				this.setState({ wrongEmail: true });
 			} else {
 				console.log(err);
 			}
 		}
 	}
 
-	render(){
+	render() {
 		const { classes } = this.props;
 
 		return (
 			<Container component="main" maxWidth="xs">
 				<CssBaseline />
 				<div className={classes.paper}>
-					<Avatar className={classes.avatar}>
-						<LockOutlinedIcon />
-					</Avatar>
-					<Typography component="h1" variant="h5">
+					{/* <Avatar className={classes.avatar}> */}
+					{/* <LockOutlinedIcon /> */}
+					<img src={logo} style={{ height: '5em', marginBottom: '5em' }} />
+					{/* </Avatar> */}
+					{/* <span style={{ fontSize: '2rem', marginBottom: '2rem' }}>
+						NEO<span style={{ color: '' }}>LOGIN</span>
+					</span> */}
+					<Typography component="h1" variant="h5" style={{ color: '#6A737D' }}>
 						Sign in
 					</Typography>
-					<form className={classes.form} onSubmit={this.state.twoFA?this.handleMFASubmit:this.handleSubmit}>
-						{this.state.twoFA?
+					<form className={classes.form} onSubmit={this.state.twoFA ? this.handleMFASubmit : this.handleSubmit}>
+						{this.state.twoFA ?
 							([
-								<TextField
+								/* <TextField
 									variant="outlined"
 									margin="normal"
 									required
 									fullWidth
 									key="MFACode"
 									id="MFACode"
-									label={this.state.twoFA==="SMS_MFA"?"SMS Code":"TOTP Code"}
+									label={this.state.twoFA === "SMS_MFA" ? "SMS Code" : "TOTP Code"}
 									name="MFACode"
 									autoFocus
 									value={this.state.MFACode}
-									error={this.state.wrongMFACode? true : null}
-									helperText={this.state.wrongMFACode? "Wrong code" : "Input the "+(this.state.twoFA==="SMS_MFA"?"SMS code that we sent you":"the time-based code from your authenticator App")}
+									error={this.state.wrongMFACode ? true : null}
+									helperText={this.state.wrongMFACode ? "Wrong code" : "Input the " + (this.state.twoFA === "SMS_MFA" ? "SMS code that we sent you" : "the time-based code from your authenticator App")}
 									onChange={this.handleInputChange}
-								/>
-							]):([
+								/> */
+								<TwoFAFormSignIn handleInputChange={(e) => this.handleInputChange(e)} twoFA={this.state.twoFA} MFACode={this.state.MFACode} wrongMFACode={this.state.wrongMFACode} />
+							]) : <SimpleFormSignIn handleInputChange={(e) => this.handleInputChange(e)} email={this.state.email} wrongEmail={this.state.wrongEmail} rememberMe={this.state.rememberMe} />/* ([
 								<TextField
-									variant="outlined"
-									margin="normal"
-									required
-									fullWidth
-									key="email"
-									id="email"
-									label="Email Address"
-									name="email"
-									autoComplete="email"
-									autoFocus
-									value={this.state.email}
-									error={this.state.wrongEmail? true : null}
-									helperText={this.state.wrongEmail? "No user with this email" : null}
-									onChange={this.handleInputChange}
-								/>,
+						variant="outlined"
+						margin="normal"
+						required
+						fullWidth
+						key="email"
+						id="email"
+						label="Email Address"
+						name="email"
+						autoComplete="email"
+						autoFocus
+						value={this.state.email}
+						error={this.state.wrongEmail ? true : null}
+						helperText={this.state.wrongEmail ? "No user with this email" : null}
+						onChange={this.handleInputChange}
+					/>,
 								<TextField
-									variant="outlined"
-									margin="normal"
-									required
-									fullWidth
-									name="password"
-									key="password"
-									label="Password"
-									type="password"
-									id="password"
-									autoComplete="current-password"
-									value={this.state.password}
-									error={this.state.wrongPassword? true : null}
-									helperText={this.state.wrongPassword? "Wrong password" : null}
-									onChange={this.handleInputChange}
-								/>,
+						variant="outlined"
+						margin="normal"
+						required
+						fullWidth
+						name="password"
+						key="password"
+						label="Password"
+						type="password"
+						id="password"
+						autoComplete="current-password"
+						value={this.state.password}
+						error={this.state.wrongPassword ? true : null}
+						helperText={this.state.wrongPassword ? "Wrong password" : null}
+						onChange={this.handleInputChange}
+					/>,
 								<FormControlLabel
-									control={<Checkbox value="remember" color="primary" name="rememberMe" checked={this.state.rememberMe} onChange={this.handleInputChange} />}
-									label="Remember me"
-								/>
-							])}
-							<Button
-								type="submit"
-								fullWidth
-								variant="contained"
-								color="primary"
-								className={classes.submit}
-							>
-								Sign In
-							</Button>
-							{this.state.twoFA? null : (
-								<Grid container>
-									<Grid item xs>
-										<Link href="#" variant="body2" onClick={this.state.passwordLostClick}>
-											Forgot password?
-										</Link>
-									</Grid>
-									<Grid item>
-										<Link href="#" variant="body2" onClick={this.state.signUpClick}>
-											{"Don't have an account? Sign Up"}
-										</Link>
-									</Grid>
+						control={<Checkbox value="remember" color="primary" name="rememberMe" checked={this.state.rememberMe} onChange={this.handleInputChange} />}
+						label="Remember me"
+					/>
+					]) */}
+						{/* <Button
+							type="submit"
+							fullWidth
+							variant="contained"
+							color="primary"
+							className={classes.submit}
+						>
+							Sign In
+							</Button> */}
+						<button className='buttonContinue' type="submit" style={{ margin: '1rem 0' }}>
+							Sign In
+          				</button>
+						{this.state.twoFA ? null : (
+							<Grid container>
+								<Grid item xs>
+									<Link href="#" variant="body2" onClick={this.state.passwordLostClick}>
+										<span style={{ color: '#2e5aac' }}>Forgot password?</span>
+									</Link>
 								</Grid>
-							)}
-						</form>
-					</div>
-				</Container>
+								<Grid item>
+									<Link href="#" variant="body2" onClick={this.state.signUpClick}>
+										<span style={{ color: '#2e5aac' }}>Don't have an account? Sign Up</span>
+									</Link>
+								</Grid>
+							</Grid>
+						)}
+					</form>
+				</div>
+			</Container >
 		);
 	}
 }

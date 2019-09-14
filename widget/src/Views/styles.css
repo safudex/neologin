@@ -54,14 +54,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00369a', end
     background: #00369a;
 }
 
-.buttonReject, .buttonBack{
+.buttonReject{
     background: #6A737D;
 }
 
 .buttonReject:hover, .buttonReject:focus {
     background: #9b1717;
-}
-
-.buttonBack:hover, .buttonBack:focus {
-  background: #868686;
 }
