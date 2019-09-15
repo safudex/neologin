@@ -146,10 +146,10 @@ function FormRegister({ handleInputChange, email, wrongEmail, password1, wrongPa
 				<Grid item xs={12}>
 					<FormControlLabel
 						control={<Checkbox value="privacyPolicy" color="primary" name="privacyPolicy" checked={privacyPolicy} onChange={handleInputChange} />}
-						label={<span>I agree with <Link href="/privacy-policy.pdf">NeoLogin's privacy policy</Link></span>}
+						label={<span>I agree with <Link href="/privacy-policy.pdf">NeoLogin's privacy policy</Link> and <Link href="/NeoLogin-EndUserLicenseAgreement.pdf">license agreement</Link>.</span>}
 					/>
 					{privacyPolicy ? null :
-						<FormHelperText error={true}>You must agree to the privacy policy</FormHelperText>
+						<FormHelperText error={true}>You must agree to the privacy policy and license agreement</FormHelperText>
 					}
 				</Grid>
 			</Grid>
