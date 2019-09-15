@@ -33,6 +33,7 @@ const styles = (theme => ({
 	},
 	paper: {
 		marginTop: theme.spacing(8),
+		marginBottom: theme.spacing(5),
 		display: 'flex',
 		flexDirection: 'column',
 		alignItems: 'center',
@@ -68,104 +69,6 @@ const useStyles = makeStyles(theme => ({
 		margin: 4,
 	},
 }));
-
-function FormRegister({ handleInputChange, email, wrongEmail, password1, wrongPassword1, password2, wrongPassword2, newsletter, privacyPolicy, signInClick }) {
-	const classes = useStyles();
-
-	return (
-		<div>
-			<Grid container spacing={2}>
-				<Grid item xs={12}>
-					<Paper className={classes.root}>
-						{/* <IconButton className={classes.iconButton} aria-label="menu"> */}
-						<AccountCircle style={{ margin: '0.3em', color: '#00369a' }} />
-						{/* </IconButton> */}
-						<InputBase
-							required
-							className={classes.input}
-							placeholder="Email Address"
-							id="email"
-							label="Email Address"
-							name="email"
-							autoComplete="email"
-							value={email}
-							error={wrongEmail ? true : null}
-							helperText={wrongEmail}
-							onChange={handleInputChange}
-						/>
-					</Paper>
-				</Grid>
-				<Grid item xs={12} sm={6}>
-					<Paper className={classes.root}>
-						{/* <IconButton className={classes.iconButton} aria-label="menu"> */}
-						<LockOutlinedIcon style={{ margin: '0.3em', color: '#00369a' }} />
-						{/* </IconButton> */}
-						<InputBase
-							required
-							className={classes.input}
-							placeholder="Password"
-							name="password1"
-							label="Password"
-							type="password"
-							id="password1"
-							autoComplete="current-password"
-							value={password1}
-							error={wrongPassword1 ? true : null}
-							helperText={wrongPassword1}
-							onChange={handleInputChange}
-						/>
-					</Paper>
-				</Grid>
-				<Grid item xs={12} sm={6}>
-					<Paper className={classes.root}>
-						{/* <IconButton className={classes.iconButton} aria-label="menu"> */}
-						<LockOutlinedIcon style={{ margin: '0.3em', color: '#00369a' }} />
-						{/* </IconButton> */}
-						<InputBase
-							required
-							className={classes.input}
-							placeholder="Confirm passowrd"
-							name="password2"
-							label="Confirm passowrd"
-							type="password"
-							id="password2"
-							autoComplete="current-password"
-							value={password2}
-							error={wrongPassword2 ? true : null}
-							helperText={wrongPassword2}
-							onChange={handleInputChange}
-						/>
-					</Paper>
-				</Grid>
-				<Grid item xs={12}>
-					<FormControlLabel
-						control={<Checkbox value="newsletter" color="primary" name="newsletter" checked={newsletter} onChange={handleInputChange} />}
-						label="I want to receive inspiration, marketing promotions and updates via email."
-					/>
-				</Grid>
-				<Grid item xs={12}>
-					<FormControlLabel
-						control={<Checkbox value="privacyPolicy" color="primary" name="privacyPolicy" checked={privacyPolicy} onChange={handleInputChange} />}
-						label={<span>I agree with <Link href="/privacy-policy.pdf">NeoLogin's privacy policy</Link> and <Link href="/NeoLogin-EndUserLicenseAgreement.pdf">license agreement</Link>.</span>}
-					/>
-					{privacyPolicy ? null :
-						<FormHelperText error={true}>You must agree to the privacy policy and license agreement</FormHelperText>
-					}
-				</Grid>
-			</Grid>
-			<button className='buttonContinue' type="submit" style={{ margin: '1rem 0' }}>
-				Sign In
-			</button>
-			<Grid container justify="flex-end">
-				<Grid item>
-					<Link href="#" variant="body2" onClick={signInClick}>
-						Already have an account? Sign in
-									</Link>
-				</Grid>
-			</Grid>
-		</div>
-	);
-}
 
 class SignUp extends React.Component {
 	constructor(props) {
@@ -311,20 +214,8 @@ class SignUp extends React.Component {
 							</Button>
 						</div>
 					) : (
-							<form className={classes.form} onSubmit={this.handleSubmit}>
-								<FormRegister
-									handleInputChange={(e) => this.handleInputChange(e)}
-									email={this.state.email}
-									wrongEmail={this.state.wrongEmail}
-									password1={this.state.password1}
-									wrongPassword1={this.state.wrongPassword1}
-									password2={this.state.password2}
-									wrongPassword2={this.state.wrongPassword2}
-									newsletter={this.state.newsletter}
-									privacyPolicy={this.state.privacyPolicy}
-									signInClick={this.state.signInClick}
-								/>
-								{/* <Grid container spacing={2}>
+						<form className={classes.form} onSubmit={this.handleSubmit}>
+								<Grid container spacing={2}>
 									<Grid item xs={12}>
 										<TextField
 											variant="outlined"
@@ -381,10 +272,10 @@ class SignUp extends React.Component {
 									<Grid item xs={12}>
 										<FormControlLabel
 											control={<Checkbox value="privacyPolicy" color="primary" name="privacyPolicy" checked={this.state.privacyPolicy} onChange={this.handleInputChange} />}
-											label={<span>I agree with <Link href="/privacy-policy.pdf">NeoLogin's privacy policy</Link></span>}
+											label={<span>I agree with <Link href="/privacy-policy.pdf">NeoLogin's privacy policy</Link> and <Link href="/NeoLogin-EndUserLicenseAgreement.pdf">license agreement</Link>.</span>}
 										/>
 										{this.state.privacyPolicy ? null :
-											<FormHelperText error={true}>You must agree to the privacy policy</FormHelperText>
+											<FormHelperText error={true}>You must agree to the privacy policy and license agreement</FormHelperText>
 										}
 									</Grid>
 								</Grid>
@@ -403,7 +294,7 @@ class SignUp extends React.Component {
 											Already have an account? Sign in
 									</Link>
 									</Grid>
-								</Grid> */}
+								</Grid>
 							</form>
 						)}
 				</div>

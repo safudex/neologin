@@ -14,6 +14,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
 
+import logo from './logoboxtxt.png';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
@@ -31,6 +32,7 @@ const styles = (theme => ({
 	},
 	paper: {
 		marginTop: theme.spacing(8),
+		marginBottom: theme.spacing(5),
 		display: 'flex',
 		flexDirection: 'column',
 		alignItems: 'center',
@@ -66,34 +68,6 @@ const useStyles = makeStyles(theme => ({
 		margin: 4,
 	},
 }));
-
-
-function ResetFormEmail({ handleInputChange, email, wrongEmail }) {
-	const classes = useStyles();
-
-	return (
-		<div>
-			<Paper className={classes.root} style={{margin: '1em 0'}} >
-				{/* <IconButton className={classes.iconButton} aria-label="menu"> */}
-				<AccountCircle style={{ margin: '0.3em', color: '#00369a' }} />
-				{/* </IconButton> */}
-				<InputBase
-					required
-					className={classes.input}
-					placeholder="Email Address"
-					id="email"
-					label="Email"
-					name="email"
-					value={email}
-					autoFocus
-					error={wrongEmail ? true : null}
-					helperText={wrongEmail}
-					onChange={handleInputChange}
-				/>
-			</Paper>
-		</div>
-	);
-}
 
 class LostPassword extends React.Component {
 	constructor(props) {
@@ -196,8 +170,7 @@ class LostPassword extends React.Component {
 		let body = null;
 		if (!this.state.emailCompleted) {
 			body = <div>
-				<ResetFormEmail handleInputChange={(e) => this.handleInputChange(e)} email={this.state.email} wrongEmail={this.state.wrongEmail} />
-				{/* <TextField
+				<TextField
 					variant="outlined"
 					margin="normal"
 					required
@@ -210,7 +183,7 @@ class LostPassword extends React.Component {
 					error={this.state.wrongEmail ? true : null}
 					helperText={this.state.wrongEmail}
 					onChange={this.handleInputChange}
-				/> */}
+				/>
 			</div>
 		} else {
 			body = <div>
@@ -274,10 +247,8 @@ class LostPassword extends React.Component {
 			<Container component="main" maxWidth="xs">
 				<CssBaseline />
 				<div className={classes.paper}>
-					<Avatar className={classes.avatar}>
-						<LockOutlinedIcon />
-					</Avatar>
-					<Typography component="h1" variant="h5" style={{ color: '#6A737D', marginTop: '3em'}}>
+					<img src={logo} style={{ height: '5em', marginBottom: '5em' }} />
+					<Typography component="h1" variant="h5" style={{ color: '#6A737D' }}>
 						Reset password
 					</Typography>
 					{this.state.codeCompleted ?

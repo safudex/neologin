@@ -34,6 +34,7 @@ const styles = (theme => ({
 	},
 	paper: {
 		marginTop: theme.spacing(8),
+		marginBottom: theme.spacing(5),
 		display: 'flex',
 		flexDirection: 'column',
 		alignItems: 'center',
@@ -69,88 +70,6 @@ const useStyles = makeStyles(theme => ({
 		margin: 4,
 	},
 }));
-
-function SimpleFormSignIn({ handleInputChange, email, wrongEmail, password, wrongPassword, rememberMe }) {
-	const classes = useStyles();
-
-	return (
-		<div>
-			<Paper className={classes.root} style={{ margin: '1rem 0' }}>
-				{/* <IconButton className={classes.iconButton} aria-label="menu"> */}
-				<AccountCircle style={{ margin: '0.3em', color: '#00369a' }} />
-				{/* </IconButton> */}
-				<InputBase
-					required
-					className={classes.input}
-					placeholder="Email Address"
-					key="email"
-					id="email"
-					label="Email Address"
-					name="email"
-					autoComplete="email"
-					autoFocus
-					value={email}
-					error={wrongEmail ? true : null}
-					helperText={wrongEmail ? "No user with this email" : null}
-					onChange={handleInputChange}
-				/>
-			</Paper>
-			<Paper className={classes.root}>
-				{/* <IconButton className={classes.iconButton} aria-label="menu"> */}
-				<LockOutlinedIcon style={{ margin: '0.3em', color: '#00369a' }} />
-				{/* </IconButton> */}
-				<InputBase
-					required
-					className={classes.input}
-					placeholder="Password"
-					name="password"
-					key="password"
-					label="Password"
-					type="password"
-					id="password"
-					autoComplete="current-password"
-					value={password}
-					error={wrongPassword ? true : null}
-					helperText={wrongPassword ? "Wrong password" : null}
-					onChange={handleInputChange}
-				/>
-			</Paper>
-			<FormControlLabel
-				control={<Checkbox value="remember" color="primary" name="rememberMe" checked={rememberMe} onChange={handleInputChange} />}
-				label="Remember me"
-			/>
-		</div>
-	);
-}
-
-function TwoFAFormSignIn({ handleInputChange, twoFA, MFACode, wrongMFACode }) {
-	const classes = useStyles();
-
-	return (
-		<div>
-			<Paper className={classes.root}>
-				{/* <IconButton className={classes.iconButton} aria-label="menu"> */}
-				<VpnKeyIcon style={{ margin: '0.3em', color: '#00369a' }} />
-				{/* </IconButton> */}
-				<InputBase
-					required
-					className={classes.input}
-					placeholder={twoFA === "SMS_MFA" ? "SMS Code" : "TOTP Code"}
-					key="MFACode"
-					id="MFACode"
-					label={twoFA === "SMS_MFA" ? "SMS Code" : "TOTP Code"}
-					name="MFACode"
-					autoFocus
-					value={MFACode}
-					error={wrongMFACode ? true : null}
-					helperText={wrongMFACode ? "Wrong code" : "Input the " + (twoFA === "SMS_MFA" ? "SMS code that we sent you" : "the time-based code from your authenticator App")}
-					onChange={handleInputChange}
-				/>
-			</Paper>
-		</div>
-	);
-}
-
 
 class SignIn extends React.Component {
 	constructor(props) {
@@ -283,10 +202,7 @@ class SignIn extends React.Component {
 			<Container component="main" maxWidth="xs">
 				<CssBaseline />
 				<div className={classes.paper}>
-					{/* <Avatar className={classes.avatar}> */}
-					{/* <LockOutlinedIcon /> */}
 					<img src={logo} style={{ height: '5em', marginBottom: '5em' }} />
-					{/* </Avatar> */}
 					{/* <span style={{ fontSize: '2rem', marginBottom: '2rem' }}>
 						NEO<span style={{ color: '' }}>LOGIN</span>
 					</span> */}
@@ -296,7 +212,7 @@ class SignIn extends React.Component {
 					<form className={classes.form} onSubmit={this.state.twoFA ? this.handleMFASubmit : this.handleSubmit}>
 						{this.state.twoFA ?
 							([
-								/* <TextField
+								<TextField
 									variant="outlined"
 									margin="normal"
 									required
@@ -310,9 +226,8 @@ class SignIn extends React.Component {
 									error={this.state.wrongMFACode ? true : null}
 									helperText={this.state.wrongMFACode ? "Wrong code" : "Input the " + (this.state.twoFA === "SMS_MFA" ? "SMS code that we sent you" : "the time-based code from your authenticator App")}
 									onChange={this.handleInputChange}
-								/> */
-								<TwoFAFormSignIn handleInputChange={(e) => this.handleInputChange(e)} twoFA={this.state.twoFA} MFACode={this.state.MFACode} wrongMFACode={this.state.wrongMFACode} />
-							]) : <SimpleFormSignIn handleInputChange={(e) => this.handleInputChange(e)} email={this.state.email} wrongEmail={this.state.wrongEmail} rememberMe={this.state.rememberMe} />/* ([
+								/>
+							]) : ([
 								<TextField
 						variant="outlined"
 						margin="normal"
@@ -349,16 +264,7 @@ class SignIn extends React.Component {
 						control={<Checkbox value="remember" color="primary" name="rememberMe" checked={this.state.rememberMe} onChange={this.handleInputChange} />}
 						label="Remember me"
 					/>
-					]) */}
-						{/* <Button
-							type="submit"
-							fullWidth
-							variant="contained"
-							color="primary"
-							className={classes.submit}
-						>
-							Sign In
-							</Button> */}
+					]) }
 						<button className='buttonContinue' type="submit" style={{ margin: '1rem 0' }}>
 							Sign In
           				</button>
