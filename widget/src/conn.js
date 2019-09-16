@@ -160,25 +160,28 @@ function closeWidget() {
 	connection.promise.then((parent) => parent.closeWidget())
 }
 
-function write(html) {
-	document.getElementById("content").innerHTML = html
+function displayWidget() {
+	connection.promise.then((parent) => parent.displayWidget(document.getElementsByTagName('body')[0].scrollHeight))
 }
 
 function showLoginButton() {
-	connection.promise.then((parent) => parent.displayWidget())
-	ReactDOM.render(<LoginButton closeWidget={closeWidget} />, document.getElementById('content'));
+	ReactDOM.render(<LoginButton closeWidget={closeWidget} />, document.getElementById('content'), () =>
+		displayWidget()
+	);
 }
 
 function successfulSignIn(account) {
-	connection.promise.then((parent) => parent.displayWidget())
-	ReactDOM.render(<UserData account={account} closeWidget={closeWidget} />, document.getElementById('content'));
+	ReactDOM.render(<UserData account={account} closeWidget={closeWidget} />, document.getElementById('content'), () =>
+		displayWidget()
+	);
 }
 
 
 function requestAcceptance(message) {
 	console.log('mess', message)
 	return new Promise((resolve, reject) => {
-		connection.promise.then((parent) => parent.displayWidget())
-		ReactDOM.render(<RequestAcceptance message={message} resolve={resolve} reject={reject} closeWidget={closeWidget} />, document.getElementById('content'));
+		ReactDOM.render(<RequestAcceptance message={message} resolve={resolve} reject={reject} closeWidget={closeWidget} />, document.getElementById('content'), () =>
+			displayWidget()
+		);
 	});
 }

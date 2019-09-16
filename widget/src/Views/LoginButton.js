@@ -18,9 +18,9 @@ function LoginButton({ closeWidget }) {
         alignItems="center"
         style={{ height: '100%', padding: '1em' }}
       >
-        <Grid item xs>
+        {/* <Grid item xs>
           <img src={logo} width='65px' />
-        </Grid>
+        </Grid> */}
         <Grid item xs>
           <p style={{ fontSize: '0.85em' }}>To continue, log in to NeoLogin, your secure gateway to the blockchain.</p>
         </Grid>
