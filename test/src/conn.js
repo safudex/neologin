@@ -59,7 +59,13 @@ let neologin = { removeEventListener, addEventListener };
 for (let i = 0; i < promiseMethods.length; i++) {
     let method = promiseMethods[i];
     neologin[method] = function (...args) {
-        return connection.promise.then((child) => child[method](...args));
+        return connection.promise.then((child) => {
+            return child
+        }).then(
+            (child) => child[method](...args)/* .then(() => {
+                
+            }) */
+        );
     };
 }
 
@@ -71,8 +77,8 @@ var iframeDeskStyle = {
     borderRadius: '8px',
     border: '0',
     width: '375px',
-    background:'white',
-    height: '300px'
+    background: 'white',
+
 }
 
 var iframeMobileStyle = {
@@ -82,26 +88,22 @@ var iframeMobileStyle = {
     borderRadius: '0px',
     width: '100%',
     border: '0',
-    background:'white',
-    height: '300px'
+    background: 'white'
 }
 
 function setIframeStyle(w, h) {
     let iframeStyle = w > 576 ? iframeDeskStyle : iframeMobileStyle
-    let actualDisp = iframe.style['display']
-    iframe.style = null
     for (let style in iframeStyle) {
         iframe.style[style] = iframeStyle[style];
     }
-    iframe.style['display'] = actualDisp
 }
 
-function displayWidget() {
-    iframe.style['display'] = 'block';
+function displayWidget(widgetHeight) {
+    iframe.style['height'] = widgetHeight + 'px';
 }
 
 function closeWidget() {
-    iframe.style['display'] = 'none';
+    iframe.style['height'] = '0px';
 }
 
 function getWindowSize() {
