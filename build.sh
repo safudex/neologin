@@ -48,6 +48,7 @@ cd ..
 
 if [ $1 == "production" ]; then
 	# Build provider bundle
+	cp test/src/conn.js provider/index.js
 	cd provider
 	sed -i 's/http:\/\/localhost:3002\//https:\/\/neologin.io\/widget\//g' index.js
 	npm install
