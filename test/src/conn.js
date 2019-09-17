@@ -36,7 +36,7 @@ function removeEventListener(ev) {
 }
 
 const iframe = document.createElement('iframe');
-iframe.src = 'http://localhost:3002/'//'https://neologin.io/widget/index.html';
+iframe.src = 'http://localhost:3002/';
 
 document.body.appendChild(iframe);
 closeWidget()
@@ -74,7 +74,7 @@ var iframeDeskStyle = {
     top: '1.5rem',
     right: '1.5rem',
     boxShadow: '0 5px 40px rgba(0,0,0,.16)',
-    borderRadius: '8px',
+    borderRadius: '4px',
     border: '0',
     width: '375px',
     background: 'white',
