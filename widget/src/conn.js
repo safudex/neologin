@@ -70,7 +70,7 @@ function signIn() {
 					acct = Neon.create.account(event.data.privkey);
 					if(event.data.rememberMe){
 						// Store privkey in localStore and restore later 
-						window.localStorage.setItem('privkey', privkey);
+						window.localStorage.setItem('privkey', event.data.privkey);
 					}
 					console.log(event.data.privkey, acct)
 					successfulSignIn(acct)
@@ -80,7 +80,7 @@ function signIn() {
 			);
 			showLoginButton();
 		} else {
-			acct = Neon.create.account(event.data.privkey);
+			acct = Neon.create.account(storedPrivkey);
 			successfulSignIn(acct)
 			resolve();
 		}
