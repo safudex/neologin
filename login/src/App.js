@@ -8,9 +8,7 @@ import { server } from './config';
 class App extends React.Component {
 	constructor(props) {
 		super(props);
-		console.log(window.opener.location.href);
-		//if(!server.includes("localhost") && (!window.opener || !window.opener.location || window.opener.location.href !== server)){
-		if(false){
+		if(!server.includes("localhost") && (!window.opener || !window.opener.location || window.opener.location.href !== server+"/widget/")){
 			//Trying to hack the user
 			window.close();
 			this.state = {
