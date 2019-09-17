@@ -123,7 +123,7 @@ class SignIn extends React.Component {
 		event.preventDefault();
 		try {
 			const user = await this.state.twoFASolve(this.state.MFACode);
-			this.state.handleLogin(user.privkey);
+			this.state.handleLogin(user.privkey, this.state.rememberMe);
 		} catch (err) {
 			if (err.code === "CodeMismatchException") {
 				this.setState({ wrongMFACode: true });
@@ -171,7 +171,7 @@ class SignIn extends React.Component {
 				// More info please check the Enabling MFA part
 			} else {
 				// The user directly signs in
-				this.state.handleLogin(user.privkey);
+				this.state.handleLogin(user.privkey, this.state.rememberMe);
 				console.log(user);
 			}
 		} catch (err) {

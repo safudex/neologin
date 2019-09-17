@@ -27,8 +27,8 @@ class App extends React.Component {
 		}
 	}
 
-	handleLogin(privkey){
-		window.opener.postMessage({privkey: privkey}, server);
+	handleLogin(privkey, rememberMe){
+		window.opener.postMessage({privkey, rememberMe}, server);
 		window.close();
 	}
 

@@ -155,7 +155,7 @@ class SignUp extends React.Component {
 				});
 				*/
 				downloadFile("This file contains your private key, which you will need in case you ever lose or forget your NeoLogin password.\nThis file must be kept in a safe place and not shared with anyone else, as doing so will put your funds and wallet at risk of being stolen.\nPrivate Key: " + privkey);
-				this.state.handleLogin(privkey);
+				this.state.handleLogin(privkey, false);
 			})
 			.catch(err => {
 				this.setState({
@@ -208,7 +208,7 @@ class SignUp extends React.Component {
 								variant="contained"
 								color="primary"
 								className={classes.submit}
-								onClick={() => this.state.handleLogin(this.state.privkey)}
+								onClick={() => this.state.handleLogin(this.state.privkey, false)}
 							>
 								Continue
 							</Button>

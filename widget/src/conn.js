@@ -59,20 +59,31 @@ connection.promise.then(parent => {
 
 function signIn() {
 	return new Promise((resolve, reject) => {
-		window.addEventListener("message",
-			(event) => {
-				console.log(event.origin, server)
-				if (event.origin !== server || !event.data.privkey) {
-					return;
-				}
-				acct = Neon.create.account(event.data.privkey);
-				console.log(event.data.privkey, acct)
-				successfulSignIn(acct)
-				resolve();
-			},
-			false
-		);
-		showLoginButton();
+		let storedPrivkey = window.localStorage.getItem('privkey');
+		if(storedPrivkey === null) {
+			window.addEventListener("message",
+				(event) => {
+					console.log(event.origin, server)
+					if (event.origin !== server || !event.data.privkey) {
+						return;
+					}
+					acct = Neon.create.account(event.data.privkey);
+					if(event.data.rememberMe){
+						// Store privkey in localStore and restore later 
+						window.localStorage.setItem('privkey', privkey);
+					}
+					console.log(event.data.privkey, acct)
+					successfulSignIn(acct)
+					resolve();
+				},
+				false
+			);
+			showLoginButton();
+		} else {
+			acct = Neon.create.account(event.data.privkey);
+			successfulSignIn(acct)
+			resolve();
+		}
 	});
 }
 
