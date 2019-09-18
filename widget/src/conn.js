@@ -103,11 +103,23 @@ const providerInfo = {
 	website: 'https://neologin.io',
 	version: 'v0.1',
 	compatibility: [],
-	extra: {}
+	extra: {
+		theme: '',
+		currency: ''
+	}
 };
 
-function getProvider() {
-	return Promise.resolve(providerInfo);
+function getProvider() {//To Do: case CONNECTION_DENIED
+	return new Promise((resolve, reject) => {
+		if (providerInfo)
+			resolve(providerInfo)
+		else
+			reject({
+				type: 'NO_PROVIDER',
+				description: 'No provider available.',
+				data: ''
+			})
+	})
 }
 
 function getNetworks() {
@@ -120,13 +132,16 @@ function getNetworks() {
 function getAccount(...args) {
 	return new Promise((resolve, reject) => {
 		requestAcceptance('Do you want to give access to your address?', false).then(() => {
-			console.log('ddd')
 			resolve({
 				address: acct.address,
 				label: 'My Spending Wallet'
 			})
 		}).catch(() => {
-			reject('Denied');
+			reject({
+				type: 'CONNECTION_DENIED',
+				description: 'The user rejected the request to connect with your dApp.',
+				data: ''
+			});
 		})
 	})
 }
