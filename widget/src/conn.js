@@ -6,6 +6,8 @@ import ReactDOM from 'react-dom'
 import LoginButton from './Views/LoginButton'
 import UserData from './Views/UserData';
 import RequestAcceptance from './Views/RequestAcceptance'
+import { u } from '@cityofzion/neon-js';
+import { v4 as uuid } from 'uuid';
 
 let acct = null;
 let defaultNetwork = "MainNet";
@@ -149,23 +151,28 @@ function invokeMulti(invokeMultiArgs) {
 }
 
 function signMessage(signArgs) {
-	requestAcceptance(JSON.stringify(signArgs)).then(() => alert('sent!'));
-	/*
-	const salt = random(); 
-	return {
-		publicKey: acct.publicKey; // Public key of account that signed message
-		message: signArgs.message; // Original message signed
-		salt: string; // Salt added to original message as prefix, before signing
-		data: string; // Signed message
-	};
-	*/
+	return requestAcceptance(JSON.stringify(signArgs))
+		.then(() => {
+			return new Promise((resolve, reject) => {
+				const salt = uuid().replace(/-/g, '');
+				const parameterHexString = u.str2hexstring(salt + signArgs.message);
+				const lengthHex = u.num2VarInt(parameterHexString.length / 2);
+				const concatenatedString = lengthHex + parameterHexString;
+				const messageHex = '010001f0' + concatenatedString + '0000';
+
+				resolve({
+					publicKey: acct.publicKey, // Public key of account that signed message
+					message: signArgs.message, // Original message signed
+					salt: salt, // Salt added to original message as prefix, before signing
+					data: messageHex, // Signed message
+				});
+			});
+		});
 }
 
 function deploy(deployArgs) {
 	requestAcceptance(JSON.stringify(deployArgs)).then(() => alert('sent!'));
 }
-
-// EVERYTHING ONWARDS HAS TO BE REMODELED TO IMPROVE THE USER INTERFACE
 
 function closeWidget() {
 	connection.promise.then((parent) => parent.closeWidget())
@@ -186,7 +193,6 @@ function successfulSignIn(account) {
 		displayWidget()
 	);
 }
-
 
 function requestAcceptance(message) {
 	console.log('mess', message)
