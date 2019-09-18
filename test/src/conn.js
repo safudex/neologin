@@ -116,4 +116,27 @@ function getWindowSize() {
 window.addEventListener("resize", getWindowSize);
 getWindowSize();
 
+neologin.utils = {
+	hex2str: (hexx)=>{
+		var hex = hexx.toString();//force conversion
+		var str = '';
+		for (var i = 0; (i < hex.length && hex.substr(i, 2) !== '00'); i += 2)
+			str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+		return str;
+	},
+	str2hex: (str)=>{
+		var arr = [];
+		for (var i = 0, l = str.length; i < l; i ++) {
+			var hex = Number(str.charCodeAt(i)).toString(16);
+			arr.push(hex.length > 1 && hex || "0" + hex); //arr.push(hex);
+		}
+		return arr.join('');
+	},
+	hex2int: (hex) => parseInt(hex, 16),
+	int2hex: (int) => int.toString(16),
+	reverseHex: (hex) => hex.match(/.{2}/g).reverse().join(''),
+	address2scriptHash: (address) =>{},
+	scriptHash2address: (scriptHash) =>{}
+};
+
 export default neologin;
