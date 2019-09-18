@@ -1,5 +1,7 @@
 import connectToChild from 'penpal/lib/connectToChild';
 
+let heights = []
+
 function sendEvent(ev, data) { //{type, data}
     registeredEvents[ev].map((cb) => cb(data));
 }
@@ -61,11 +63,7 @@ for (let i = 0; i < promiseMethods.length; i++) {
     neologin[method] = function (...args) {
         return connection.promise.then((child) => {
             return child
-        }).then(
-            (child) => child[method](...args)/* .then(() => {
-                
-            }) */
-        );
+        }).then((child) => child[method](...args));
     };
 }
 
@@ -99,11 +97,21 @@ function setIframeStyle(w, h) {
 }
 
 function displayWidget(widgetHeight) {
+    heights.push(widgetHeight)
     iframe.style['height'] = widgetHeight + 'px';
+    console.log(heights)
 }
 
 function closeWidget() {
-    iframe.style['height'] = '0px';
+    heights.pop()
+    if (heights.length) {
+        iframe.style['height'] = heights[heights.length - 1] + 'px';
+        console.log(heights[heights.length - 1], '<----')
+        console.log(iframe.style['height'])
+    }
+    else
+        iframe.style['height'] = '0px';
+    console.log(heights)
 }
 
 function getWindowSize() {

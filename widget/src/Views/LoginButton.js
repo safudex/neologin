@@ -1,6 +1,7 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import { server } from '../config';
+import ReactDOM from 'react-dom'
 
 import './styles.css'
 
@@ -10,7 +11,10 @@ import Brand from './Brand'
 function LoginButton({ closeWidget }) {
   return (
     <div>
-      <Brand closeWidget={closeWidget}/>
+      <Brand closeWidget={() => {
+        closeWidget()
+        ReactDOM.unmountComponentAtNode(window.document.getElementById('content'))
+      }} />
       <Grid
         container
         direction="column"

@@ -3,7 +3,7 @@ import Grid from '@material-ui/core/Grid';
 
 import './styles.css'
 
-function Brand({ closeWidget }) {
+function Brand({ closeWidget, reqNumber }) {
   return (
     <div>
       <Grid
@@ -13,9 +13,14 @@ function Brand({ closeWidget }) {
         alignItems="center"
         style={{ textAlign: 'center', padding: '8px 0', background: '#fff' }}
       >
-        <Grid item xs={1}></Grid>
+        <Grid item xs={1}>
+          <Grid container container direction="row" justify="flex-end" alignItems="center">
+            <Grid item>
+              <span className='pendingRequestBadge'>{reqNumber == 1 ? null : reqNumber}</span>
+            </Grid>
+          </Grid>
+        </Grid>
         <Grid item xs={10}>
-          {/* <img src={logo2} style={{ height: '1em' }} /> */}
           <span className="brand" onClick={() => window.open('https://neologin.io')}>NEO LOGIN</span>
         </Grid>
         <Grid item xs={1}>

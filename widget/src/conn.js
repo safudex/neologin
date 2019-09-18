@@ -12,6 +12,9 @@ import { v4 as uuid } from 'uuid';
 let acct = null;
 let defaultNetwork = "MainNet";
 
+let totalRequests = 0
+let calledLogin = false
+
 let rawMethods = {
 	getProvider,
 	getNetworks,
@@ -43,7 +46,7 @@ Object.keys(rawMethods).map((key) => {
 		if (acct || unathenticatedMethods.includes(key)) {
 			return rawMethods[key](...args);
 		} else {
-			return signIn().then(() => rawMethods[key](...args));
+			return signIn().then(() => rawMethods[key](...args)).catch(() => Promise.reject('already opened'))
 		}
 	}
 })
@@ -61,30 +64,36 @@ connection.promise.then(parent => {
 
 function signIn() {
 	return new Promise((resolve, reject) => {
-		let storedPrivkey = window.localStorage.getItem('privkey');
-		if(storedPrivkey === null) {
-			window.addEventListener("message",
-				(event) => {
-					console.log(event.origin, server)
-					if (event.origin !== server || !event.data.privkey) {
-						return;
-					}
-					acct = Neon.create.account(event.data.privkey);
-					if(event.data.rememberMe){
-						// Store privkey in localStore and restore later 
-						window.localStorage.setItem('privkey', event.data.privkey);
-					}
-					console.log(event.data.privkey, acct)
-					successfulSignIn(acct)
-					resolve();
-				},
-				false
-			);
-			showLoginButton();
-		} else {
-			acct = Neon.create.account(storedPrivkey);
-			successfulSignIn(acct)
-			resolve();
+		if (!calledLogin) {
+			console.log('inn')
+			calledLogin = true
+			let storedPrivkey = window.localStorage.getItem('privkey');
+			if (storedPrivkey === null) {
+				window.addEventListener("message",
+					(event) => {
+						console.log(event.origin, server)
+						if (event.origin !== server || !event.data.privkey) {
+							return;
+						}
+						acct = Neon.create.account(event.data.privkey);
+						if (event.data.rememberMe) {
+							// Store privkey in localStore and restore later 
+							window.localStorage.setItem('privkey', event.data.privkey);
+						}
+						successfulSignIn(acct)
+						resolve();
+					},
+					false
+				);
+				showLoginButton();
+			} else {
+				acct = Neon.create.account(storedPrivkey);
+				successfulSignIn(acct)
+				resolve();
+			}
+		}
+		else {
+			reject()
 		}
 	});
 }
@@ -109,10 +118,17 @@ function getNetworks() {
 }
 
 function getAccount(...args) {
-	return Promise.resolve({
-		address: acct.address,
-		label: 'My Spending Wallet'
-	});
+	return new Promise((resolve, reject) => {
+		requestAcceptance('Do you want to give access to your address?', false).then(() => {
+			console.log('ddd')
+			resolve({
+				address: acct.address,
+				label: 'My Spending Wallet'
+			})
+		}).catch(() => {
+			reject('Denied');
+		})
+	})
 }
 
 function getPublicKey() {
@@ -139,7 +155,13 @@ function getTransaction(txArgs) { }
 function getApplicationLog(appLogArgs) { }
 
 function send(sendArgs) {
-	requestAcceptance(JSON.stringify(sendArgs)).then(() => alert('sent!'));
+	return new Promise((resolve, reject) =>
+		requestAcceptance(JSON.stringify(sendArgs), true).then(() =>
+			alert('sent!')
+		).catch(() =>
+			reject('not sent!')
+		)
+	)
 }
 
 function invoke(invokeArgs) {
@@ -178,27 +200,44 @@ function closeWidget() {
 	connection.promise.then((parent) => parent.closeWidget())
 }
 
-function displayWidget() {
-	connection.promise.then((parent) => parent.displayWidget(document.getElementsByTagName('body')[0].scrollHeight))
+function displayWidget(wheight) {
+	connection.promise.then((parent) => parent.displayWidget(wheight))
+	console.log('displayed!!')
 }
 
 function showLoginButton() {
-	ReactDOM.render(<LoginButton closeWidget={closeWidget} />, document.getElementById('content'), () =>
-		displayWidget()
+	ReactDOM.render(<LoginButton closeWidget={() => { closeWidget(); calledLogin = false; }} />, document.getElementById('content'), () =>
+		displayWidget(document.getElementById('content').clientHeight)
 	);
 }
 
 function successfulSignIn(account) {
-	ReactDOM.render(<UserData account={account} closeWidget={closeWidget} />, document.getElementById('content'), () =>
-		displayWidget()
-	);
+	console.log('called successfulSignIn')
+	window.document.getElementById('content').innerHTML = '';
+	closeWidget()
+	//ReactDOM.render(<UserData account={account} closeWidget={closeWidget} />, document.getElementById('content'), () => {
+	//	displayWidget(document.getElementById('content').clientHeight)
+	//});
 }
 
-function requestAcceptance(message) {
-	console.log('mess', message)
+function requestAcceptance(message, transaction) {
+	console.log('called requestAcceptance')
+	var requestContainer = document.createElement("div");
+	requestContainer.id = 'request-' + totalRequests
+	requestContainer.style.top = '0'
+	requestContainer.style.position = 'fixed'
+	requestContainer.style.width = '100%'
+	requestContainer.style.background = 'white'
+	var mainContainer = document.getElementById("root");
+	mainContainer.appendChild(requestContainer);
 	return new Promise((resolve, reject) => {
-		ReactDOM.render(<RequestAcceptance message={message} resolve={resolve} reject={reject} closeWidget={closeWidget} />, document.getElementById('content'), () =>
-			displayWidget()
-		);
+		ReactDOM.render(<RequestAcceptance transaction={transaction} message={message} resolve={resolve} reject={reject} closeWidget={closeWidget} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+			totalRequests++
+			displayWidget(document.getElementById(requestContainer.id).clientHeight)
+		});
 	});
+}
+
+function closeRequest() {
+	totalRequests--
 }

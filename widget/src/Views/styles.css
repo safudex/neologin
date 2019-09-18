@@ -38,12 +38,17 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00369a', end
     background: linear-gradient(to right, #2e5aac 0%,#00c9cb 100%);
 }
 
-.buttonContinue:hover, .closeButton:hover{
+.buttonContinue:hover{
     cursor: pointer;
 }
 
 .closeButton {
     color: grey
+}
+
+.closeButton:hover{
+    cursor: pointer;
+    color: dimgray;
 }
 
 .buttonAccept {
@@ -60,4 +65,13 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00369a', end
 
 .buttonReject:hover, .buttonReject:focus {
     background: #9b1717;
+}
+
+.pendingRequestBadge {
+    display : inline-block;
+    width: 1.3em;
+    border-radius: 50%;
+    color: #fff;
+    text-align: center;
+    background: coral;
 }
