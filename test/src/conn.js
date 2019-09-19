@@ -1,4 +1,7 @@
 import connectToChild from 'penpal/lib/connectToChild';
+import base58 from 'bs58'; //TODO: Remove dependency
+import SHA256 from 'crypto-js/sha256';
+import hexEncoding from 'crypto-js/enc-hex';
 
 function sendEvent(ev, data) { //{type, data}
     registeredEvents[ev].map((cb) => cb(data));
@@ -116,6 +119,16 @@ function getWindowSize() {
 window.addEventListener("resize", getWindowSize);
 getWindowSize();
 
+// UTILS
+
+let reverseHex = (hex) => hex.match(/.{2}/g).reverse().join('');
+
+function sha256(data) {
+  const hex = hexEncoding.parse(data);
+  const sha = SHA256(hex).toString();
+  return sha;
+}
+
 neologin.utils = {
 	hex2str: (hexx)=>{
 		var hex = hexx.toString();//force conversion
@@ -128,15 +141,30 @@ neologin.utils = {
 		var arr = [];
 		for (var i = 0, l = str.length; i < l; i ++) {
 			var hex = Number(str.charCodeAt(i)).toString(16);
-			arr.push(hex.length > 1 && hex || "0" + hex); //arr.push(hex);
+			arr.push(hex.length > 1 && hex || "0" + hex);
 		}
 		return arr.join('');
 	},
-	hex2int: (hex) => parseInt(hex, 16),
-	int2hex: (int) => int.toString(16),
-	reverseHex: (hex) => hex.match(/.{2}/g).reverse().join(''),
-	address2scriptHash: (address) =>{},
-	scriptHash2address: (scriptHash) =>{}
+	hex2int: (hex) => parseInt(reverseHex(hex), 16),
+	int2hex: (int) => {
+		let hex = int.toString(16);
+		return reverseHex(hex.length % 2 ? '0' + hex : hex)
+	},
+	reverseHex,
+	// Functions taken directly from o3's implementation (MIT licensed)
+	address2scriptHash: (address) => {
+		const hash = base58.decode(address).toString('hex'); //TODO: Replace with base58tohex
+		return hash.substr(2, 40);
+	},
+	scriptHash2address: (scriptHash) =>{
+		const ADDR_VERSION = '17';
+		scriptHash = scriptHash.substr(0, 40);
+		const firstSha = sha256(ADDR_VERSION + scriptHash);
+		const secondSha = sha256(firstSha);
+		const shaChecksum = secondSha.substr(0, 8);
+		const arrayBuffer = Buffer.from(ADDR_VERSION + scriptHash + shaChecksum, "hex");
+		return base58.encode(arrayBuffer);
+	}
 };
 
 export default neologin;
