@@ -1,9 +1,9 @@
 # NeoLogin
-> Easy peasy NEO dAPI provider
+> A simple and easy to integrate wallet provider for NEO dApps
 
 ## Try it
 
-Check out [a live example of a Dapp using NeoLogin](https://neologin.io/example/)!
+Check out [a live example of NeoLogin's capabilities](https://neologin.io/)!
 
 ## Quickstart
 
@@ -41,9 +41,10 @@ NeoLogin is a semi-custodial web-wallet for NEO. User's private keys are encrypt
 Furthermore, Switcheo Account nor Portis are fully open-source, but NeoLogin is.
 
 ## How does it work?
-It works the same way Portis and Switcheo Account do, check out the explanations for their systems:
-- [Portis whitepaper](https://assets.portis.io/white-paper/latest.pdf)
-- [Medium article explaining how Switcheo Account works](https://medium.com/switcheo/switcheo-discovery-how-switcheo-account-actually-works-1c702bb77b16)
+NeoLogin encrypts the user's private key with their password (making sure that it has enough entropy to prevent password cracking attacks) on sign up and proceeds to store the encrypted private key on it's servers.
+Every time a user logs in, the private key is downloaded and decrypted in the browser client, therefore the server never gets to know the decryption password nor the private key itself.
+
+This allows NeoLogin to provide the security of a non-custodial wallet coupled with the User Experience of a centralized login solution, as, from the point of view of the user, it works the same way as Google's universal login.
 
 ## Why was this created?
 Because I wanted to use a semi-custodial wallet for SafuDEX but couln't find any. I tried to contact Switcheo about their solution but didn't get any reply, couldn't use their system because it's not fully open source and it doesn't make business sense for them to distribute it, as it's one of their competitive advantages.
@@ -56,48 +57,24 @@ Compared to traditional software wallets, NeoLogin appears as a standard central
 - Can be used from multiple devices without any friction
 - Device loss doesn't lead to private key loss
 
-## Security analysis
-
-The biggest attack vector is without a doubt the webpage that serves the code that handles the login and decryption of the password. This webpage is directly served from the github repository using Github Pages, which means that if either Github or the repository maintainers were to turn malicious or get hacked it'd be possible to change the website to another one that could capture user login details (such as password and email) and the decrypted private keys and send them to a 3rd party server, effectively stealing all user funds and login details. Fortunately, if this attack were to be carried, it would affect all the wallet logins and the change would be public on Github (unless the attackers managed to get complete control over the github infrastructure and performed an attack especially targeted at NeoLogin, which seems unlikely considering the fact that there's many more profitable targets to attack if Github is hacked), so it'd be possible to detect the attack quickly an act on it. Still, all the users that logged in during the attack would have their wallet compromised.  
-It's also worth noting that this attack vector is also present in any other wallet that has a self-updating mechanism, such as all the browser extensions (MetaMask, Teemo, Neoline), all web-based wallets and, finally, any wallets downloaded through an App store, which includes all the mobile wallets and O3 if downloaded through a 3rd party. In these other wallets this particular attack is even worse, as it could affect all users, not just those who have signed in during the attack.
-
-A second attack vector that is also quite important is the key database, which houses all the users' private keys encrypted. If the service operators were to turn malicious or this database was hacked, malicious entities could try to crack the encrypted keys using dictionary attacks or just plain brute force attacks. This means that, if a user's password is weak, it'd be possible to crack the private key's encryption and steal the user's funds. Because of the reliance on the strength of the user's password a simple mitigation for this attack is to use a strong password.
-
-A third problem that may arise is that, if the user hasn't saved the key locally, a shutdown/wipedout of the service can result in the loss of user's private keys, resulting in the loss of all the funds stored in the wallet. Among all the other issues, this one is almost negligible, given that backups of the database are performed routinely and, in case of the service shutting down, there would be a winding down period in which users could retrieve their funds. And, even in the case of the service operators turning suddenly malicious, shutting down the service and refusing to let any users get their keys (exposing themselves to massive legal liabilities in the process) users would be able to get their keys from the files downloaded when the regsitration is performed.
-
-It is possible to mitigate both the first and second attack vectors through the use of Trusted Execution Environments (TEE):      
-- The web server that serves the website could be run inside a TEE where the website's SSL certificate would reside, making it so only the software inside the TEE could serve the webpages
-- Private keys inside the password database could be doubly encrypted with a key under the control of some software running inside a TEE, which would only decrypt the private key if all the required checks have passed (password provided is correct, 2FA passes...)
-
-In combination, these two changes would make it possible to fully audit the whole system from outside while making it impossible to alter any part of it due to the TEE's hardware isolation. Therefore, neither the service providers nor any hackers could get access to private key's without going through the standard procedure (user login & 2FA).
-Implementation of such a system is non-trivial and would require a substantial development effort, which is the reason it's not implemented in the current version. Also, the maintenance costs of such systems would be way higher than the costs of the current one.
-
-Overall, NeoLogin trades security for convenience when compared with traditional wallets. Following is a simple comparison of security attack vectors between wallets:
-
-|           Wallet                 | First attack | Second attack | Third attack |
-|----------------------------------|--------------|---------------|--------------|
-| Non-updatable traditional wallet |              |               |              |
-| Updatable traditional wallet    |      ⚰️       |               |              |
-| non-TEE-based NeoLogin (current) |      ⚰️       |       ⚰️       |       ⚰️      |
-| TEE-based NeoLogin (future)      |              |               |              |
+## Security Analysis
+[Analysis](https://github.com/safudex/neologin/blob/master/SECURITY.md)
 
 ## Development
 
 ### Front-end
 
-To build the whole system:
+Build the whole system:
 ```bash
-bash build.sh
+bash build.sh production
 ```
+The static files resulting from the build will be found in `./dist`
 
-To start a development server:
+Start a development server:
 ```
-npm start
+bash build.sh dev
 ```
-
-**Note**: The development server only watches and rebuilds javascript files, so if any other type of file (like html) is changed, `bash build.sh` will have to be run for the changes to be applied.
-
-Once the system has been built and the development server is running, go to <http://localhost:8080/example/> for a live version of the current system.
+Once the system has been built and the development server is running, go to <http://localhost:3000/> for a live version of the current system.
 
 ### Back-end
 It's based in the following AWS resources:

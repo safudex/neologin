@@ -26,7 +26,7 @@ function LoginButton({ closeWidget }) {
           <img src={logo} width='65px' />
         </Grid> */}
         <Grid item xs>
-          <p style={{ fontSize: '0.85em' }}>To continue, log in to NeoLogin, your secure gateway to the blockchain.</p>
+          <p style={{ fontSize: '0.85em' }}>To continue, log in to NeoLogin.</p>
         </Grid>
         <Grid item xs style={{ width: '100%' }}>
           <button className='buttonContinue' onClick={() => {
