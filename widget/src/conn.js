@@ -11,6 +11,7 @@ import { v4 as uuid } from 'uuid';
 
 let acct = null;
 let defaultNetwork = "MainNet";
+const supportedNetworks = ["MainNet", "TestNet"];
 
 let totalRequests = 0
 let calledLogin = false
@@ -109,37 +110,20 @@ const providerInfo = {
 	}
 };
 
+// Does NOT need to be accepted
 function getProvider() {
-	return new Promise((resolve, reject) => {
-		requestAcceptance('Do you want to give access to your provider information?', false).then(() => {
-			resolve(providerInfo)
-		}).catch(() => {
-			reject({
-				type: 'CONNECTION_DENIED',
-				description: 'The user rejected the request to connect with your dApp.',
-				data: null
-			});
-		})
-	})
+	return Promise.resolve(providerInfo);
 }
 
+// Does NOT need to be accepted
 function getNetworks() {
-	return new Promise((resolve, reject) => {
-		requestAcceptance('Do you want to give access to your network information?', false).then(() => {
-			resolve({
-				networks: ["MainNet", "TestNet"],
-				defaultNetwork: defaultNetwork
-			})
-		}).catch(() => {
-			reject({
-				type: 'CONNECTION_DENIED',
-				description: 'The user rejected the request to connect with your dApp.',
-				data: null
-			});
-		})
-	})
+	return Promise.resolve({
+		networks: supportedNetworks,
+		defaultNetwork: defaultNetwork
+	});
 }
 
+// Needs to be accepted once
 function getAccount(...args) {
 	return new Promise((resolve, reject) => {
 		requestAcceptance('Do you want to give access to your address?', false).then(() => {
@@ -157,6 +141,7 @@ function getAccount(...args) {
 	})
 }
 
+// Needs to be accepted once
 function getPublicKey() {
 	return new Promise((resolve, reject) => {
 		requestAcceptance('Do you want to give access to your public key?', false).then(() => {
@@ -174,29 +159,15 @@ function getPublicKey() {
 	})
 }
 
+// Does NOT need to be accepted
 function getBalance(balanceArgs) {
 	return new Promise((resolve, reject) => {
-		requestAcceptance('Do you want to give access to your balance?', false).then(() => {
-			resolve()
-		}).catch(() => {
-			reject({
-				type: 'CONNECTION_DENIED',
-				description: 'The user rejected the request to connect with your dApp.',
-				data: ''
-			});
-		})
 	})
 }
 
+// Does NOT need to be accepted
 function getStorage(storageArgs) {
 	return new Promise((resolve, reject) => {
-		if (!acct)
-			reject({
-				type: 'CONNECTION_REFUSED',
-				description: 'Connection dApp not connected. Please call the "connect" function.',
-				data: ''
-			})
-		else
 			//foo().then(() => resolve({ result: 'hello world' })).catch(() => {
 			//	reject({
 			//		type: 'RPC_ERROR',
@@ -208,6 +179,7 @@ function getStorage(storageArgs) {
 	})
 } //{ scriptHash: string, key: string, network?: string }){
 
+// Needs to be accepted once
 function invokeRead(invokeArgs) {
 	return new Promise((resolve, reject) => {
 		if (!acct)
@@ -238,6 +210,7 @@ function invokeRead(invokeArgs) {
 	})
 }
 
+// Does NOT need to be accepted
 function getBlock(blockArgs) {
 	//return new Promise((resolve, reject) => {
 	//	foo().then(() => resolve({ ... })).catch(() => {
@@ -250,6 +223,7 @@ function getBlock(blockArgs) {
 	//})
 }
 
+// Does NOT need to be accepted
 function getBlockHeight(blockHeightArgs) {
 	//return client.getBlockCount();
 
@@ -264,6 +238,7 @@ function getBlockHeight(blockHeightArgs) {
 	//})
 }
 
+// Does NOT need to be accepted
 function getTransaction(txArgs) {
 	//return new Promise((resolve, reject) => {
 	//	foo().then(() => resolve({ ... })).catch(() => {
@@ -276,6 +251,7 @@ function getTransaction(txArgs) {
 	//})
 }
 
+// Does NOT need to be accepted
 function getApplicationLog(appLogArgs) {
 	//return new Promise((resolve, reject) => {
 	//	foo().then(() => resolve({ ... })).catch(() => {
@@ -288,6 +264,7 @@ function getApplicationLog(appLogArgs) {
 	//})
 }
 
+// Needs to be accepted every time
 function send(sendArgs) {
 	return new Promise((resolve, reject) =>
 		requestAcceptance(JSON.stringify(sendArgs), true).then(() =>//TODO DIFFERENT FOR TRANSACTION
@@ -318,6 +295,7 @@ function send(sendArgs) {
 	)
 }
 
+// Needs to be accepted every time
 function invoke(invokeArgs) {
 	return new Promise((resolve, reject) =>
 		requestAcceptance(JSON.stringify(invokeArgs)).then(() =>
@@ -339,6 +317,7 @@ function invoke(invokeArgs) {
 	)
 }
 
+// Needs to be accepted every time
 function invokeMulti(invokeMultiArgs) {
 	return new Promise((resolve, reject) =>
 		requestAcceptance(JSON.stringify(invokeMultiArgs)).then(() =>
@@ -360,6 +339,7 @@ function invokeMulti(invokeMultiArgs) {
 	)
 }
 
+// Needs to be accepted every time
 function signMessage(signArgs) {
 	return requestAcceptance(signArgs.message)
 		.then(() => {
@@ -386,6 +366,7 @@ function signMessage(signArgs) {
 		})
 }
 
+// Needs to be accepted every time
 function deploy(deployArgs) {
 	return requestAcceptance(JSON.stringify(deployArgs))
 		.then(() => {
