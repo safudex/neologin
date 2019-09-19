@@ -188,7 +188,7 @@ function invokeMulti(invokeMultiArgs) {
 }
 
 function signMessage(signArgs) {
-	return requestAcceptance(JSON.stringify(signArgs))
+	return requestAcceptance(signArgs.message)
 		.then(() => {
 			return new Promise((resolve, reject) => {
 				const salt = uuid().replace(/-/g, '');
