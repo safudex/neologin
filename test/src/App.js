@@ -13,7 +13,7 @@ function App() {
             .then((account) => {
               setResult(account.address)
               console.log('Provider address: ' + account);
-            }).catch((err) => setResult(err))}>getAccount</button>
+            }).catch((err) => setResult(JSON.stringify(err)))}>getAccount</button>
 
           <button onClick={() => neologin.getProvider()
             .then((provider) => {
@@ -33,7 +33,7 @@ function App() {
               console.log('Public key: ' + publicKey);
             })}>getPublicKey</button>
 
-          <button onClick={() => neologin.send().catch(err => setResult(err))}>send</button>
+          <button onClick={() => neologin.send().catch(err => setResult(JSON.stringify(err)))}>send</button>
         </div>
         <div>
           <p>{result}</p>

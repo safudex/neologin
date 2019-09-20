@@ -15,6 +15,8 @@ const supportedNetworks = ["MainNet", "TestNet"];
 
 let totalRequests = 0
 let calledLogin = false
+let calledPermission = false
+let userGivesPermission = false
 
 let rawMethods = {
 	getProvider,
@@ -47,7 +49,7 @@ Object.keys(rawMethods).map((key) => {
 		if (acct || unathenticatedMethods.includes(key)) {
 			return rawMethods[key](...args);
 		} else {
-			return signIn().then(() => rawMethods[key](...args)).catch(() => Promise.reject('already opened'))
+			return signIn().then(() => rawMethods[key](...args)).catch((e) => Promise.reject(e))
 		}
 	}
 })
@@ -168,7 +170,7 @@ function getNetworks() {
 // Needs to be accepted once
 function getAccount(...args) {
 	return new Promise((resolve, reject) => {
-		requestAcceptance('Do you want to give access to your address?', false).then(() => {
+		requestAcceptance('Do you want to give access to your address?').then(() => {
 			resolve({
 				address: acct.address,
 				label: 'My Spending Wallet'
@@ -186,7 +188,7 @@ function getAccount(...args) {
 // Needs to be accepted once
 function getPublicKey() {
 	return new Promise((resolve, reject) => {
-		requestAcceptance('Do you want to give access to your public key?', false).then(() => {
+		requestAcceptance('Do you want to give access to your public key?').then(() => {
 			resolve({
 				address: acct.address,
 				publicKey: acct.publicKey
@@ -270,7 +272,7 @@ function getApplicationLog(appLogArgs) {
 // Needs to be accepted every time
 function send(sendArgs) {
 	return new Promise((resolve, reject) =>
-		requestAcceptance(JSON.stringify(sendArgs), true).then(() =>//TODO DIFFERENT FOR TRANSACTION
+		requestAcceptance('This website is requesting access to your account').then(() =>//TODO DIFFERENT FOR TRANSACTION
 			alert('sent!')
 			//foo().then(() => resolve( { txid:'', nodeUrl:'' } )).catch((err) => {
 			//	let err_response = {}
@@ -407,7 +409,6 @@ function showLoginButton() {
 }
 
 function successfulSignIn(account) {
-	console.log('called successfulSignIn')
 	window.document.getElementById('content').innerHTML = '';
 	closeWidget()
 	//ReactDOM.render(<UserData account={account} closeWidget={closeWidget} />, document.getElementById('content'), () => {
@@ -415,8 +416,7 @@ function successfulSignIn(account) {
 	//});
 }
 
-function requestAcceptance(message, transaction) {
-	console.log('called requestAcceptance')
+function requestAcceptance(message) {
 	var requestContainer = document.createElement("div");
 	requestContainer.id = 'request-' + totalRequests
 	requestContainer.style.top = '0'
@@ -426,10 +426,16 @@ function requestAcceptance(message, transaction) {
 	var mainContainer = document.getElementById("root");
 	mainContainer.appendChild(requestContainer);
 	return new Promise((resolve, reject) => {
-		ReactDOM.render(<RequestAcceptance transaction={transaction} message={message} resolve={resolve} reject={reject} closeWidget={closeWidget} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
-			totalRequests++
-			displayWidget(document.getElementById(requestContainer.id).clientHeight)
-		});
+		if (!calledPermission || userGivesPermission) {
+			calledPermission = true
+			if (userGivesPermission)
+				resolve()
+			else
+				ReactDOM.render(<RequestAcceptance message={message} resolve={() => { userGivesPermission = true; resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+					totalRequests++
+					displayWidget(document.getElementById(requestContainer.id).clientHeight)
+				});
+		}
 	});
 }
 
