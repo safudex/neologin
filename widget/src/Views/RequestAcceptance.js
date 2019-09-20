@@ -8,7 +8,6 @@ import ReactDOM from 'react-dom'
 
 import './styles.css'
 
-//({ transaction, message, resolve, reject, closeWidget }) {
 class RequestAcceptance extends React.Component {
 
   unmountComponent = () => {
@@ -32,15 +31,8 @@ class RequestAcceptance extends React.Component {
           alignItems="center"
           style={{ height: '100%', padding: '1em' }}
         >
-          {
-            this.props.transaction ?
-              <Grid item xs>
-                <img src={logo} height='65px' />
-              </Grid> : null
-          }
-
           <Grid item xs>
-            <p style={{ fontSize: '0.85em' }}>{this.props.transaction ? 'Do you accept that transaction?' : this.props.message}</p>
+            <p style={{ fontSize: '0.85em' }}>{this.props.message}</p>
           </Grid>
           <Grid item xs style={{ width: '100%' }}>
             <Grid
