@@ -1,12 +1,12 @@
 import connectToParent from 'penpal/lib/connectToParent';
 import Neon from "@cityofzion/neon-js";
+import { u } from '@cityofzion/neon-js';
 import { server } from './config';
 import React from 'react'
 import ReactDOM from 'react-dom'
 import LoginButton from './Views/LoginButton'
 import UserData from './Views/UserData';
 import RequestAcceptance from './Views/RequestAcceptance'
-import { u } from '@cityofzion/neon-js';
 import { v4 as uuid } from 'uuid';
 
 let acct = null;
@@ -110,6 +110,48 @@ const providerInfo = {
 	}
 };
 
+function getClient(netParam, reject){
+	const rpcUrls = {
+		"MainNet": "http://seed1.neo.org:10332",
+		"TestNet": "http://seed1.ngd.network:20332",
+	};
+	if(netParam === undefined){
+		netParam = defaultNetwork;
+	} else if (!supportedNetworks.includes(netParam)){
+		reject({
+			"type": "INVALID_NETWORK",
+			"description": "This network is not supported."
+		});
+		return null;
+	}
+	return {client: Neon.create.rpcClient(rpcUrls[netParam]), url: rpcUrls[netParam]};
+}
+
+function rpcCall(call, args, network, constructResponse, unsupportedCall = false){
+	return new Promise(async (resolve, reject) => {
+		try{
+			const {client, url} = getClient(network, reject);
+			if(client === null){
+				return;
+			}
+			let result;
+			if(unsupportedCall){
+				const query = Neon.create.query({ method: call, params: args });
+				result = await query.execute(url);
+			} else {
+				result = await client[call](...args);
+			}
+			resolve(constructResponse(result));
+		} catch(e){
+			reject({
+				type: 'RPC_ERROR',
+				description: 'There was an error with this RPC call.',
+				data: ''
+			});
+		}
+	})
+}
+
 // Does NOT need to be accepted
 function getProvider() {
 	return Promise.resolve(providerInfo);
@@ -162,22 +204,17 @@ function getPublicKey() {
 // Does NOT need to be accepted
 function getBalance(balanceArgs) {
 	return new Promise((resolve, reject) => {
+		const client = getClient(balanceArgs.network, reject);
+		if(client === null){
+			return;
+		}
 	})
 }
 
 // Does NOT need to be accepted
 function getStorage(storageArgs) {
-	return new Promise((resolve, reject) => {
-			//foo().then(() => resolve({ result: 'hello world' })).catch(() => {
-			//	reject({
-			//		type: 'RPC_ERROR',
-			//		description: 'There was an error when broadcasting this transaction to the network.',
-			//		data: ''
-			//	});
-			//})
-			resolve({ result: 'hello world' })
-	})
-} //{ scriptHash: string, key: string, network?: string }){
+	return rpcCall("getStorage", [storageArgs.scriptHash, storageArgs.key], storageArgs.network, (res)=>{return {result:u.hexstring2str(res)}});
+}
 
 // Needs to be accepted once
 function invokeRead(invokeArgs) {
@@ -212,56 +249,22 @@ function invokeRead(invokeArgs) {
 
 // Does NOT need to be accepted
 function getBlock(blockArgs) {
-	//return new Promise((resolve, reject) => {
-	//	foo().then(() => resolve({ ... })).catch(() => {
-	//		reject({
-	//			type: 'RPC_ERROR',
-	//			description: 'There was an error when broadcasting this transaction to the network.',
-	//			data: ''
-	//		});
-	//	})
-	//})
+	return rpcCall("getBlock", [blockArgs.blockHeight], blockArgs.network, (res)=>res);
 }
 
 // Does NOT need to be accepted
 function getBlockHeight(blockHeightArgs) {
-	//return client.getBlockCount();
-
-	//return new Promise((resolve, reject) => {
-	//	foo().then(() => resolve({ "result": 2619690 })).catch(() => {
-	//		reject({
-	//			type: 'RPC_ERROR',
-	//			description: 'There was an error when broadcasting this transaction to the network.',
-	//			data: ''
-	//		});
-	//	})
-	//})
+	return rpcCall("getBlockCount", [], blockHeightArgs.network, (res)=>{return {result:res}});
 }
 
 // Does NOT need to be accepted
 function getTransaction(txArgs) {
-	//return new Promise((resolve, reject) => {
-	//	foo().then(() => resolve({ ... })).catch(() => {
-	//		reject({
-	//			type: 'RPC_ERROR',
-	//			description: 'There was an error when broadcasting this transaction to the network.',
-	//			data: ''
-	//		});
-	//	})
-	//})
+	return rpcCall("getRawTransaction", [txArgs.txid], txArgs.network, (res)=>res);
 }
 
 // Does NOT need to be accepted
 function getApplicationLog(appLogArgs) {
-	//return new Promise((resolve, reject) => {
-	//	foo().then(() => resolve({ ... })).catch(() => {
-	//		reject({
-	//			type: 'RPC_ERROR',
-	//			description: 'There was an error when broadcasting this transaction to the network.',
-	//			data: ''
-	//		});
-	//	})
-	//})
+	return rpcCall("getapplicationlog", [appLogArgs.txid], appLogArgs.network, (res)=>res, true);
 }
 
 // Needs to be accepted every time
@@ -344,24 +347,26 @@ function signMessage(signArgs) {
 	return requestAcceptance(signArgs.message)
 		.then(() => {
 			return new Promise((resolve, reject) => {
-				const salt = uuid().replace(/-/g, '');
-				const parameterHexString = u.str2hexstring(salt + signArgs.message);
-				const lengthHex = u.num2VarInt(parameterHexString.length / 2);
-				const concatenatedString = lengthHex + parameterHexString;
-				const messageHex = '010001f0' + concatenatedString + '0000';
+				try {
+					const salt = uuid().replace(/-/g, '');
+					const parameterHexString = u.str2hexstring(salt + signArgs.message);
+					const lengthHex = u.num2VarInt(parameterHexString.length / 2);
+					const concatenatedString = lengthHex + parameterHexString;
+					const messageHex = '010001f0' + concatenatedString + '0000';
 
-				//reject({
-				//	type: 'UNKNOWN_ERROR',
-				//	description: 'There was an unknown error.',
-				//	data: ''
-				//})
-				resolve({
-					publicKey: acct.publicKey, // Public key of account that signed message
-					message: signArgs.message, // Original message signed
-					salt: salt, // Salt added to original message as prefix, before signing
-					data: messageHex, // Signed message
-				});
-
+					resolve({
+						publicKey: acct.publicKey, // Public key of account that signed message
+						message: signArgs.message, // Original message signed
+						salt: salt, // Salt added to original message as prefix, before signing
+						data: messageHex, // Signed message
+					});
+				} catch(e) {
+					reject({
+						type: 'UNKNOWN_ERROR',
+						description: 'There was an unknown error.',
+						data: ''
+					})
+				}
 			})
 		})
 }
