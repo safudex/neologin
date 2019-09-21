@@ -1,5 +1,5 @@
 import connectToParent from 'penpal/lib/connectToParent';
-import Neon, { u, api } from "@cityofzion/neon-js";
+import Neon, { u, api, sc } from "@cityofzion/neon-js";
 import { server } from './config';
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -256,52 +256,29 @@ function getStorage(storageArgs) {
 	return rpcCall("getStorage", [storageArgs.scriptHash, storageArgs.key], storageArgs.network, (res)=>{return {result:u.hexstring2str(res)}});
 }
 
-// Needs to be accepted once
+// Does NOT need to be accepted -> This is a security hole (can be used to leak the user's public key/address) but O3 does it like this so it's better to maintain compatibility
 function invokeRead(invokeArgs) {
-	return new Promise((resolve, reject) => {
-		requestAcceptance('Do you want to give access to your address?').then(() => {
-			resolve({
-				address: acct.address,
-				label: 'My Spending Wallet'
-			})
-		}).catch(() => {
-			reject({
-				type: 'CONNECTION_DENIED',
-				description: 'The user rejected the request to connect with your dApp.',
-				data: ''
-			});
-		})
-	})
+	let script = "";
+	try{
+		const props = {
+			// Scripthash for the contract
+			scriptHash: invokeArgs.scriptHash,
+			// name of operation to perform.
+			operation: invokeArgs.operation,
+			// any optional arguments to pass in. If null, use empty array.
+			args: invokeArgs.args,
+		}
 
+		script = sc.createScript(props);
+	} catch (e) {
+		return Promise.reject({
+			type: 'RPC_ERROR', //Should be MALFORMED_INPUT but compatibility
+			description: 'The parameters or the scriptHash that you passed to the function are wrong',
+			data: e,
+		});
+	}
 
-	// PLACEHOLDER
-	return new Promise((resolve, reject) => {
-		if (!acct)
-			reject({
-				type: 'CONNECTION_REFUSED',
-				description: 'Connection dApp not connected. Please call the "connect" function.',
-				data: ''
-			})
-		else
-			//foo().then(() => resolve({ ... })).catch(() => {
-			//	reject({
-			//		type: 'RPC_ERROR',
-			//		description: 'There was an error when broadcasting this transaction to the network.',
-			//		data: ''
-			//	});
-			//})
-			resolve({
-				script: '8h89fh398f42f.....89hf2894hf9834',
-				state: 'HALT, BREAK',
-				gas_consumed: '0.13',
-				stack: [
-					{
-						type: 'Integer',
-						value: '1337'
-					}
-				]
-			})
-	})
+	return rpcCall("invokeScript", [script], invokeArgs.network, (res)=>res.result);
 }
 
 // Does NOT need to be accepted
