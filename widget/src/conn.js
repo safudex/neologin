@@ -204,7 +204,7 @@ function getPublicKey() {
 
 // Does NOT need to be accepted
 function getBalance(balanceArgs) {
-	return new Promise((resolve, reject) => {
+	return new Promise(async (resolve, reject) => {
 		const neoscanEndpoints = {
 			"MainNet": "https://api.neoscan.io/api/main_net/v1/",
 			"TestNet": "https://neoscan-testnet.io/api/test_net/v1/"
