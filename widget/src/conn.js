@@ -1,6 +1,5 @@
 import connectToParent from 'penpal/lib/connectToParent';
-import Neon from "@cityofzion/neon-js";
-import { u } from '@cityofzion/neon-js';
+import Neon, { u, api } from "@cityofzion/neon-js";
 import { server } from './config';
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -128,7 +127,7 @@ function getClient(netParam, reject){
 	}
 	return {client: Neon.create.rpcClient(rpcUrls[netParam]), url: rpcUrls[netParam]};
 }
-
+// See https://github.com/CityOfZion/neon-js/blob/master/examples/browser/README.md
 function rpcCall(call, args, network, constructResponse, unsupportedCall = false){
 	return new Promise(async (resolve, reject) => {
 		try{
@@ -206,10 +205,49 @@ function getPublicKey() {
 // Does NOT need to be accepted
 function getBalance(balanceArgs) {
 	return new Promise((resolve, reject) => {
-		const client = getClient(balanceArgs.network, reject);
-		if(client === null){
+		const neoscanEndpoints = {
+			"MainNet": "https://api.neoscan.io/api/main_net/v1/",
+			"TestNet": "https://neoscan-testnet.io/api/test_net/v1/"
+		};
+		if (balanceArgs.network !== undefined && !supportedNetworks.includes(balanceArgs.network)){
+			reject({
+				"type": "INVALID_NETWORK",
+				"description": "This network is not supported."
+			});
 			return;
 		}
+		const endpoint = neoscanEndpoints[balanceArgs.network === undefined? defaultNetwork : balanceArgs.network];
+		let balances = await Promise.all(
+			balanceArgs.params.map(
+				(param) => fetch(endpoint+"get_balance/"+param.address)
+				.then(res => res.json())
+				.then(res => {
+					let balance = [];
+					for(let i = 0; i < res.balance.length; i++){
+						if(param.assets === undefined || param.assets.includes(balance[i].asset_symbol)){
+							let newAsset = {
+								assetID: res.balance[i].asset_hash,
+								symbol: res.balance[i].asset_symbol,
+								amount: String(res.balance[i].amount),
+							};
+							if(param.fetchUTXO){
+								newAsset.unspent = res.balance[i].unspent.map((utxo)=>(utxo.value=String(utxo.value), utxo)); // Convert type of value field from Number to String
+							}
+							balance.push(newAsset);
+						}
+					}
+					return {
+						balance: balance,
+						address: res.address
+					}; 
+				})
+			);
+		);
+		let final = {};
+		for(let i = 0; i < balances.length; i++){
+			final[balances[i].address] = balances[i].balance;
+		}
+		resolve(final);
 	})
 }
 
