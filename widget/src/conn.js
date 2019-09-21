@@ -296,6 +296,7 @@ function getApplicationLog(appLogArgs) {
 }
 
 // Needs to be accepted every time
+// See https://cityofzion.io/neon-js/docs/en/examples/native_asset.html
 function send(sendArgs) {
 	if(sendArgs.fromAddress !== acct.address){
 		return Promise.reject({
@@ -377,6 +378,7 @@ function send(sendArgs) {
 }
 
 // Needs to be accepted every time
+// See https://cityofzion.io/neon-js/docs/en/examples/smart_contract.html
 function invoke(invokeArgs) {
 	return new Promise((resolve, reject) =>
 		requestAcceptance(JSON.stringify(invokeArgs)).then(() =>
