@@ -42,9 +42,18 @@ let rawMethods = {
 let methods = {};
 
 const unathenticatedMethods = ['getProvider', 'getNetworks', 'getBalance', 'getStorage', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog'];
+const requireNetworkCheckMethods = ['getBalance', 'getStorage', 'invokeRead', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog', 'send', 'invoke', 'invokeMulti', 'deploy'];
 
 Object.keys(rawMethods).map((key) => {
 	methods[key] = (...args) => {
+		if (requireNetworkCheckMethods.includes(key)) {
+			if (args[0].network !== undefined && !supportedNetworks.includes(args[0].network)){
+				return Promise.reject({
+					"type": "INVALID_NETWORK",
+					"description": "This network is not supported."
+				});
+			}
+		}
 		if (acct || unathenticatedMethods.includes(key)) {
 			return rawMethods[key](...args);
 		} else {
@@ -111,30 +120,21 @@ const providerInfo = {
 	}
 };
 
-function getClient(netParam, reject){
-	const rpcUrls = {
-		"MainNet": "http://seed1.neo.org:10332",
-		"TestNet": "http://seed1.ngd.network:20332",
-	};
-	if(netParam === undefined){
-		netParam = defaultNetwork;
-	} else if (!supportedNetworks.includes(netParam)){
-		reject({
-			"type": "INVALID_NETWORK",
-			"description": "This network is not supported."
-		});
-		return null;
-	}
-	return {client: Neon.create.rpcClient(rpcUrls[netParam]), url: rpcUrls[netParam]};
+function getNetwork(network){
+	return network === undefined? defaultNetwork : network;
 }
+
+const rpcUrls = {
+	"MainNet": "http://seed1.neo.org:10332",
+	"TestNet": "http://seed1.ngd.network:20332",
+};
+
 // See https://github.com/CityOfZion/neon-js/blob/master/examples/browser/README.md
 function rpcCall(call, args, network, constructResponse, unsupportedCall = false){
 	return new Promise(async (resolve, reject) => {
 		try{
-			const {client, url} = getClient(network, reject);
-			if(client === null){
-				return;
-			}
+			const url = rpcUrls[getNetwork(network)];
+			const client = Neon.create.rpcClient(url);
 			let result;
 			if(unsupportedCall){
 				const query = Neon.create.query({ method: call, params: args });
@@ -202,24 +202,18 @@ function getPublicKey() {
 	})
 }
 
+const neoscanEndpoints = {
+	"MainNet": "https://api.neoscan.io/api/main_net",
+	"TestNet": "https://neoscan-testnet.io/api/test_net"
+};
+
 // Does NOT need to be accepted
 function getBalance(balanceArgs) {
 	return new Promise(async (resolve, reject) => {
-		const neoscanEndpoints = {
-			"MainNet": "https://api.neoscan.io/api/main_net/v1/",
-			"TestNet": "https://neoscan-testnet.io/api/test_net/v1/"
-		};
-		if (balanceArgs.network !== undefined && !supportedNetworks.includes(balanceArgs.network)){
-			reject({
-				"type": "INVALID_NETWORK",
-				"description": "This network is not supported."
-			});
-			return;
-		}
-		const endpoint = neoscanEndpoints[balanceArgs.network === undefined? defaultNetwork : balanceArgs.network];
+		const endpoint = neoscanEndpoints[getNetwork(balanceArgs.network)]; 
 		let balances = await Promise.all(
 			balanceArgs.params.map(
-				(param) => fetch(endpoint+"get_balance/"+param.address)
+				(param) => fetch(endpoint+"/v1/get_balance/"+param.address)
 				.then(res => res.json())
 				.then(res => {
 					let balance = [];
@@ -303,33 +297,83 @@ function getApplicationLog(appLogArgs) {
 
 // Needs to be accepted every time
 function send(sendArgs) {
-	return new Promise((resolve, reject) =>
-		requestAcceptance('This website is requesting access to your account').then(() =>//TODO DIFFERENT FOR TRANSACTION
-			alert('sent!')
-			//foo().then(() => resolve( { txid:'', nodeUrl:'' } )).catch((err) => {
-			//	let err_response = {}
-			//	err_response.type = error
-			//	switch (error) {
-			//		case 'SEND_ERROR':
-			//			err_response.description = 'There was an error when broadcasting this transaction to the network.'
-			//			break;
-			//		case 'MALFORMED_INPUT':
-			//			err_response.description = 'The receiver address provided is not valid.'
-			//			break;
-			//		case 'INSUFFICIENT_FUNDS':
-			//			err_response.description = 'The user has insufficient funds to execute this transaction.'
-			//			break;
-			//	}
-			//	reject(err_response);
-			//})
-		).catch(() =>
-			reject({
-				type: 'CANCELED',
-				description: 'There was an error when broadcasting this transaction to the network.',
-				data: ''
-			})
-		)
-	)
+	if(sendArgs.fromAddress !== acct.address){
+		return Promise.reject({
+			type: 'MALFORMED_INPUT', 
+			description: 'From address is not a properly formatted address.'
+		});
+	}
+	return new Promise((resolve, reject) => {
+		requestAcceptance('Send monies?', sendArgs)
+			.catch(() =>
+				reject({
+					type: 'CANCELED',
+					description: 'There was an error when broadcasting this transaction to the network.',
+				})
+			)
+			.then(async () => {
+				let transaction;
+				try{
+					const endpoint = neoscanEndpoints[getNetwork(sendArgs.network)]; 
+					const apiProvider = new api.neoscan.instance(endpoint);
+
+					// Create contract transaction using Neoscan API
+					let balance = await apiProvider.getBalance(sendArgs.fromAddress);
+					transaction = Neon.create.contractTx();
+					transaction = transaction.addIntent(sendArgs.asset, Number(sendArgs.amount), sendArgs.toAddress);
+					if(sendArgs.remark) {
+						transaction = transaction.addRemark(sendArgs.remark)
+					}
+					try{
+						if(sendArgs.fee) {
+							transaction = transaction.calculate(balance, null, Number(sendArgs.fee))
+						} else {
+							transaction = transaction.calculate(balance)
+						}
+					} catch(e) {
+						reject({
+							type: 'INSUFFICIENT_FUNDS',
+							description: "Account doesn't have enough funds.",
+						});
+						return;
+					}
+					transaction = transaction.sign(acct.privateKey);
+				} catch(e) {
+					reject({
+						type: 'MALFORMED_INPUT',
+						description: "Some input provided was wrong.",
+					});
+					return;
+				}
+
+				try{
+					const txid = transaction.hash;
+					if(sendArgs.broadcastOverride) {
+						resolve({
+							txid,
+							signedTx: transaction.serialize()
+						});
+					} else {
+						// Send raw transaction
+						const nodeURL = rpcUrls[getNetwork(sendArgs.network)];
+						const client = Neon.create.rpcClient(nodeURL);
+						await client.sendRawTransaction(transaction);
+
+						// Sucess!
+						resolve({
+							txid,
+							nodeURL
+						});
+					}
+				} catch(e) {
+					reject({
+						type: 'SEND_ERROR',
+						description: "There was an error when broadcasting this transaction to the network.",
+					});
+					return;
+				}
+			});
+	});
 }
 
 // Needs to be accepted every time
