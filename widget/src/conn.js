@@ -241,7 +241,7 @@ function getBalance(balanceArgs) {
 						address: res.address
 					}; 
 				})
-			);
+			)
 		);
 		let final = {};
 		for(let i = 0; i < balances.length; i++){
@@ -258,6 +258,23 @@ function getStorage(storageArgs) {
 
 // Needs to be accepted once
 function invokeRead(invokeArgs) {
+	return new Promise((resolve, reject) => {
+		requestAcceptance('Do you want to give access to your address?').then(() => {
+			resolve({
+				address: acct.address,
+				label: 'My Spending Wallet'
+			})
+		}).catch(() => {
+			reject({
+				type: 'CONNECTION_DENIED',
+				description: 'The user rejected the request to connect with your dApp.',
+				data: ''
+			});
+		})
+	})
+
+
+	// PLACEHOLDER
 	return new Promise((resolve, reject) => {
 		if (!acct)
 			reject({
