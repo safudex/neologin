@@ -1,0 +1,39 @@
+.gradientBg {
+  width: 100vw;
+  height: 25vh;
+  background: -webkit-gradient(linear,left top,right bottom,from(#00369a),to(#00c9cb));
+  background: -webkit-linear-gradient(left,#00369a,#00c9cb);
+  background: linear-gradient(135deg,#00369a 0,#00c9cb);
+}
+
+.centerPaper{
+  position: absolute;
+  top: 12.5vh;
+}
+
+.iconst {
+  height: 25px;
+  width: 25px;
+  margin-bottom: 10px;
+}
+
+.iconbg {
+  display: block;
+  height: 40px;
+  width: 40px;
+  line-height: 60px;
+  -moz-border-radius: 30px;
+  border-radius: 30px;
+  text-align: center;
+  font-size: 2em;
+  border: solid 1px black;
+}
+
+.iconbg:hover {
+  background: whitesmoke;
+  cursor: pointer;
+}
+
+.copyIcon:hover {
+  cursor: pointer;
+}
