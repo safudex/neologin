@@ -82,6 +82,7 @@ var iframeDeskStyle = {
     border: '0',
     width: '375px',
     background: 'white',
+	z-index: 99999,
 }
 
 var iframeMobileStyle = {
@@ -91,7 +92,8 @@ var iframeMobileStyle = {
     borderRadius: '0px',
     width: '100%',
     border: '0',
-    background: 'white'
+    background: 'white',
+	z-index: 99999,
 }
 
 function setIframeStyle(w, h) {
