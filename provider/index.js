@@ -43,18 +43,20 @@ function removeEventListener(ev) {
 const iframe = document.createElement('iframe');
 iframe.src = 'http://localhost:3002/';
 
-document.body.appendChild(iframe);
-closeWidget()
+document.addEventListener("DOMContentLoaded", () => {
+	document.body.appendChild(iframe);
+	closeWidget()
+});
 
 const connection = connectToChild({
-    // The iframe to which a connection should be made
-    iframe,
-    // Methods the parent is exposing to the child
-    methods: {
-        sendEvent,
-        displayWidget,
-        closeWidget
-    }
+	// The iframe to which a connection should be made
+	iframe,
+	// Methods the parent is exposing to the child
+	methods: {
+		sendEvent,
+		displayWidget,
+		closeWidget
+	}
 });
 
 const promiseMethods = ["getProvider", "getNetworks", "getAccount", "getPublicKey", "getBalance", "getStorage", "invokeRead", "getBlock", "getBlockHeight", "getTransaction", "getApplicationLog", "send", "invoke", "invokeMulti", "signMessage", "deploy"]; //Doesn't include addEventListener nor removeEventListener as these don't return promises
@@ -62,12 +64,12 @@ const promiseMethods = ["getProvider", "getNetworks", "getAccount", "getPublicKe
 let neologin = { removeEventListener, addEventListener };
 
 for (let i = 0; i < promiseMethods.length; i++) {
-    let method = promiseMethods[i];
-    neologin[method] = function (...args) {
-        return connection.promise.then((child) => {
-            return child
-        }).then((child) => child[method](...args));
-    };
+	let method = promiseMethods[i];
+	neologin[method] = function (...args) {
+		return connection.promise.then((child) => {
+			return child
+		}).then((child) => child[method](...args));
+	};
 }
 
 var iframeDeskStyle = {
@@ -79,7 +81,6 @@ var iframeDeskStyle = {
     border: '0',
     width: '375px',
     background: 'white',
-
 }
 
 var iframeMobileStyle = {
@@ -112,8 +113,9 @@ function closeWidget() {
         console.log(heights[heights.length - 1], '<----')
         console.log(iframe.style['height'])
     }
-    else
+    else {
         iframe.style['height'] = '0px';
+	}
     console.log(heights)
 }
 
