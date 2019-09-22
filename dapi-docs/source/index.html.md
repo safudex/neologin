@@ -2,8 +2,8 @@
 title: NEO dAPI
 
 language_tabs: # must be one of https://git.io/vQNgJ
-
-  # - typescript
+  - javascript
+  - typescript
 
 toc_footers:
   # - <a href='#'>Sign Up for a Developer Key</a>
@@ -24,5 +24,5 @@ includes:
   # - errors
   # - utils
 
-search: false
+search: true
 ---
