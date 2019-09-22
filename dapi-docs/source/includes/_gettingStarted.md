@@ -18,10 +18,10 @@ dAPI client integrations are currently facilited via a versioned JS package, and
 <script src="https://neologin.to/neologin.js"></script>
 ```
 ```typescript
-window.neoDapi
+window.neologin
 ```
 ```javascript
-window.neoDapi
+window.neologin
 ```
 <!--
 When installing via CDN, it's always recommended to reference a specific version of the neo-dapi package, to protect your app from possible method interface updates. In this example the version referenced in the url is 2.0.4.
@@ -38,18 +38,18 @@ yarn add neologin
 ```
 
 ```typescript
-var neoDapi = require('neologin');
+var neologin = require('neologin');
 
 or
 
-import neoDapi from 'neologin';
+import neologin from 'neologin';
 ```
 ```javascript
-var neoDapi = require('neologin');
+var neologin = require('neologin');
 
 or
 
-import neoDapi from 'neologin';
+import neologin from 'neologin';
 ```
 
 [![npm version](https://badge.fury.io/js/neologin.svg)](https://www.npmjs.com/package/neologin)
