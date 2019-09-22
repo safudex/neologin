@@ -56,6 +56,6 @@ import neologin from 'neologin';
 
 When installing via NPM, it's always advised to lockdown your package version to either the specific version only, or to patch updates.
 
-## Mobile Compatability
+## Mobile Compatibility
  
 We suggest doing the majority of your development using a desktop browser and Chrome's mobile device simulator. Once your app is fully functional on desktop, the neologin wallet will automatically adapt to work on mobile browsers without requiring any additional changes.
