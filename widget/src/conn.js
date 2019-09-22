@@ -25,6 +25,7 @@ let rawMethods = {
 	getBalance,
 	getStorage,
 	invokeRead,
+	verifyMessage,
 	getBlock,
 	getBlockHeight,
 	getTransaction,
@@ -41,7 +42,7 @@ let rawMethods = {
 
 let methods = {};
 
-const unathenticatedMethods = ['getProvider', 'getNetworks', 'getBalance', 'getStorage', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog'];
+const unathenticatedMethods = ['getProvider', 'getNetworks', 'getBalance', 'getStorage', 'verifyMessage', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog'];
 const requireNetworkCheckMethods = ['getBalance', 'getStorage', 'invokeRead', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog', 'send', 'invoke', 'invokeMulti', 'deploy'];
 
 Object.keys(rawMethods).map((key) => {
@@ -279,6 +280,13 @@ function invokeRead(invokeArgs) {
 }
 
 // Does NOT need to be accepted
+function verifyMessage(verifyArgs) {
+	return Promise.resolve({
+		result: Neon.verify.message(verifyArgs.message, verifyArgs.data, verifyArgs.publicKey)
+	});
+}
+
+// Does NOT need to be accepted
 function getBlock(blockArgs) {
 	return rpcCall("getBlock", [blockArgs.blockHeight], blockArgs.network, (res)=>res);
 }
@@ -436,12 +444,13 @@ function signMessage(signArgs) {
 					const lengthHex = u.num2VarInt(parameterHexString.length / 2);
 					const concatenatedString = lengthHex + parameterHexString;
 					const messageHex = '010001f0' + concatenatedString + '0000';
+					const signedMessage = Neon.sign.hex(messageHex, acct.privateKey);
 
 					resolve({
 						publicKey: acct.publicKey, // Public key of account that signed message
 						message: signArgs.message, // Original message signed
 						salt: salt, // Salt added to original message as prefix, before signing
-						data: messageHex, // Signed message
+						data: signedMessage, // Signed message
 					});
 				} catch(e) {
 					reject({
