@@ -46,7 +46,7 @@ iframe.src = 'http://localhost:3002/';
 
 document.addEventListener("DOMContentLoaded", () => {
 	document.body.appendChild(iframe);
-	closeWidget()
+	getWindowSize();
 });
 
 const connection = connectToChild({
@@ -128,10 +128,10 @@ function getWindowSize() {
     var w = document.documentElement.clientWidth;
     var h = document.documentElement.clientHeight;
     setIframeStyle(w, h)
+    closeWidget()
 }
 
 window.addEventListener("resize", getWindowSize);
-getWindowSize();
 
 // UTILS
 
