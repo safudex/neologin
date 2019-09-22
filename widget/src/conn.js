@@ -209,6 +209,9 @@ const neoscanEndpoints = {
 
 // Does NOT need to be accepted
 function getBalance(balanceArgs) {
+	if(balanceArgs.params.constructor !== Array) {
+		balanceArgs.params = [balanceArgs.params];
+	}
 	return new Promise(async (resolve, reject) => {
 		const endpoint = neoscanEndpoints[getNetwork(balanceArgs.network)]; 
 		let balances = await Promise.all(
