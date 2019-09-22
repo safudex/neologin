@@ -130,10 +130,10 @@ function getWindowSize() {
     var w = document.documentElement.clientWidth;
     var h = document.documentElement.clientHeight;
     setIframeStyle(w, h)
-    closeWidget()
 }
 
 window.addEventListener("resize", getWindowSize);
+closeWidget()
 
 // UTILS
 
