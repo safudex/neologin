@@ -15,7 +15,7 @@ dAPI client integrations are currently facilited via a versioned JS package, and
 ### Install via CDN
 
 ```html
-<script src="https://neologin.to/neologin.js"></script>
+<script src="https://neologin.io/neologin.js"></script>
 ```
 ```typescript
 window.neologin

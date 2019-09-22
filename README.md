@@ -18,7 +18,7 @@ import neologin from 'neologin';
 
 Or add it as a script tag to your html pages:
 ```html
-<script src="https://neologin.to/neologin.js"></script>
+<script src="https://neologin.io/neologin.js"></script>
 ```
 which will expose the `neologin` object in `window.neologin`.
 
