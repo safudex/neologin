@@ -4,9 +4,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="O3 dApp Platform — NEO">
-  <meta name="author" content="O3">
-  <title>O3 dApp Platform — NEO</title>
+  <meta name="description" content="NeoLogin API TestBed">
+  <meta name="author" content="Forked from O3">
+  <title>NeoLogin API TestBed</title>
 
   <link rel="stylesheet" href="https://cdn.o3.app/css/purpose2.0/assets/libs/@fortawesome/fontawesome-free/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.o3.app/css/purpose2.0/assets/css/purpose.css" id="stylesheet">
@@ -14,7 +14,8 @@
   <link rel="stylesheet" href="./docs.css" id="stylesheet">
   <!-- <script src="https://cdn.jsdelivr.net/npm/o3-dapi-core@0.3.6/lib/o3-dapi-core.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/o3-dapi-neo@0.4.2/lib/o3-dapi-neo.min.js"></script> -->
-  <script src="https://cdn.jsdelivr.net/npm/neo-dapi@2.0.4/lib/neo-dapi.min.js"></script>
+  <script src="https://neologin.io/neologin.js"></script>
+  <script>window.neoDapi = window.neologin</script>
   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
   <style type="text/css">
   .string {
@@ -74,7 +75,7 @@ a {
       <nav id="navbar-main" class="navbar navbar-expand-lg navbar-light bg-white">
         <div class="container-fluid">
           <a class="navbar-brand" href="index.html">
-            <img alt="Image placeholder" src="https://cdn.o3.network/logo/logo-light.png" id="navbar-logo" style="height: 40px;"><span class="ml-3">O3 dApp Platform — NEO</span>
+            <img alt="Image placeholder" src="https://neologin.io/logo.png" id="navbar-logo" style="height: 40px;"><span class="ml-3">NeoLogin API TestBed</span>
           </a>
           <button class="sidenav-toggler ml-auto mr-3 active" type="button" data-action="sidenav-pin" data-target="#sidenav-main">
             <div class="sidenav-toggler-inner">
@@ -93,7 +94,7 @@ a {
               <a class="nav-link" href="./deploy.html">Deploy Smart Contract</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" target="_blank" href="https://docs.o3.network">Documents</a>
+              <a class="nav-link" target="_blank" href="https://neologin.io/api">Documentation</a>
             </li>
             <li class="nav-item">
               <select id="networks" name="networks" class="custom-select" v-model="network"></select>
@@ -113,7 +114,7 @@ a {
           <div class="docs-content">
 
             <div class="docs-page-title">
-              <h2>O3 dApp Platform — NEO</h2>
+              <h2>NeoLogin API TestBed</h2>
             </div>
             <p class="text-muted docs-lead">A testbed for dAPI for NEO blockchain.</p>
             <hr class="divider divider-fade"></hr>
