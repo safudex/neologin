@@ -98,10 +98,12 @@ var iframeMobileStyle = {
 
 function setIframeStyle(w, h) {
     let iframeStyle = w > 576 ? iframeDeskStyle : iframeMobileStyle;
+	let actualHeight = iframe.style['height']
 	iframe.style = null;
     for (let style in iframeStyle) {
         iframe.style[style] = iframeStyle[style];
     }
+	iframe.style['height']=actualHeight
 }
 
 function displayWidget(widgetHeight) {
