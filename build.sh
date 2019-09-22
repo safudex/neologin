@@ -3,9 +3,14 @@ set -ev
 
 mkdir -p dist
 
-#Build landing
+# Build landing
 if [ $1 == "production" ]; then
 	cp -r landing/* dist
+fi
+
+# Build testbed
+if [ $1 == "production" ]; then
+	cp -r testbed dist/testbed
 fi
 
 # Build login page
