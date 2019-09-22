@@ -2,6 +2,7 @@ import connectToChild from 'penpal/lib/connectToChild';
 import base58 from 'bs58'; //TODO: Remove dependency
 import SHA256 from 'crypto-js/sha256';
 import hexEncoding from 'crypto-js/enc-hex';
+import { ArgumentDataType, EventName } from './constants';
 
 let heights = []
 
@@ -175,6 +176,13 @@ neologin.utils = {
 		const arrayBuffer = Buffer.from(ADDR_VERSION + scriptHash + shaChecksum, "hex");
 		return base58.encode(arrayBuffer);
 	}
+};
+
+// CONSTANTS
+
+neologin.Constants = {
+	ArgumentDataType,
+	EventName
 };
 
 export default neologin;

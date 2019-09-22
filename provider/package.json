@@ -4,7 +4,8 @@
   "description": "Easy peasy NEO dAPI provider",
   "main": "index.js",
   "files": [
-    "index.js"
+    "index.js",
+	"constants.js"
   ],
   "scripts": {
     "build": "webpack",
