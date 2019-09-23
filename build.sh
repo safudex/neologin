@@ -26,18 +26,6 @@ if [ $1 == "production" ]; then
 fi
 cd ..
 
-# Build test page
-cd test
-npm install
-if [ $1 == "dev" ]; then
-	PORT=3000 npm start &
-fi
-if [ $1 == "production" ]; then
-	CI=false npm run build
-	#mv build ../dist/login
-fi
-cd ..
-
 # Build widget
 cd widget
 npm install
