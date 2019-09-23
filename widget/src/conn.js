@@ -126,8 +126,8 @@ function getNetwork(network){
 }
 
 const rpcUrls = {
-	"MainNet": "https://seed1.neo.org:10332",
-	"TestNet": "https://seed1.ngd.network:20332",
+	"MainNet": "https://seed4.cityofzion.io:443",
+	"TestNet": "https://test4.cityofzion.io:443",
 };
 
 // See https://github.com/CityOfZion/neon-js/blob/master/examples/browser/README.md
