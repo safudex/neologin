@@ -17,12 +17,17 @@ class MyWallet extends React.Component {
         };
     }
 
-    componentDidMount() {
-        console.log('called')
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.network !== this.state.network) {
+            this.getUserAccount()
+        }
+    }
+
+    getUserAccount() {
         neologin.getAccount()
             .then((account) => {
                 this.setState({ address: account.address })
-
+                this.setState({ balance: [] })
                 neologin.getBalance({
                     params: [{
                         address: account.address
@@ -46,8 +51,10 @@ class MyWallet extends React.Component {
                     })
 
             }).catch((e) => console.log(e));
+    }
 
-
+    componentDidMount() {
+        this.getUserAccount()
     }
 
     render() {
@@ -55,7 +62,7 @@ class MyWallet extends React.Component {
             <div>
                 <Grid container direction="column">
                     <Grid item style={{ margin: '1rem 0' }}>
-                        <span style={{ fontWeight: 'bold' }}>Address: </span><span>{this.state.address}</span> <img src={copyIcon} className='copyIcon' style={{ width: '1em', display: 'inline' }} ></img>
+                        <span style={{ fontWeight: 'bold' }}>Address: </span><span style={{ wordBreak: 'break-all' }}>{this.state.address}</span> {/* <img src={copyIcon} className='copyIcon' style={{ width: '1em', display: 'inline' }} ></img> */}
                     </Grid>
                     <Grid item>
                         <Grid container direction="row" spacing={3}>
@@ -66,7 +73,7 @@ class MyWallet extends React.Component {
                                     </Grid>
                                     {
                                         this.state.balance.map((el) =>
-                                            <Grid item>
+                                            <Grid item key={el.symbol}>
                                                 <span>{el.symbol}</span>
                                             </Grid>
                                         )
@@ -79,8 +86,8 @@ class MyWallet extends React.Component {
                                         <span style={{ fontWeight: 'bold' }}>AMOUNT</span>
                                     </Grid>
                                     {
-                                        this.state.balance.map((el) =>
-                                            <Grid item>
+                                        this.state.balance.map((el, n) =>
+                                            <Grid item key={n}>
                                                 <span>{el.amount}</span>
                                             </Grid>
                                         )
