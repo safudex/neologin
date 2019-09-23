@@ -19,6 +19,8 @@ import settingsIcon from './imgs/settings.png'
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MyWallet from './views/MyWallet';
+import SendWallet from './views/SendWallet';
+import SecurityWallet from './views/SecurityWallet';
 
 const useStyles = makeStyles(theme => ({
   formControl: {
@@ -32,8 +34,22 @@ const useStyles = makeStyles(theme => ({
 function App() {
 
   const classes = useStyles();
-  const [network, setNetwork] = React.useState('MainNet');
+  const [network, setNetwork] = React.useState('TestNet');
   const [tabSelected, setTabSelected] = React.useState(0);
+  const [isMobile, setIsMobile] = React.useState(document.documentElement.clientWidth < 576);
+
+  function changeStyles(w, h) {
+    w < 576 ? setIsMobile(true) : setIsMobile(false)
+  }
+
+  function getWindowSize() {
+    // Get width and height of the window excluding scrollbars
+    var w = document.documentElement.clientWidth;
+    var h = document.documentElement.clientHeight;
+    changeStyles(w, h)
+  }
+
+  window.addEventListener("resize", getWindowSize);
 
   function handleChange(event) {
     setNetwork(event.target.value);
@@ -44,14 +60,14 @@ function App() {
       <div className="gradientBg"></div>
       <Grid container direction="column" justify="center" alignItems="center" className="centerPaper">
         <Grid item style={{ width: '75%' }}>
-          <Paper style={{ padding: '1rem' }}>
-            <Grid container direction="row" justify="space-between" alignItems="center">
+          <Paper style={{ padding: '1rem', marginBottom: '5rem' }}>
+            <Grid container direction={isMobile ? 'column' : 'row'} justify="space-between" alignItems="center">
               <Grid item>
-                <span style={{ fontWeight: 'bold' }}>
+                <span style={{ fontWeight: 'bold', marginBottom: isMobile ? '1rem' : '0rem', display: isMobile ? 'block' : 'inline' }}>
                   {
                     tabSelected == 0 ? "WALLET" :
                       tabSelected == 1 ? "SEND ASSETS" :
-                        tabSelected == 2 ? "SECURITY" : "SETTINGS"
+                        tabSelected == 2 ? "SECURITY & SETTINGS" : "SETTINGS"
                   }
                 </span>
               </Grid>
@@ -81,7 +97,7 @@ function App() {
               </Grid>
             </Grid>
             <Divider style={{ margin: '1rem 0' }} />
-            <Grid container direction="row" justify="flex-start" alignItems="flex-start" spacing={3}>
+            <Grid container direction="row" justify={isMobile ? 'center' : "flex-start"} alignItems="flex-start" spacing={3}>
               <Grid item>
                 <Grid container direction="column" justify="center" alignItems="center">
                   <Grid item>
@@ -108,11 +124,11 @@ function App() {
                     <WalletView icon={keyIcon} onClick={() => setTabSelected(2)} />
                   </Grid>
                   <Grid item>
-                    <span style={{ fontWeight: tabSelected == 2 ? 'bold' : 'normal' }}>Security</span>
+                    <span style={{ fontWeight: tabSelected == 2 ? 'bold' : 'normal' }}>{'Security & settings'}</span>
                   </Grid>
                 </Grid>
               </Grid>
-              <Grid item>
+              {/* <Grid item>
                 <Grid container direction="column" justify="center" alignItems="center">
                   <Grid item>
                     <WalletView icon={settingsIcon} onClick={() => setTabSelected(3)} />
@@ -121,14 +137,18 @@ function App() {
                     <span style={{ fontWeight: tabSelected == 3 ? 'bold' : 'normal' }}>Settings</span>
                   </Grid>
                 </Grid>
-              </Grid>
+              </Grid> */}
             </Grid>
             <Grid container direction="row" justify="flex-start" alignItems="flex-start" spacing={3}>
-              <Grid item style={{ padding: '21px' }}>
+              <Grid item style={{ padding: '21px', width: '100%' }}>
                 {
                   tabSelected == 0 ?
                     <MyWallet network={network} />
-                    : null
+                    : tabSelected == 1 ?
+                      <SendWallet network={network} />
+                      : tabSelected == 2 ?
+                        <SecurityWallet isMobile={isMobile} />
+                        : null
                 }
               </Grid>
             </Grid>
