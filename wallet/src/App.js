@@ -49,7 +49,7 @@ function App() {
               <Grid item>
                 <span style={{ fontWeight: 'bold' }}>
                   {
-                    tabSelected == 0 ? "MY WALLET" :
+                    tabSelected == 0 ? "WALLET" :
                       tabSelected == 1 ? "SEND ASSETS" :
                         tabSelected == 2 ? "SECURITY" : "SETTINGS"
                   }
