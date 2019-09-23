@@ -222,7 +222,7 @@ function getBalance(balanceArgs) {
 				.then(res => {
 					let balance = [];
 					for(let i = 0; i < res.balance.length; i++){
-						if(param.assets === undefined || param.assets.includes(balance[i].asset_symbol)){
+						if(param.assets === undefined || param.assets.includes(res.balance[i].asset_symbol)){
 							let newAsset = {
 								assetID: res.balance[i].asset_hash,
 								symbol: res.balance[i].asset_symbol,
