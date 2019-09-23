@@ -54,7 +54,6 @@ cd ..
 if [ $1 == "production" ]; then
 	# Build provider bundle
 	cd provider
-	sed -i 's/http:\/\/localhost:3002\//https:\/\/neologin.io\/widget\//g' index.js
 	npm install
 	webpack
 	cd ..
