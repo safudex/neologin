@@ -51,6 +51,18 @@ if [ $1 == "production" ]; then
 fi
 cd ..
 
+# Build wallet
+cd wallet
+npm install
+if [ $1 == "dev" ]; then
+	PORT=3002 npm start &
+fi
+if [ $1 == "production" ]; then
+	CI=false npm run build
+	mv build ../dist/wallet
+fi
+cd ..
+
 if [ $1 == "production" ]; then
 	# Build provider bundle
 	cd provider
