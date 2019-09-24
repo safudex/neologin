@@ -1,5 +1,5 @@
 import connectToParent from 'penpal/lib/connectToParent';
-import Neon, { u, api, sc } from "@cityofzion/neon-js";
+import Neon, { u, api, sc, tx, wallet } from "@cityofzion/neon-js";
 import { server } from './config';
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -391,24 +391,141 @@ function send(sendArgs) {
 // Needs to be accepted every time
 // See https://cityofzion.io/neon-js/docs/en/examples/smart_contract.html
 function invoke(invokeArgs) {
-	return new Promise((resolve, reject) =>
-		requestAcceptance(JSON.stringify(invokeArgs)).then(() =>
-			alert('sent!')
-			//	foo().then(() => resolve({ ... })).catch(() => {
-			//		reject({
-			//			type: 'RPC_ERROR',
-			//			description: 'There was an error when broadcasting this transaction to the network.',
-			//			data: ''
-			//		});
-			//	})
-		).catch(() =>
-			reject({
-				type: 'CANCELED',
-				description: 'There was an error when broadcasting this transaction to the network.',
-				data: ''
-			})
-		)
-	)
+	return new Promise((resolve, reject) => {
+		requestAcceptance(JSON.stringify(invokeArgs))
+			.catch(() =>
+				reject({
+					type: 'CANCELED',
+					description: 'There was an error when broadcasting this transaction to the network.',
+				})
+			)
+			.then(async () => {
+				let transaction;
+				try{
+					const endpoint = neoscanEndpoints[getNetwork(invokeArgs.network)]; 
+					const apiProvider = new api.neoscan.instance(endpoint);
+
+					// Create contract transaction using Neoscan API
+					let balance = await apiProvider.getBalance(invokeArgs.fromAddress);
+					const script = Neon.create.script({
+						scriptHash: invokeArgs.scriptHash,
+						operation: invokeArgs.operation,
+						args: invokeArgs.args
+					});
+					let transaction = new tx.InvocationTransaction({
+						script: script,
+						gas: 0
+					});
+					if(invokeArgs.triggerContractVerification){
+						transaction.addAttribute(
+							tx.TxAttrUsage.Script,
+							u.reverseHex(wallet.getScriptHashFromAddress(acct.address))
+						);
+					} else if(invokeArgs.assetIntentOverrides === undefined && invokeArgs.attachedAssets === undefined && (invokeArgs.fee === undefined || invokeArgs.fee === 0)){
+						transaction.addAttribute(
+							tx.TxAttrUsage.Script,
+							u.reverseHex(acct.scriptHash)
+						);
+					} else if(invokeArgs.assetIntentOverrides){
+						let txids = (balance.assets.GAS? balance.assets.GAS.unspent : []).concat(balance.assets.NEO? balance.assets.NEO.unspent : []).map(txx => txx.txid);
+						let userTxs = invokeArgs.assetIntentOverrides.inputs.filter((input)=> txids.includes(input.txid));
+						if(userTxs.length === 0){
+							transaction.addAttribute(
+								tx.TxAttrUsage.Script,
+								u.reverseHex(acct.scriptHash)
+							);
+						} else {
+							transaction.addAttribute(
+								tx.TxAttrUsage.Script,
+								u.reverseHex(acct.scriptHash)
+							);
+						}
+					} else {
+						transaction.addAttribute(
+							tx.TxAttrUsage.Script,
+							u.reverseHex(acct.scriptHash)
+						);
+					}
+					if(invokeArgs.assetIntentOverrides){
+						invokeArgs.assetIntentOverrides.outputs.map(output=>transaction.addOutput(new tx.TransactionOutput({
+							assetId: CONST.ASSET_ID[output.asset],
+							value: output.value,
+							scriptHash: wallet.getScriptHashFromAddress(output.address)
+						})));
+						transaction.inputs = invokeArgs.assetIntentOverrides.inputs.map(input => (new tx.TransactionInput({
+							prevHash: input.txid,
+							prevIndex: input.index
+						})));
+					} else {
+						if(invokeArgs.attachedAssets){
+							["NEO, GAS"].map((asset) => {
+								if(invokeArgs.attachedAssets[asset]){
+									transaction = transaction.addIntent(asset, Number(invokeArgs.attachedAssets[asset]), wallet.getAddressFromScriptHash(invokeArgs.scriptHash));
+								}
+							});
+						}
+						try{
+							if(invokeArgs.fee) {
+								transaction = transaction.calculate(balance, null, Number(invokeArgs.fee))
+							} else {
+								transaction = transaction.calculate(balance)
+							}
+						} catch(e) {
+							reject({
+								type: 'INSUFFICIENT_FUNDS',
+								description: "Account doesn't have enough funds.",
+							});
+							return;
+						}
+					}
+					if(invokeArgs.txHashAttributes){
+						invokeArgs.txHashAttributes.map((attr) => {
+							if(!attr.startsWith("Hash")){
+								return;
+							}
+							transaction.addAttribute(
+								Neon.tx.TxAttrUsage[attr.txAttrUsage],
+								attr.value //TODO: Do type conversion
+							);
+						});
+					}
+					transaction = transaction.sign(acct.privateKey);
+				} catch(e) {
+					reject({
+						type: 'MALFORMED_INPUT',
+						description: "Some input provided was wrong.",
+					});
+					return;
+				}
+
+				try{ //TODO: Separate into function
+					const txid = transaction.hash;
+					if(invokeArgs.broadcastOverride) {
+						resolve({
+							txid,
+							signedTx: transaction.serialize()
+						});
+					} else {
+						// Send raw transaction
+						const nodeURL = rpcUrls[getNetwork(invokeArgs.network)];
+						const client = Neon.create.rpcClient(nodeURL);
+						await client.sendRawTransaction(transaction);
+
+						// Sucess!
+						resolve({
+							txid,
+							nodeURL
+						});
+					}
+				} catch(e) {
+					reject({
+						type: 'RPC_ERROR',
+						description: "There was an error when broadcasting this transaction to the network.",
+					});
+					return;
+				}
+			});
+	});
 }
 
 // Needs to be accepted every time
