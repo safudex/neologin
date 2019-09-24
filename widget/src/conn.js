@@ -42,7 +42,7 @@ let rawMethods = {
 
 let methods = {};
 
-const unathenticatedMethods = ['getProvider', 'getNetworks', 'getBalance', 'getStorage', 'verifyMessage', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog'];
+const unathenticatedMethods = ['getProvider', 'getNetworks', 'getBalance', 'getStorage', 'invokeRead', 'verifyMessage', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog'];
 const requireNetworkCheckMethods = ['getBalance', 'getStorage', 'invokeRead', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog', 'send', 'invoke', 'invokeMulti', 'deploy'];
 
 Object.keys(rawMethods).map((key) => {
@@ -254,7 +254,7 @@ function getStorage(storageArgs) {
 	return rpcCall("getStorage", [storageArgs.scriptHash, storageArgs.key], storageArgs.network, (res)=>{return {result:u.hexstring2str(res)}});
 }
 
-// Does NOT need to be accepted -> This is a security hole (can be used to leak the user's public key/address) but O3 does it like this so it's better to maintain compatibility
+// Does NOT need to be accepted
 function invokeRead(invokeArgs) {
 	let script = "";
 	try{
