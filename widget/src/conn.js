@@ -581,21 +581,102 @@ function signMessage(signArgs) {
 }
 
 // Needs to be accepted every time
+// See https://github.com/NeoResearch/neocompiler-eco/blob/master/public/js/eco-scripts/invoke_deploy_NeonJS.js
 function deploy(deployArgs) {
-	return requestAcceptance(JSON.stringify(deployArgs))
+	let sysGasFee = 100;
+	if (deployArgs.needsStorage) {
+		sysGasFee += 400;
+	}
+	if (deployArgs.dynamicInvoke) {
+		sysGasFee += 500;
+	}
+	return requestAcceptance(sysGasFee, deployArgs.networkFee)
 		.then(() => {
 			return new Promise((resolve, reject) => {
-				alert('sent!')
+				try{
+					if (!deployArgs.code) {
+						throw "ERROR (DEPLOY): Empty script (avm)!";
+					}
+					const sb = Neon.create.scriptBuilder();
+					sb.emitPush(u.str2hexstring(deployArgs.description)) // description
+						.emitPush(u.str2hexstring(deployArgs.email)) // email
+						.emitPush(u.str2hexstring(deployArgs.author)) // author
+						.emitPush(u.str2hexstring(deployArgs.version)) // code_version
+						.emitPush(u.str2hexstring(deployArgs.name)) // name
+						.emitPush(0x00 | (deployArgs.needsStorage? 0x01 : 0x00) | (deployArgs.dynamicInvoke? 0x02 : 0x00) | (deployArgs.isPayable? 0x04 : 0x00)) // storage: {none: 0x00, storage: 0x01, dynamic: 0x02, storage+dynamic:0x03}
+						.emitPush(deployArgs.returnType) // expects hexstring  (_emitString) // usually '05'
+						.emitPush(deployArgs.parameterList) // expects hexstring  (_emitString) // usually '0710'
+						.emitPush(deployArgs.code) //script
+						.emitSysCall('Neo.Contract.Create');
 
-				//reject({
-				//	type: 'UNKNOWN_ERROR',
-				//	description: 'There was an unknown error.',
-				//	data: ''
-				//})
-				resolve({
-					txid: null,
-					nodeUrl: null
-				})
+					let transaction;
+					try {
+						const endpoint = neoscanEndpoints[getNetwork(deployArgs.network)]; 
+						const apiProvider = new api.neoscan.instance(endpoint);
+
+						// Create contract transaction using Neoscan API
+						let balance = await apiProvider.getBalance(acct.address);
+						let transaction = new tx.InvocationTransaction({
+							script: sb.str,
+							gas: sysGasFee
+						});
+
+						transaction.addAttribute(
+							tx.TxAttrUsage.Script,
+							u.reverseHex(acct.scriptHash)
+						);
+						transaction = transaction.addIntent("GAS", Number(sysGasFee), wallet.getAddressFromScriptHash(invokeArgs.scriptHash));
+						try {
+							transaction = transaction.calculate(balance, null, Number(deployArgs.networkFee));
+						} catch(e) {
+							reject({
+								type: 'INSUFFICIENT_FUNDS',
+								description: "Account doesn't have enough funds.",
+							});
+							return;
+						}
+						transaction = transaction.sign(acct.privateKey);
+					} catch(e) {
+						reject({
+							type: 'MALFORMED_INPUT',
+							description: "Some input provided was wrong.",
+						});
+						return;
+					}
+
+					try{ //TODO: Separate into function
+						const txid = transaction.hash;
+						if(invokeArgs.broadcastOverride) {
+							resolve({
+								txid,
+								signedTx: transaction.serialize()
+							});
+						} else {
+							// Send raw transaction
+							const nodeURL = rpcUrls[getNetwork(invokeArgs.network)];
+							const client = Neon.create.rpcClient(nodeURL);
+							await client.sendRawTransaction(transaction);
+
+							// Sucess!
+							resolve({
+								txid,
+								nodeURL
+							});
+						}
+					} catch(e) {
+						reject({
+							type: 'RPC_ERROR',
+							description: "There was an error when broadcasting this transaction to the network.",
+						});
+						return;
+					}
+				} catch(e) {
+					reject({
+						type: 'UNKNOWN_ERROR',
+						description: 'There was an unknown error.',
+						data: ''
+					})
+				}
 			})
 		})
 }
