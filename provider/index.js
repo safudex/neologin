@@ -5,9 +5,13 @@ import hexEncoding from 'crypto-js/enc-hex';
 import { ArgumentDataType, EventName } from './constants';
 
 let heights = []
+let isReady = null;
 
 function sendEvent(ev, data) { //{type, data}
     registeredEvents[ev].map((cb) => cb(data));
+	if(ev === 'READY'){
+		isReady = data;
+	}
 }
 
 let registeredEvents = {
@@ -30,14 +34,18 @@ function checkEvent(ev) {
 }
 
 function addEventListener(ev, cb) {
-    if (checkEvent(ev)) {
-        registeredEvents[ev].push(cb);
-    }
+	if (ev === 'READY' && isReady !== null){
+		cb(isReady);
+	} else {
+		if (checkEvent(ev)) {
+			registeredEvents[ev].push(cb);
+		}
+	}
 }
 
 function removeEventListener(ev) {
-    if (checkEvent(ev)) {
-        registeredEvents[ev] = [];
+	if (checkEvent(ev)) {
+		registeredEvents[ev] = [];
     }
 }
 
