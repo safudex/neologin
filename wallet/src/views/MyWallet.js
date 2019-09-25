@@ -5,7 +5,6 @@ import Grid from '@material-ui/core/Grid';
 import copyIcon from '../imgs/copy.png'
 
 import neologin from 'neologin';
-//import neologin from '../provider.js';
 
 class MyWallet extends React.Component {
 
