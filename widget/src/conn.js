@@ -67,11 +67,50 @@ const connection = connectToParent({
 	methods
 });
 
+let pendingTransactions = {
+	MainNet:[],
+	TestNet: []
+};
+
+let lastBlockHeight = {
+	MainNet:0,
+	TestNet: 0
+};
+
 connection.promise.then(parent => {
 	parent.sendEvent('READY', providerInfo);
+	
 	//TODO: Add event listeners for CONNECTED, BLOCK_HEIGHT_CHANGED and TRANSACTION_CONFIRMED
-
-	//parent.add(3, 1).then(total => console.log(total));
+	supportedNetworks.map(async network => {
+		lastBlockHeight[network] = await getBlockHeight({network});
+		setInterval(()=>{
+			getBlock({
+				network,
+				blockHeight: lastBlockHeight[network]+1
+			}).then( block => {
+				lastBlockHeight[network] = block.index;
+				parent.sendEvent('BLOCK_HEIGHT_CHANGED', {
+					network,
+					blockHeight: block.index,
+					blockTime: block.time,
+					blockHash: block.hash,
+					tx: block.tx
+				});
+				const txids = block.tx.map(txx => txx.txid.substr(2));
+				pendingTransactions[network] = pendingTransactions[network].filter(pendingTx => {
+					if(txids.includes(pendingTx)){
+						parent.sendEvent('TRANSACTION_CONFIRMED', {
+							txid: pendingTx,
+							blockHeight: block.index,
+						});
+						return false;
+					} else {
+						return true;
+					}
+				});
+			});
+		}, 1000); // Run every second
+	});
 });
 
 function signIn() {
@@ -306,6 +345,28 @@ function getApplicationLog(appLogArgs) {
 	return rpcCall("getapplicationlog", [appLogArgs.txid], appLogArgs.network, (res)=>res, true);
 }
 
+function sendTransaction(transaction, broadcastOverride, network, resolve){
+	const txid = transaction.hash;
+	if(broadcastOverride) {
+		resolve({
+			txid,
+			signedTx: transaction.serialize()
+		});
+	} else {
+		// Send raw transaction
+		const nodeURL = rpcUrls[getNetwork(network)];
+		const client = Neon.create.rpcClient(nodeURL);
+		await client.sendRawTransaction(transaction);
+
+		// Sucess!
+		pendingTransactions[network].push(txid);
+		resolve({
+			txid,
+			nodeURL
+		});
+	}
+}
+
 // Needs to be accepted every time
 // See https://cityofzion.io/neon-js/docs/en/examples/native_asset.html
 function send(sendArgs) {
@@ -359,24 +420,7 @@ function send(sendArgs) {
 				}
 
 				try{
-					const txid = transaction.hash;
-					if(sendArgs.broadcastOverride) {
-						resolve({
-							txid,
-							signedTx: transaction.serialize()
-						});
-					} else {
-						// Send raw transaction
-						const nodeURL = rpcUrls[getNetwork(sendArgs.network)];
-						const client = Neon.create.rpcClient(nodeURL);
-						await client.sendRawTransaction(transaction);
-
-						// Sucess!
-						resolve({
-							txid,
-							nodeURL
-						});
-					}
+					sendTransaction(transaction, sendArgs.broadcastOverride, sendArgs.network, resolve);
 				} catch(e) {
 					reject({
 						type: 'SEND_ERROR',
@@ -498,25 +542,8 @@ function invoke(invokeArgs) {
 					return;
 				}
 
-				try{ //TODO: Separate into function
-					const txid = transaction.hash;
-					if(invokeArgs.broadcastOverride) {
-						resolve({
-							txid,
-							signedTx: transaction.serialize()
-						});
-					} else {
-						// Send raw transaction
-						const nodeURL = rpcUrls[getNetwork(invokeArgs.network)];
-						const client = Neon.create.rpcClient(nodeURL);
-						await client.sendRawTransaction(transaction);
-
-						// Sucess!
-						resolve({
-							txid,
-							nodeURL
-						});
-					}
+				try{
+					sendTransaction(transaction, invokeArgs.broadcastOverride, invokeArgs.network, resolve);
 				} catch(e) {
 					reject({
 						type: 'RPC_ERROR',
@@ -644,26 +671,9 @@ function deploy(deployArgs) {
 						return;
 					}
 
-					try{ //TODO: Separate into function
-						const txid = transaction.hash;
-						if(deployArgs.broadcastOverride) {
-							resolve({
-								txid,
-								signedTx: transaction.serialize()
-							});
-						} else {
-							// Send raw transaction
-							const nodeURL = rpcUrls[getNetwork(deployArgs.network)];
-							const client = Neon.create.rpcClient(nodeURL);
-							await client.sendRawTransaction(transaction);
-
-							// Sucess!
-							resolve({
-								txid,
-								nodeURL
-							});
-						}
-					} catch(e) {
+					try{
+						sendTransaction(transaction, deployArgs.broadcastOverride, deployArgs.network, resolve);
+					} catch(e) { // Should it be UNKNOWN_ERROR to maintain compatibility?
 						reject({
 							type: 'RPC_ERROR',
 							description: "There was an error when broadcasting this transaction to the network.",
@@ -704,6 +714,8 @@ function successfulSignIn(account) {
 	//});
 }
 
+connection.promise.then(parent => {
+	parent.sendEvent('READY', providerInfo);
 function requestAcceptance(message) {
 	var requestContainer = document.createElement("div");
 	requestContainer.id = 'request-' + totalRequests
@@ -719,7 +731,7 @@ function requestAcceptance(message) {
 			if (userGivesPermission)
 				resolve()
 			else
-				ReactDOM.render(<RequestAcceptance message={message} resolve={() => { userGivesPermission = true; resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+				ReactDOM.render(<RequestAcceptance message={message} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', {address: acct.address, label: "My Spending Wallet"})); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
 					totalRequests++
 					displayWidget(document.getElementById(requestContainer.id).clientHeight)
 				});
