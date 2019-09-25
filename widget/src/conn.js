@@ -714,8 +714,6 @@ function successfulSignIn(account) {
 	//});
 }
 
-connection.promise.then(parent => {
-	parent.sendEvent('READY', providerInfo);
 function requestAcceptance(message) {
 	var requestContainer = document.createElement("div");
 	requestContainer.id = 'request-' + totalRequests
