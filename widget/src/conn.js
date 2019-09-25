@@ -345,7 +345,7 @@ function getApplicationLog(appLogArgs) {
 	return rpcCall("getapplicationlog", [appLogArgs.txid], appLogArgs.network, (res)=>res, true);
 }
 
-function sendTransaction(transaction, broadcastOverride, network, resolve){
+async function sendTransaction(transaction, broadcastOverride, network, resolve){
 	const txid = transaction.hash;
 	if(broadcastOverride) {
 		resolve({
@@ -420,7 +420,7 @@ function send(sendArgs) {
 				}
 
 				try{
-					sendTransaction(transaction, sendArgs.broadcastOverride, sendArgs.network, resolve);
+					await sendTransaction(transaction, sendArgs.broadcastOverride, sendArgs.network, resolve);
 				} catch(e) {
 					reject({
 						type: 'SEND_ERROR',
@@ -543,7 +543,7 @@ function invoke(invokeArgs) {
 				}
 
 				try{
-					sendTransaction(transaction, invokeArgs.broadcastOverride, invokeArgs.network, resolve);
+					await sendTransaction(transaction, invokeArgs.broadcastOverride, invokeArgs.network, resolve);
 				} catch(e) {
 					reject({
 						type: 'RPC_ERROR',
@@ -672,7 +672,7 @@ function deploy(deployArgs) {
 					}
 
 					try{
-						sendTransaction(transaction, deployArgs.broadcastOverride, deployArgs.network, resolve);
+						await sendTransaction(transaction, deployArgs.broadcastOverride, deployArgs.network, resolve);
 					} catch(e) { // Should it be UNKNOWN_ERROR to maintain compatibility?
 						reject({
 							type: 'RPC_ERROR',
