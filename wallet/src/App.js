@@ -35,7 +35,7 @@ function App() {
 
   const classes = useStyles();
   const [network, setNetwork] = React.useState('TestNet');
-  const [tabSelected, setTabSelected] = React.useState(0);
+  const [tabSelected, setTabSelected] = React.useState(2);
   const [isMobile, setIsMobile] = React.useState(document.documentElement.clientWidth < 576);
 
   function changeStyles(w, h) {

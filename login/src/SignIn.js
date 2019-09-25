@@ -123,7 +123,7 @@ class SignIn extends React.Component {
 		event.preventDefault();
 		try {
 			const user = await this.state.twoFASolve(this.state.MFACode);
-			this.state.handleLogin(user.privkey, this.state.rememberMe);
+			this.state.handleLogin(user.privkey, this.state.rememberMe, user.cognitoUser, this.state.twoFA);
 		} catch (err) {
 			if (err.code === "CodeMismatchException") {
 				this.setState({ wrongMFACode: true });
@@ -171,7 +171,7 @@ class SignIn extends React.Component {
 				// More info please check the Enabling MFA part
 			} else {
 				// The user directly signs in
-				this.state.handleLogin(user.privkey, this.state.rememberMe);
+				this.state.handleLogin(user.privkey, this.state.rememberMe, user.cognitoUser);
 				console.log(user);
 			}
 		} catch (err) {
@@ -229,42 +229,42 @@ class SignIn extends React.Component {
 								/>
 							]) : ([
 								<TextField
-						variant="outlined"
-						margin="normal"
-						required
-						fullWidth
-						key="email"
-						id="email"
-						label="Email Address"
-						name="email"
-						autoComplete="email"
-						autoFocus
-						value={this.state.email}
-						error={this.state.wrongEmail ? true : null}
-						helperText={this.state.wrongEmail ? "No user with this email" : null}
-						onChange={this.handleInputChange}
-					/>,
+									variant="outlined"
+									margin="normal"
+									required
+									fullWidth
+									key="email"
+									id="email"
+									label="Email Address"
+									name="email"
+									autoComplete="email"
+									autoFocus
+									value={this.state.email}
+									error={this.state.wrongEmail ? true : null}
+									helperText={this.state.wrongEmail ? "No user with this email" : null}
+									onChange={this.handleInputChange}
+								/>,
 								<TextField
-						variant="outlined"
-						margin="normal"
-						required
-						fullWidth
-						name="password"
-						key="password"
-						label="Password"
-						type="password"
-						id="password"
-						autoComplete="current-password"
-						value={this.state.password}
-						error={this.state.wrongPassword ? true : null}
-						helperText={this.state.wrongPassword ? "Wrong password" : null}
-						onChange={this.handleInputChange}
-					/>,
+									variant="outlined"
+									margin="normal"
+									required
+									fullWidth
+									name="password"
+									key="password"
+									label="Password"
+									type="password"
+									id="password"
+									autoComplete="current-password"
+									value={this.state.password}
+									error={this.state.wrongPassword ? true : null}
+									helperText={this.state.wrongPassword ? "Wrong password" : null}
+									onChange={this.handleInputChange}
+								/>,
 								<FormControlLabel
-						control={<Checkbox value="remember" color="primary" name="rememberMe" checked={this.state.rememberMe} onChange={this.handleInputChange} />}
-						label="Remember me"
-					/>
-					]) }
+									control={<Checkbox value="remember" color="primary" name="rememberMe" checked={this.state.rememberMe} onChange={this.handleInputChange} />}
+									label="Remember me"
+								/>
+							])}
 						<button className='buttonContinue' type="submit" style={{ margin: '1rem 0' }}>
 							Sign In
           				</button>
@@ -275,11 +275,13 @@ class SignIn extends React.Component {
 										<span style={{ color: '#2e5aac' }}>Forgot password?</span>
 									</Link>
 								</Grid>
-								<Grid item>
-									<Link href="#" variant="body2" onClick={this.state.signUpClick}>
-										<span style={{ color: '#2e5aac' }}>Don't have an account? Sign Up</span>
-									</Link>
-								</Grid>
+								´{
+									this.state.openSettings ? <Grid item>
+										<Link href="#" variant="body2" onClick={this.state.signUpClick}>
+											<span style={{ color: '#2e5aac' }}>Don't have an account? Sign Up</span>
+										</Link>
+									</Grid> : null
+								}
 							</Grid>
 						)}
 					</form>
