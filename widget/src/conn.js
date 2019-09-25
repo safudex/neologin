@@ -592,7 +592,7 @@ function deploy(deployArgs) {
 	}
 	return requestAcceptance(sysGasFee, deployArgs.networkFee)
 		.then(() => {
-			return new Promise((resolve, reject) => {
+			return new Promise(async (resolve, reject) => {
 				try{
 					if (!deployArgs.code) {
 						throw "ERROR (DEPLOY): Empty script (avm)!";
