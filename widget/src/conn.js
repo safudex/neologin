@@ -625,7 +625,7 @@ function deploy(deployArgs) {
 							tx.TxAttrUsage.Script,
 							u.reverseHex(acct.scriptHash)
 						);
-						transaction = transaction.addIntent("GAS", Number(sysGasFee), wallet.getAddressFromScriptHash(invokeArgs.scriptHash));
+
 						try {
 							transaction = transaction.calculate(balance, null, Number(deployArgs.networkFee));
 						} catch(e) {
@@ -646,14 +646,14 @@ function deploy(deployArgs) {
 
 					try{ //TODO: Separate into function
 						const txid = transaction.hash;
-						if(invokeArgs.broadcastOverride) {
+						if(deployArgs.broadcastOverride) {
 							resolve({
 								txid,
 								signedTx: transaction.serialize()
 							});
 						} else {
 							// Send raw transaction
-							const nodeURL = rpcUrls[getNetwork(invokeArgs.network)];
+							const nodeURL = rpcUrls[getNetwork(deployArgs.network)];
 							const client = Neon.create.rpcClient(nodeURL);
 							await client.sendRawTransaction(transaction);
 
