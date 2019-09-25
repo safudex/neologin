@@ -9,7 +9,7 @@ import { server } from './config';
 class App extends React.Component {
 	constructor(props) {
 		super(props);
-		if (!server.includes("localhost") && (!window.opener || !window.opener.location || (window.opener.location.href !== server + "/widget/" && window.opener.location.href !== server + "/wallet/")) {
+		if (!server.includes("localhost") && (!window.opener || !window.opener.location || (window.opener.location.href !== server + "/widget/" && window.opener.location.href !== server + "/wallet/"))) {
 			//Trying to hack the user
 			window.close();
 			this.state = {
