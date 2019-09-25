@@ -1502,7 +1502,7 @@ Will deploy a compiled smart contract to the blockchain with the provided input 
 | parameterList     | String   | The list of input argument types for the Main function on the contract. https://docs.neo.org/en-us/sc/Parameter.html    |
 | returnType        | String   | The list of output returnType argument types. https://docs.neo.org/en-us/sc/Parameter.html                              |
 | code              | String   | The hex of the compiled smart contract avm                                                                              |
-| netowrkFee        | String   | The network fee to execute the transaction, in addition to the deploy fee which will be added automatically             |
+| networkFee        | String   | The network fee to execute the transaction, in addition to the deploy fee which will be added automatically             |
 | broadcastOverride | Boolean? | If this flag is set to True, the wallet provider will return the signed transaction rather than broadcasting to a node. |
 
 ##### Success Response
