@@ -1,5 +1,5 @@
 import connectToParent from 'penpal/lib/connectToParent';
-import Neon, { u, api, sc, tx, wallet } from "@cityofzion/neon-js";
+import Neon, { u, api, sc, tx, wallet, CONST } from "@cityofzion/neon-js";
 import { server } from './config';
 import React from 'react'
 import ReactDOM from 'react-dom'
