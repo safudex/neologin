@@ -215,7 +215,7 @@ function getNetworks() {
 // Needs to be accepted once
 function getAccount(...args) {
 	return new Promise((resolve, reject) => {
-		requestAcceptance('Do you want to give access to your address?').then(() => {
+		requestAcceptance('Do you want to give this dApp access to your address?').then(() => {
 			resolve({
 				address: acct.address,
 				label: 'My Spending Wallet'
@@ -233,7 +233,7 @@ function getAccount(...args) {
 // Needs to be accepted once
 function getPublicKey() {
 	return new Promise((resolve, reject) => {
-		requestAcceptance('Do you want to give access to your public key?').then(() => {
+		requestAcceptance('Do you want to give this dApp access to your address?').then(() => {
 			resolve({
 				address: acct.address,
 				publicKey: acct.publicKey
@@ -383,7 +383,7 @@ function send(sendArgs) {
 		});
 	}
 	return new Promise((resolve, reject) => {
-		requestAcceptance('Send monies?', sendArgs)
+		requestAcceptance('This dApp has requested permission to send some of your funds. Accept?', sendArgs)
 			.catch(() =>
 				reject({
 					type: 'CANCELED',
@@ -442,7 +442,7 @@ function send(sendArgs) {
 // See https://cityofzion.io/neon-js/docs/en/examples/smart_contract.html
 function invoke(invokeArgs) {
 	return new Promise((resolve, reject) => {
-		requestAcceptance(JSON.stringify(invokeArgs))
+		requestAcceptance("This dApp has requested permission to invoke a smart contract, this may spend some of your funds. Accept?")
 			.catch(() =>
 				reject({
 					type: 'CANCELED',
@@ -564,7 +564,8 @@ function invoke(invokeArgs) {
 // Needs to be accepted every time
 function invokeMulti(invokeMultiArgs) {
 	return new Promise((resolve, reject) =>
-		requestAcceptance(JSON.stringify(invokeMultiArgs)).then(() =>
+		requestAcceptance("This dApp has requested permission to invoke a smart contract, this may spend some of your funds. Accept?")
+		.then(() =>{
 			alert('sent!')
 			//	foo().then(() => resolve({ ... })).catch(() => {
 			//		reject({
@@ -573,7 +574,7 @@ function invokeMulti(invokeMultiArgs) {
 			//			data: ''
 			//		});
 			//	})
-		).catch(() =>
+		}).catch(() =>
 			reject({
 				type: 'CANCELED',
 				description: 'There was an error when broadcasting this transaction to the network.',
@@ -585,7 +586,7 @@ function invokeMulti(invokeMultiArgs) {
 
 // Needs to be accepted every time
 function signMessage(signArgs) {
-	return requestAcceptance(signArgs.message)
+	return requestAcceptance("This dApp wants to sign the message '"+signArgs.message+"' using your private key. Accept?")
 		.then(() => {
 			return new Promise((resolve, reject) => {
 				try {
@@ -623,7 +624,7 @@ function deploy(deployArgs) {
 	if (deployArgs.dynamicInvoke) {
 		sysGasFee += 500;
 	}
-	return requestAcceptance(sysGasFee, deployArgs.networkFee)
+	return requestAcceptance("This dApp has requested permission to deploy a smart contract. This will cost "+sysGasFee+" GAS in system costs and "+deployArgs.networkFee+" GAS in network fees. Accept?")
 		.then(() => {
 			return new Promise(async (resolve, reject) => {
 				try{
