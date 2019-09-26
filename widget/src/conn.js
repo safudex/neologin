@@ -356,7 +356,7 @@ function getTransaction(txArgs) {
 
 // Does NOT need to be accepted
 function getApplicationLog(appLogArgs) {
-	return rpcCall("getapplicationlog", [appLogArgs.txid], appLogArgs.network, (res)=>res, true);
+	return rpcCall("getapplicationlog", [appLogArgs.txid], appLogArgs.network, (res) => res.result, true);
 }
 
 async function sendTransaction(transaction, broadcastOverride, network, resolve){
