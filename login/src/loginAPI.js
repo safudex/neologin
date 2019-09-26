@@ -127,7 +127,7 @@ function login(email, password) {
 function resolveUser(cognitoUser, email, password, resolve, reject) {
 }
 
-function enableTOTP(cognitoUser, email, drawQR) {
+function enableTOTP(cognitoUser, email, openQRView) {
 	return new Promise((resolve, reject) => {
 		cognitoUser.associateSoftwareToken({
 			onSuccess: resolve,
@@ -140,7 +140,7 @@ function enableTOTP(cognitoUser, email, drawQR) {
 			},
 			associateSecretCode: function (secretCode) {
 				console.log(secretCode);
-				drawQR(secretCode, email)
+				openQRView(secretCode, email)
 				resolve()
 				//var challengeAnswer = prompt('Please input the TOTP code.', '');
 				/* cognitoUser.verifySoftwareToken(challengeAnswer, 'My TOTP device', {

@@ -8,13 +8,7 @@ import ReactDOM from 'react-dom'
 
 import './styles.css'
 
-const rejectError = {
-  type: 'CONNECTION_DENIED',
-  description: 'The user rejected the request to connect with your dApp.',
-  data: ''
-}
-
-class RequestAcceptance extends React.Component {
+class RequestAcceptanceSend extends React.Component {
 
   unmountComponent = () => {
     ReactDOM.unmountComponentAtNode(window.document.getElementById(this.props.contid))
@@ -29,9 +23,7 @@ class RequestAcceptance extends React.Component {
   render() {
     return (
       <div>
-        <Brand closeWidget={() => {
-          this.props.reject(rejectError); this.unmountComponent();
-        }} reqNumber={parseInt(this.props.contid.split('-')[1]) + 1} />
+        <Brand closeWidget={() => { this.props.reject(); this.unmountComponent(); }} reqNumber={parseInt(this.props.contid.split('-')[1]) + 1} />
         <Grid
           container
           direction="column"
@@ -40,7 +32,25 @@ class RequestAcceptance extends React.Component {
           style={{ height: '100%', padding: '1em' }}
         >
           <Grid item xs>
-            <p style={{ fontSize: '0.85em' }}>{this.props.message}</p>
+            <p style={{ fontSize: '0.85em' }}>This dApp has requested permission to send</p>
+          </Grid>
+          <Grid item xs>
+            <span style={{ fontWeight: 'bold' }}>{this.props.sendArgs.amount} {this.props.sendArgs.asset}</span>
+          </Grid>
+          <Grid item xs style={{ width: '100%' }}>
+            <Grid
+              container
+              direction="column"
+              justify="center"
+              alignItems="flex-start"
+              style={{ padding: '1em' }}
+            >{/* sendArgs.network + ' to ' + sendArgs.toAddress + ' with ' + (sendArgs.fee || 0) + ' GAS in fees. Accept?' */}
+              <div>
+                <span style={{ fontSize: '0.85em', display: 'block' }}>Network: {this.props.sendArgs.network}</span>
+                <span>To: </span><span style={{ fontSize: '0.80em' }}>{this.props.sendArgs.toAddress}</span>
+                <span style={{ fontSize: '0.85em', display: 'block' }}>Fee: {this.props.sendArgs.fee || 0} GAS</span>
+              </div>
+            </Grid>
           </Grid>
           <Grid item xs style={{ width: '100%' }}>
             <Grid
@@ -60,7 +70,7 @@ class RequestAcceptance extends React.Component {
               </Grid>
               <Grid item xs>
                 <button className='buttonContinue buttonReject' onClick={() => {
-                  this.props.reject(rejectError)
+                  this.props.reject()
                   this.unmountComponent()
                 }}>
                   Reject
@@ -74,4 +84,4 @@ class RequestAcceptance extends React.Component {
   }
 }
 
-export default RequestAcceptance;
+export default RequestAcceptanceSend;

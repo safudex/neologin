@@ -6,7 +6,11 @@ import ReactDOM from 'react-dom'
 import LoginButton from './Views/LoginButton'
 import UserData from './Views/UserData';
 import RequestAcceptance from './Views/RequestAcceptance'
+import RequestAcceptanceSend from './Views/RequestAcceptanceSend'
+import RequestAcceptanceSignMessage from './Views/RequestAcceptanceSignMessage'
 import { v4 as uuid } from 'uuid';
+import RequestAcceptanceInvoke from './Views/RequestAcceptanceInvoke';
+import RequestAcceptanceDeploy from './Views/RequestAcceptanceDeploy';
 
 let acct = null;
 let defaultNetwork = "MainNet";
@@ -49,7 +53,7 @@ const requireNetworkCheckMethods = ['getBalance', 'getStorage', 'invokeRead', 'g
 Object.keys(rawMethods).map((key) => {
 	methods[key] = (...args) => {
 		if (requireNetworkCheckMethods.includes(key)) {
-			if (args[0].network !== undefined && !supportedNetworks.includes(args[0].network)){
+			if (args[0].network !== undefined && !supportedNetworks.includes(args[0].network)) {
 				return Promise.reject({
 					"type": "INVALID_NETWORK",
 					"description": "This network is not supported."
@@ -69,27 +73,27 @@ const connection = connectToParent({
 });
 
 let pendingTransactions = {
-	MainNet:[],
+	MainNet: [],
 	TestNet: []
 };
 
 let lastBlockHeight = {
-	MainNet:0,
+	MainNet: 0,
 	TestNet: 0
 };
 
 connection.promise.then(parent => {
 	parent.sendEvent('READY', providerInfo);
-	
+
 	//TODO: Add event listeners for CONNECTED, BLOCK_HEIGHT_CHANGED and TRANSACTION_CONFIRMED
 	supportedNetworks.map(async network => {
-		lastBlockHeight[network] = (await getBlockHeight({network})).result;
-		setInterval(()=>{
+		lastBlockHeight[network] = (await getBlockHeight({ network })).result;
+		setInterval(() => {
 			getBlock({
 				network,
-				blockHeight: lastBlockHeight[network]+1
+				blockHeight: lastBlockHeight[network] + 1
 			})
-				.then( block => {
+				.then(block => {
 					lastBlockHeight[network] = block.index;
 					parent.sendEvent('BLOCK_HEIGHT_CHANGED', {
 						network,
@@ -100,7 +104,7 @@ connection.promise.then(parent => {
 					});
 					const txids = block.tx.map(txx => txx.txid.substr(2));
 					pendingTransactions[network] = pendingTransactions[network].filter(pendingTx => {
-						if(txids.includes(pendingTx)){
+						if (txids.includes(pendingTx)) {
 							parent.sendEvent('TRANSACTION_CONFIRMED', {
 								txid: pendingTx,
 								blockHeight: block.index,
@@ -163,8 +167,8 @@ const providerInfo = {
 	}
 };
 
-function getNetwork(network){
-	return network === undefined? defaultNetwork : network;
+function getNetwork(network) {
+	return network === undefined ? defaultNetwork : network;
 }
 
 const rpcUrls = {
@@ -184,20 +188,20 @@ supportedNetworks.map(network => {
 */
 
 // See https://github.com/CityOfZion/neon-js/blob/master/examples/browser/README.md
-function rpcCall(call, args, network, constructResponse, unsupportedCall = false){
+function rpcCall(call, args, network, constructResponse, unsupportedCall = false) {
 	return new Promise(async (resolve, reject) => {
-		try{
+		try {
 			const url = rpcUrls[getNetwork(network)];
 			const client = Neon.create.rpcClient(url);
 			let result;
-			if(unsupportedCall){
+			if (unsupportedCall) {
 				const query = Neon.create.query({ method: call, params: args });
 				result = await query.execute(url);
 			} else {
 				result = await client[call](...args);
 			}
 			resolve(constructResponse(result));
-		} catch(e){
+		} catch (e) {
 			reject({
 				type: 'RPC_ERROR',
 				description: 'There was an error with this RPC call.',
@@ -223,17 +227,13 @@ function getNetworks() {
 // Needs to be accepted once
 function getAccount(...args) {
 	return new Promise((resolve, reject) => {
-		requestAcceptance('Do you want to give this dApp access to your address?').then(() => {
+		requestAcceptance('This dApp is requesting access to your NeoLogin wallet.').then(() => {
 			resolve({
 				address: acct.address,
 				label: 'My Spending Wallet'
 			})
-		}).catch(() => {
-			reject({
-				type: 'CONNECTION_DENIED',
-				description: 'The user rejected the request to connect with your dApp.',
-				data: ''
-			});
+		}).catch((e) => {
+			reject(e);
 		})
 	})
 }
@@ -241,17 +241,13 @@ function getAccount(...args) {
 // Needs to be accepted once
 function getPublicKey() {
 	return new Promise((resolve, reject) => {
-		requestAcceptance('Do you want to give this dApp access to your address?').then(() => {
+		requestAcceptance('This dApp is requesting access to your NeoLogin wallet.').then(() => {
 			resolve({
 				address: acct.address,
 				publicKey: acct.publicKey
 			})
-		}).catch(() => {
-			reject({
-				type: 'CONNECTION_DENIED',
-				description: 'The user rejected the request to connect with your dApp.',
-				data: ''
-			});
+		}).catch((e) => {
+			reject(e);
 		})
 	})
 }
@@ -263,39 +259,39 @@ const neoscanEndpoints = {
 
 // Does NOT need to be accepted
 function getBalance(balanceArgs) {
-	if(balanceArgs.params.constructor !== Array) {
+	if (balanceArgs.params.constructor !== Array) {
 		balanceArgs.params = [balanceArgs.params];
 	}
 	return new Promise(async (resolve, reject) => {
-		const endpoint = neoscanEndpoints[getNetwork(balanceArgs.network)]; 
+		const endpoint = neoscanEndpoints[getNetwork(balanceArgs.network)];
 		let balances = await Promise.all(
 			balanceArgs.params.map(
-				(param) => fetch(endpoint+"/v1/get_balance/"+param.address)
-				.then(res => res.json())
-				.then(res => {
-					let balance = [];
-					for(let i = 0; i < res.balance.length; i++){
-						if(param.assets === undefined || param.assets.includes(res.balance[i].asset_symbol)){
-							let newAsset = {
-								assetID: res.balance[i].asset_hash,
-								symbol: res.balance[i].asset_symbol,
-								amount: String(res.balance[i].amount),
-							};
-							if(param.fetchUTXO){
-								newAsset.unspent = res.balance[i].unspent.map((utxo)=>(utxo.value=String(utxo.value), utxo)); // Convert type of value field from Number to String
+				(param) => fetch(endpoint + "/v1/get_balance/" + param.address)
+					.then(res => res.json())
+					.then(res => {
+						let balance = [];
+						for (let i = 0; i < res.balance.length; i++) {
+							if (param.assets === undefined || param.assets.includes(res.balance[i].asset_symbol)) {
+								let newAsset = {
+									assetID: res.balance[i].asset_hash,
+									symbol: res.balance[i].asset_symbol,
+									amount: String(res.balance[i].amount),
+								};
+								if (param.fetchUTXO) {
+									newAsset.unspent = res.balance[i].unspent.map((utxo) => (utxo.value = String(utxo.value), utxo)); // Convert type of value field from Number to String
+								}
+								balance.push(newAsset);
 							}
-							balance.push(newAsset);
 						}
-					}
-					return {
-						balance: balance,
-						address: res.address
-					}; 
-				})
+						return {
+							balance: balance,
+							address: res.address
+						};
+					})
 			)
 		);
 		let final = {};
-		for(let i = 0; i < balances.length; i++){
+		for (let i = 0; i < balances.length; i++) {
 			final[balances[i].address] = balances[i].balance;
 		}
 		resolve(final);
@@ -304,13 +300,13 @@ function getBalance(balanceArgs) {
 
 // Does NOT need to be accepted
 function getStorage(storageArgs) {
-	return rpcCall("getStorage", [storageArgs.scriptHash, storageArgs.key], storageArgs.network, (res)=>{return {result:(res === null? "" : res)}});
+	return rpcCall("getStorage", [storageArgs.scriptHash, storageArgs.key], storageArgs.network, (res) => { return { result: (res === null ? "" : res) } });
 }
 
 // Does NOT need to be accepted
 function invokeRead(invokeArgs) {
 	let script = "";
-	try{
+	try {
 		const props = {
 			// Scripthash for the contract
 			scriptHash: invokeArgs.scriptHash,
@@ -341,17 +337,17 @@ function verifyMessage(verifyArgs) {
 
 // Does NOT need to be accepted
 function getBlock(blockArgs) {
-	return rpcCall("getBlock", [blockArgs.blockHeight], blockArgs.network, (res)=>res);
+	return rpcCall("getBlock", [blockArgs.blockHeight], blockArgs.network, (res) => res);
 }
 
 // Does NOT need to be accepted
 function getBlockHeight(blockHeightArgs) {
-	return rpcCall("getBlockCount", [], blockHeightArgs.network, (res)=>{return {result:res}});
+	return rpcCall("getBlockCount", [], blockHeightArgs.network, (res) => { return { result: res } });
 }
 
 // Does NOT need to be accepted
 function getTransaction(txArgs) {
-	return rpcCall("getRawTransaction", [txArgs.txid], txArgs.network, (res)=>res);
+	return rpcCall("getRawTransaction", [txArgs.txid], txArgs.network, (res) => res);
 }
 
 // Does NOT need to be accepted
@@ -359,9 +355,9 @@ function getApplicationLog(appLogArgs) {
 	return rpcCall("getapplicationlog", [appLogArgs.txid], appLogArgs.network, (res) => res.result, true);
 }
 
-async function sendTransaction(transaction, broadcastOverride, network, resolve){
+async function sendTransaction(transaction, broadcastOverride, network, resolve) {
 	const txid = transaction.hash;
-	if(broadcastOverride) {
+	if (broadcastOverride) {
 		resolve({
 			txid,
 			signedTx: transaction.serialize()
@@ -384,201 +380,208 @@ async function sendTransaction(transaction, broadcastOverride, network, resolve)
 // Needs to be accepted every time
 // See https://cityofzion.io/neon-js/docs/en/examples/native_asset.html
 function send(sendArgs) {
-	if(sendArgs.fromAddress !== acct.address){
-		return Promise.reject({
-			type: 'MALFORMED_INPUT', 
-			description: 'From address is not a properly formatted address.'
-		});
-	}
 	return new Promise((resolve, reject) => {
-		requestAcceptance('This dApp has requested permission to send '+sendArgs.amount+' '+sendArgs.asset+' on '+sendArgs.network+' to '+sendArgs.toAddress+' with '+(sendArgs.fee||0)+' GAS in fees. Accept?')
-			.then(async () => {
-				let transaction;
-				try{
-					const endpoint = neoscanEndpoints[getNetwork(sendArgs.network)]; 
-					const apiProvider = new api.neoscan.instance(endpoint);
-
-					// Create contract transaction using Neoscan API
-					let balance = await apiProvider.getBalance(sendArgs.fromAddress);
-					transaction = Neon.create.contractTx();
-					transaction = transaction.addIntent(sendArgs.asset, Number(sendArgs.amount), sendArgs.toAddress);
-					if(sendArgs.remark) {
-						transaction = transaction.addRemark(sendArgs.remark)
-					}
-					try{
-						if(sendArgs.fee) {
-							transaction = transaction.calculate(balance, null, Number(sendArgs.fee))
-						} else {
-							transaction = transaction.calculate(balance)
-						}
-					} catch(e) {
-						reject({
-							type: 'INSUFFICIENT_FUNDS',
-							description: "Account doesn't have enough funds.",
+		requestAcceptance()
+			.then(() => {
+				requestAcceptanceSend(sendArgs, 'This dApp has requested permission to send ' + sendArgs.amount + ' ' + sendArgs.asset + ' on ' + sendArgs.network + ' to ' + sendArgs.toAddress + ' with ' + (sendArgs.fee || 0) + ' GAS in fees. Accept?').then(async () => {
+					if (sendArgs.fromAddress !== acct.address) {
+						return Promise.reject({
+							type: 'MALFORMED_INPUT',
+							description: 'From address is not a properly formatted address.'
 						});
-						return;
 					}
-					transaction = transaction.sign(acct.privateKey);
-				} catch(e) {
-					reject({
-						type: 'MALFORMED_INPUT',
-						description: "Some input provided was wrong.",
-					});
-					return;
-				}
+					let transaction;
+					try {
+						const endpoint = neoscanEndpoints[getNetwork(sendArgs.network)];
+						const apiProvider = new api.neoscan.instance(endpoint);
 
-				try{
-					await sendTransaction(transaction, sendArgs.broadcastOverride, sendArgs.network, resolve);
-				} catch(e) {
-					reject({
-						type: 'SEND_ERROR',
-						description: "There was an error when broadcasting this transaction to the network.",
-					});
-					return;
-				}
-			})
-			.catch(() =>
-				reject({
-					type: 'CANCELED',
-					description: 'There was an error when broadcasting this transaction to the network.',
-				})
-			);
-	});
-}
-
-// Needs to be accepted every time
-// See https://cityofzion.io/neon-js/docs/en/examples/smart_contract.html
-function invoke(invokeArgs) {
-	let requestMessage = "This dApp has requested permission to invoke the smart contract at "+invokeArgs.scriptHash+' on '+invokeArgs.network;
-	if(invokeArgs.assetIntentOverrides !== undefined){
-		requestMessage += ". The amount of GAS or NEO that will be spent on this transaction could not be estimated, please make sure that this is a legitimate transaction";
-	} else if (invokeArgs.attachedAssets !== undefined) {
-		requestMessage += " and send ";
-		["NEO, GAS"].map((asset) => {
-			if(invokeArgs.attachedAssets[asset]){
-				requestMessage += invokeArgs.attachedAssets[asset]+" "+asset+",";
-			}
-		});
-		requestMessage += " to it";
-	}
-	requestMessage += ' with '+(invokeArgs.fee||0)+' GAS in fees. Accept?';
-	return new Promise((resolve, reject) => {
-		requestAcceptance(requestMessage)
-			.then(async () => {
-				let transaction;
-				try{
-					const endpoint = neoscanEndpoints[getNetwork(invokeArgs.network)]; 
-					const apiProvider = new api.neoscan.instance(endpoint);
-
-					// Create contract transaction using Neoscan API
-					let balance = await apiProvider.getBalance(invokeArgs.fromAddress);
-					const script = Neon.create.script({
-						scriptHash: invokeArgs.scriptHash,
-						operation: invokeArgs.operation,
-						args: invokeArgs.args
-					});
-					let transaction = new tx.InvocationTransaction({
-						script: script,
-						gas: 0
-					});
-					if(invokeArgs.triggerContractVerification){
-						transaction.addAttribute(
-							tx.TxAttrUsage.Script,
-							u.reverseHex(wallet.getScriptHashFromAddress(acct.address))
-						);
-					} else if(invokeArgs.assetIntentOverrides === undefined && invokeArgs.attachedAssets === undefined && (invokeArgs.fee === undefined || invokeArgs.fee === 0)){
-						transaction.addAttribute(
-							tx.TxAttrUsage.Script,
-							u.reverseHex(acct.scriptHash)
-						);
-					} else if(invokeArgs.assetIntentOverrides){
-						let txids = (balance.assets.GAS? balance.assets.GAS.unspent : []).concat(balance.assets.NEO? balance.assets.NEO.unspent : []).map(txx => txx.txid);
-						let userTxs = invokeArgs.assetIntentOverrides.inputs.filter((input)=> txids.includes(input.txid));
-						if(userTxs.length === 0){
-							transaction.addAttribute(
-								tx.TxAttrUsage.Script,
-								u.reverseHex(acct.scriptHash)
-							);
-						} else {
-							transaction.addAttribute(
-								tx.TxAttrUsage.Script,
-								u.reverseHex(acct.scriptHash)
-							);
+						// Create contract transaction using Neoscan API
+						let balance = await apiProvider.getBalance(sendArgs.fromAddress);
+						transaction = Neon.create.contractTx();
+						transaction = transaction.addIntent(sendArgs.asset, Number(sendArgs.amount), sendArgs.toAddress);
+						if (sendArgs.remark) {
+							transaction = transaction.addRemark(sendArgs.remark)
 						}
-					} else {
-						transaction.addAttribute(
-							tx.TxAttrUsage.Script,
-							u.reverseHex(acct.scriptHash)
-						);
-					}
-					if(invokeArgs.assetIntentOverrides){
-						invokeArgs.assetIntentOverrides.outputs.map(output=>transaction.addOutput(new tx.TransactionOutput({
-							assetId: CONST.ASSET_ID[output.asset],
-							value: output.value,
-							scriptHash: wallet.getScriptHashFromAddress(output.address)
-						})));
-						transaction.inputs = invokeArgs.assetIntentOverrides.inputs.map(input => (new tx.TransactionInput({
-							prevHash: input.txid,
-							prevIndex: input.index
-						})));
-					} else {
-						if(invokeArgs.attachedAssets){
-							["NEO, GAS"].map((asset) => {
-								if(invokeArgs.attachedAssets[asset]){
-									transaction = transaction.addIntent(asset, Number(invokeArgs.attachedAssets[asset]), wallet.getAddressFromScriptHash(invokeArgs.scriptHash));
-								}
-							});
-						}
-						try{
-							if(invokeArgs.fee) {
-								transaction = transaction.calculate(balance, null, Number(invokeArgs.fee))
+						try {
+							if (sendArgs.fee) {
+								transaction = transaction.calculate(balance, null, Number(sendArgs.fee))
 							} else {
 								transaction = transaction.calculate(balance)
 							}
-						} catch(e) {
+						} catch (e) {
 							reject({
 								type: 'INSUFFICIENT_FUNDS',
 								description: "Account doesn't have enough funds.",
 							});
 							return;
 						}
-					}
-					if(invokeArgs.txHashAttributes){
-						invokeArgs.txHashAttributes.map((attr) => {
-							if(!attr.startsWith("Hash")){
-								return;
-							}
-							transaction.addAttribute(
-								Neon.tx.TxAttrUsage[attr.txAttrUsage],
-								attr.value //TODO: Do type conversion
-							);
+						transaction = transaction.sign(acct.privateKey);
+					} catch (e) {
+						reject({
+							type: 'MALFORMED_INPUT',
+							description: "Some input provided was wrong.",
 						});
+						return;
 					}
-					transaction = transaction.sign(acct.privateKey);
-				} catch(e) {
-					reject({
-						type: 'MALFORMED_INPUT',
-						description: "Some input provided was wrong.",
-					});
-					return;
-				}
 
-				try{
-					await sendTransaction(transaction, invokeArgs.broadcastOverride, invokeArgs.network, resolve);
-				} catch(e) {
+					try {
+						await sendTransaction(transaction, sendArgs.broadcastOverride, sendArgs.network, resolve);
+					} catch (e) {
+						reject({
+							type: 'SEND_ERROR',
+							description: "There was an error when broadcasting this transaction to the network.",
+						});
+						return;
+					}
+				}).catch(() =>
 					reject({
-						type: 'RPC_ERROR',
-						description: "There was an error when broadcasting this transaction to the network.",
-					});
-					return;
-				}
+						type: 'CANCELED',
+						description: 'There was an error when broadcasting this transaction to the network.',
+					})
+				)
+			}).catch((e) => {
+				console.log('first catch')
+				console.log(e)
 			})
-			.catch(() =>
-				reject({
-					type: 'CANCELED',
-					description: 'There was an error when broadcasting this transaction to the network.',
-				})
-			);
+	});
+}
+
+// Needs to be accepted every time
+// See https://cityofzion.io/neon-js/docs/en/examples/smart_contract.html
+function invoke(invokeArgs) {
+	let requestMessage = "This dApp has requested permission to invoke the smart contract at " + invokeArgs.scriptHash + ' on ' + invokeArgs.network;
+	if (invokeArgs.assetIntentOverrides !== undefined) {
+		requestMessage += ". The amount of GAS or NEO that will be spent on this transaction could not be estimated, please make sure that this is a legitimate transaction";
+	} else if (invokeArgs.attachedAssets !== undefined) {
+		requestMessage += " and send ";
+		["NEO, GAS"].map((asset) => {
+			if (invokeArgs.attachedAssets[asset]) {
+				requestMessage += invokeArgs.attachedAssets[asset] + " " + asset + ",";
+			}
+		});
+		requestMessage += " to it";
+	}
+	requestMessage += ' with ' + (invokeArgs.fee || 0) + ' GAS in fees. Accept?';
+	return new Promise((resolve, reject) => {
+		requestAcceptance()
+			.then(() => {
+				requestAcceptanceInvoke(invokeArgs, (invokeArgs.assetIntentOverrides !== undefined))
+					.then(async () => {
+						let transaction;
+						try {
+							const endpoint = neoscanEndpoints[getNetwork(invokeArgs.network)];
+							const apiProvider = new api.neoscan.instance(endpoint);
+
+							// Create contract transaction using Neoscan API
+							let balance = await apiProvider.getBalance(invokeArgs.fromAddress);
+							const script = Neon.create.script({
+								scriptHash: invokeArgs.scriptHash,
+								operation: invokeArgs.operation,
+								args: invokeArgs.args
+							});
+							let transaction = new tx.InvocationTransaction({
+								script: script,
+								gas: 0
+							});
+							if (invokeArgs.triggerContractVerification) {
+								transaction.addAttribute(
+									tx.TxAttrUsage.Script,
+									u.reverseHex(wallet.getScriptHashFromAddress(acct.address))
+								);
+							} else if (invokeArgs.assetIntentOverrides === undefined && invokeArgs.attachedAssets === undefined && (invokeArgs.fee === undefined || invokeArgs.fee === 0)) {
+								transaction.addAttribute(
+									tx.TxAttrUsage.Script,
+									u.reverseHex(acct.scriptHash)
+								);
+							} else if (invokeArgs.assetIntentOverrides) {
+								let txids = (balance.assets.GAS ? balance.assets.GAS.unspent : []).concat(balance.assets.NEO ? balance.assets.NEO.unspent : []).map(txx => txx.txid);
+								let userTxs = invokeArgs.assetIntentOverrides.inputs.filter((input) => txids.includes(input.txid));
+								if (userTxs.length === 0) {
+									transaction.addAttribute(
+										tx.TxAttrUsage.Script,
+										u.reverseHex(acct.scriptHash)
+									);
+								} else {
+									transaction.addAttribute(
+										tx.TxAttrUsage.Script,
+										u.reverseHex(acct.scriptHash)
+									);
+								}
+							} else {
+								transaction.addAttribute(
+									tx.TxAttrUsage.Script,
+									u.reverseHex(acct.scriptHash)
+								);
+							}
+							if (invokeArgs.assetIntentOverrides) {
+								invokeArgs.assetIntentOverrides.outputs.map(output => transaction.addOutput(new tx.TransactionOutput({
+									assetId: CONST.ASSET_ID[output.asset],
+									value: output.value,
+									scriptHash: wallet.getScriptHashFromAddress(output.address)
+								})));
+								transaction.inputs = invokeArgs.assetIntentOverrides.inputs.map(input => (new tx.TransactionInput({
+									prevHash: input.txid,
+									prevIndex: input.index
+								})));
+							} else {
+								if (invokeArgs.attachedAssets) {
+									["NEO, GAS"].map((asset) => {
+										if (invokeArgs.attachedAssets[asset]) {
+											transaction = transaction.addIntent(asset, Number(invokeArgs.attachedAssets[asset]), wallet.getAddressFromScriptHash(invokeArgs.scriptHash));
+										}
+									});
+								}
+								try {
+									if (invokeArgs.fee) {
+										transaction = transaction.calculate(balance, null, Number(invokeArgs.fee))
+									} else {
+										transaction = transaction.calculate(balance)
+									}
+								} catch (e) {
+									reject({
+										type: 'INSUFFICIENT_FUNDS',
+										description: "Account doesn't have enough funds.",
+									});
+									return;
+								}
+							}
+							if (invokeArgs.txHashAttributes) {
+								invokeArgs.txHashAttributes.map((attr) => {
+									if (!attr.startsWith("Hash")) {
+										return;
+									}
+									transaction.addAttribute(
+										Neon.tx.TxAttrUsage[attr.txAttrUsage],
+										attr.value //TODO: Do type conversion
+									);
+								});
+							}
+							transaction = transaction.sign(acct.privateKey);
+						} catch (e) {
+							reject({
+								type: 'MALFORMED_INPUT',
+								description: "Some input provided was wrong.",
+							});
+							return;
+						}
+
+						try {
+							await sendTransaction(transaction, invokeArgs.broadcastOverride, invokeArgs.network, resolve);
+						} catch (e) {
+							reject({
+								type: 'RPC_ERROR',
+								description: "There was an error when broadcasting this transaction to the network.",
+							});
+							return;
+						}
+					})
+					.catch(() =>
+						reject({
+							type: 'CANCELED',
+							description: 'There was an error when broadcasting this transaction to the network.',
+						})
+					);
+			}).catch((e) => reject(e))
 	});
 }
 
@@ -586,53 +589,58 @@ function invoke(invokeArgs) {
 function invokeMulti(invokeMultiArgs) {
 	return new Promise((resolve, reject) =>
 		requestAcceptance("This dApp has requested permission to invoke a smart contract, this may spend some of your funds. Accept?")
-		.then(() =>{
-			alert('sent!')
-			//	foo().then(() => resolve({ ... })).catch(() => {
-			//		reject({
-			//			type: 'RPC_ERROR',
-			//			description: 'There was an error when broadcasting this transaction to the network.',
-			//			data: ''
-			//		});
-			//	})
-		}).catch(() =>
-			reject({
-				type: 'CANCELED',
-				description: 'There was an error when broadcasting this transaction to the network.',
-				data: ''
-			})
-		)
+			.then(() => {
+				alert('sent!')
+				//	foo().then(() => resolve({ ... })).catch(() => {
+				//		reject({
+				//			type: 'RPC_ERROR',
+				//			description: 'There was an error when broadcasting this transaction to the network.',
+				//			data: ''
+				//		});
+				//	})
+			}).catch(() =>
+				reject({
+					type: 'CANCELED',
+					description: 'There was an error when broadcasting this transaction to the network.',
+					data: ''
+				})
+			)
 	)
 }
 
 // Needs to be accepted every time
 function signMessage(signArgs) {
-	return requestAcceptance("This dApp wants to sign the message '"+signArgs.message+"' using your private key. Accept?")
-		.then(() => {
-			return new Promise((resolve, reject) => {
-				try {
-					const salt = uuid().replace(/-/g, '');
-					const parameterHexString = u.str2hexstring(salt + signArgs.message);
-					const lengthHex = u.num2VarInt(parameterHexString.length / 2);
-					const concatenatedString = lengthHex + parameterHexString;
-					const messageHex = '010001f0' + concatenatedString + '0000';
-					const signedMessage = Neon.sign.hex(messageHex, acct.privateKey);
+	return new Promise((resolve, reject) =>
+		requestAcceptance("This dApp wants to sign the message '" + signArgs.message + "' using your private key. Accept?")
+			.then(() => {
+				requestAcceptanceSignMessage(signArgs.message)
+					.then(() => {
+						try {
+							const salt = uuid().replace(/-/g, '');
+							const parameterHexString = u.str2hexstring(salt + signArgs.message);
+							const lengthHex = u.num2VarInt(parameterHexString.length / 2);
+							const concatenatedString = lengthHex + parameterHexString;
+							const messageHex = '010001f0' + concatenatedString + '0000';
+							const signedMessage = Neon.sign.hex(messageHex, acct.privateKey);
 
-					resolve({
-						publicKey: acct.publicKey, // Public key of account that signed message
-						message: signArgs.message, // Original message signed
-						salt: salt, // Salt added to original message as prefix, before signing
-						data: signedMessage, // Signed message
-					});
-				} catch(e) {
-					reject({
-						type: 'UNKNOWN_ERROR',
-						description: 'There was an unknown error.',
-						data: ''
-					})
-				}
-			})
-		})
+							resolve({
+								publicKey: acct.publicKey, // Public key of account that signed message
+								message: signArgs.message, // Original message signed
+								salt: salt, // Salt added to original message as prefix, before signing
+								data: signedMessage, // Signed message
+							});
+						} catch (e) {
+							reject({
+								type: 'UNKNOWN_ERROR',
+								description: 'There was an unknown error.',
+								data: ''
+							})
+						}
+					}).catch(() => reject({
+						type: 'CANCELED'
+					}))
+			}).catch((e) => reject(e))
+	)
 }
 
 // Needs to be accepted every time
@@ -645,78 +653,83 @@ function deploy(deployArgs) {
 	if (deployArgs.dynamicInvoke) {
 		sysGasFee += 500;
 	}
-	return requestAcceptance("This dApp has requested permission to deploy a smart contract on "+deployArgs.network+". This will cost "+sysGasFee+" GAS in system costs and "+deployArgs.networkFee+" GAS in network fees. Accept?")
-		.then(() => {
-			return new Promise(async (resolve, reject) => {
-				try{
-					if (!deployArgs.code) {
-						throw "ERROR (DEPLOY): Empty script (avm)!";
-					}
-					const sb = Neon.create.scriptBuilder();
-					sb.emitPush(u.str2hexstring(deployArgs.description)) // description
-						.emitPush(u.str2hexstring(deployArgs.email)) // email
-						.emitPush(u.str2hexstring(deployArgs.author)) // author
-						.emitPush(u.str2hexstring(deployArgs.version)) // code_version
-						.emitPush(u.str2hexstring(deployArgs.name)) // name
-						.emitPush(0x00 | (deployArgs.needsStorage? 0x01 : 0x00) | (deployArgs.dynamicInvoke? 0x02 : 0x00) | (deployArgs.isPayable? 0x04 : 0x00)) // storage: {none: 0x00, storage: 0x01, dynamic: 0x02, storage+dynamic:0x03}
-						.emitPush(deployArgs.returnType) // expects hexstring  (_emitString) // usually '05'
-						.emitPush(deployArgs.parameterList) // expects hexstring  (_emitString) // usually '0710'
-						.emitPush(deployArgs.code) //script
-						.emitSysCall('Neo.Contract.Create');
-
-					let transaction;
-					try {
-						const endpoint = neoscanEndpoints[getNetwork(deployArgs.network)]; 
-						const apiProvider = new api.neoscan.instance(endpoint);
-
-						// Create contract transaction using Neoscan API
-						let balance = await apiProvider.getBalance(acct.address);
-						let transaction = new tx.InvocationTransaction({
-							script: sb.str,
-							gas: sysGasFee
-						});
-
-						transaction.addAttribute(
-							tx.TxAttrUsage.Script,
-							u.reverseHex(acct.scriptHash)
-						);
-
+	return new Promise((resolve, reject) => {
+		requestAcceptance("This dApp has requested permission to deploy a smart contract on " + deployArgs.network + ". This will cost " + sysGasFee + " GAS in system costs and " + deployArgs.networkFee + " GAS in network fees. Accept?")
+			.then(() => {
+				requestAcceptanceDeploy(deployArgs, sysGasFee)
+					.then(async () => {
 						try {
-							transaction = transaction.calculate(balance, null, Number(deployArgs.networkFee));
-						} catch(e) {
-							reject({
-								type: 'INSUFFICIENT_FUNDS',
-								description: "Account doesn't have enough funds.",
-							});
-							return;
-						}
-						transaction = transaction.sign(acct.privateKey);
-					} catch(e) {
-						reject({
-							type: 'MALFORMED_INPUT',
-							description: "Some input provided was wrong.",
-						});
-						return;
-					}
+							if (!deployArgs.code) {
+								throw "ERROR (DEPLOY): Empty script (avm)!";
+							}
+							const sb = Neon.create.scriptBuilder();
+							sb.emitPush(u.str2hexstring(deployArgs.description)) // description
+								.emitPush(u.str2hexstring(deployArgs.email)) // email
+								.emitPush(u.str2hexstring(deployArgs.author)) // author
+								.emitPush(u.str2hexstring(deployArgs.version)) // code_version
+								.emitPush(u.str2hexstring(deployArgs.name)) // name
+								.emitPush(0x00 | (deployArgs.needsStorage ? 0x01 : 0x00) | (deployArgs.dynamicInvoke ? 0x02 : 0x00) | (deployArgs.isPayable ? 0x04 : 0x00)) // storage: {none: 0x00, storage: 0x01, dynamic: 0x02, storage+dynamic:0x03}
+								.emitPush(deployArgs.returnType) // expects hexstring  (_emitString) // usually '05'
+								.emitPush(deployArgs.parameterList) // expects hexstring  (_emitString) // usually '0710'
+								.emitPush(deployArgs.code) //script
+								.emitSysCall('Neo.Contract.Create');
 
-					try{
-						await sendTransaction(transaction, deployArgs.broadcastOverride, deployArgs.network, resolve);
-					} catch(e) { // Should it be UNKNOWN_ERROR to maintain compatibility?
-						reject({
-							type: 'RPC_ERROR',
-							description: "There was an error when broadcasting this transaction to the network.",
-						});
-						return;
-					}
-				} catch(e) {
-					reject({
-						type: 'UNKNOWN_ERROR',
-						description: 'There was an unknown error.',
-						data: ''
-					})
-				}
-			})
-		})
+							let transaction;
+							try {
+								const endpoint = neoscanEndpoints[getNetwork(deployArgs.network)];
+								const apiProvider = new api.neoscan.instance(endpoint);
+
+								// Create contract transaction using Neoscan API
+								let balance = await apiProvider.getBalance(acct.address);
+								let transaction = new tx.InvocationTransaction({
+									script: sb.str,
+									gas: sysGasFee
+								});
+
+								transaction.addAttribute(
+									tx.TxAttrUsage.Script,
+									u.reverseHex(acct.scriptHash)
+								);
+
+								try {
+									transaction = transaction.calculate(balance, null, Number(deployArgs.networkFee));
+								} catch (e) {
+									reject({
+										type: 'INSUFFICIENT_FUNDS',
+										description: "Account doesn't have enough funds.",
+									});
+									return;
+								}
+								transaction = transaction.sign(acct.privateKey);
+							} catch (e) {
+								reject({
+									type: 'MALFORMED_INPUT',
+									description: "Some input provided was wrong.",
+								});
+								return;
+							}
+
+							try {
+								await sendTransaction(transaction, deployArgs.broadcastOverride, deployArgs.network, resolve);
+							} catch (e) { // Should it be UNKNOWN_ERROR to maintain compatibility?
+								reject({
+									type: 'RPC_ERROR',
+									description: "There was an error when broadcasting this transaction to the network.",
+								});
+								return;
+							}
+						} catch (e) {
+							reject({
+								type: 'UNKNOWN_ERROR',
+								description: 'There was an unknown error.',
+								data: ''
+							})
+						}
+					}).catch(() => reject({
+						type: 'CANCELED'
+					}))
+			}).catch((e) => reject(e))
+	})
 }
 
 function closeWidget() {
@@ -743,6 +756,77 @@ function successfulSignIn(account) {
 }
 
 function requestAcceptance(message) {
+	var requestContainer = createRequestContainer()
+	return new Promise((resolve, reject) => {
+		if (!calledPermission || userGivesPermission) {
+			calledPermission = true
+			if (userGivesPermission)
+				resolve()
+			else
+				ReactDOM.render(<RequestAcceptance message={"This dApp is requesting access to your NeoLogin wallet."} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+					totalRequests++
+					displayWidget(document.getElementById(requestContainer.id).clientHeight)
+				});
+		}
+	});
+}
+
+function requestAcceptanceSend(sendArgs, message) {
+	var requestContainer = createRequestContainer()
+	return new Promise((resolve, reject) => {
+		if (!calledPermission || userGivesPermission) {
+			calledPermission = true
+			//if (userGivesPermission)
+			//	resolve()
+			//else
+			ReactDOM.render(<RequestAcceptanceSend sendArgs={sendArgs} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+				totalRequests++
+				displayWidget(document.getElementById(requestContainer.id).clientHeight)
+			});
+		}
+	});
+}
+
+function requestAcceptanceSignMessage(message) {
+	var requestContainer = createRequestContainer()
+	return new Promise((resolve, reject) => {
+		if (!calledPermission || userGivesPermission) {
+			calledPermission = true
+			ReactDOM.render(<RequestAcceptanceSignMessage message={message} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+				totalRequests++
+				displayWidget(document.getElementById(requestContainer.id).clientHeight)
+			});
+		}
+	});
+}
+
+function requestAcceptanceInvoke(invokeArgs, goodEstimation) {
+	var requestContainer = createRequestContainer()
+	return new Promise((resolve, reject) => {
+		if (!calledPermission || userGivesPermission) {
+			calledPermission = true
+			ReactDOM.render(<RequestAcceptanceInvoke goodEstimation={goodEstimation} invokeArgs={invokeArgs} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+				totalRequests++
+				displayWidget(document.getElementById(requestContainer.id).clientHeight)
+			});
+		}
+	});
+}
+
+function requestAcceptanceDeploy(deployArgs, sysGasFee) {
+	var requestContainer = createRequestContainer()
+	return new Promise((resolve, reject) => {
+		if (!calledPermission || userGivesPermission) {
+			calledPermission = true
+			ReactDOM.render(<RequestAcceptanceDeploy sysGasFee={sysGasFee} deployArgs={deployArgs} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+				totalRequests++
+				displayWidget(document.getElementById(requestContainer.id).clientHeight)
+			});
+		}
+	});
+}
+
+function createRequestContainer() {
 	var requestContainer = document.createElement("div");
 	requestContainer.id = 'request-' + totalRequests
 	requestContainer.style.top = '0'
@@ -751,18 +835,7 @@ function requestAcceptance(message) {
 	requestContainer.style.background = 'white'
 	var mainContainer = document.getElementById("root");
 	mainContainer.appendChild(requestContainer);
-	return new Promise((resolve, reject) => {
-		if (!calledPermission || userGivesPermission) {
-			calledPermission = true
-			if (userGivesPermission)
-				resolve()
-			else
-				ReactDOM.render(<RequestAcceptance message={message} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', {address: acct.address, label: "My Spending Wallet"})); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
-					totalRequests++
-					displayWidget(document.getElementById(requestContainer.id).clientHeight)
-				});
-		}
-	});
+	return requestContainer;
 }
 
 function closeRequest() {
