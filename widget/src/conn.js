@@ -449,7 +449,7 @@ function send(sendArgs) {
 // Needs to be accepted every time
 // See https://cityofzion.io/neon-js/docs/en/examples/smart_contract.html
 function invoke(invokeArgs) {
-	let requestMessage = "This dApp has requested permission to invoke the smart contract at "+invokeArgs.scriptHash+' on '+sendArgs.network;
+	let requestMessage = "This dApp has requested permission to invoke the smart contract at "+invokeArgs.scriptHash+' on '+invokeArgs.network;
 	if(invokeArgs.assetIntentOverrides !== undefined){
 		requestMessage += ". The amount of GAS or NEO that will be spent on this transaction could not be estimated, please make sure that this is a legitimate transaction";
 	} else if (invokeArgs.attachedAssets !== undefined) {
@@ -461,7 +461,7 @@ function invoke(invokeArgs) {
 		});
 		requestMessage += " to it";
 	}
-	requestMessage += ' with '+(sendArgs.fee||0)+' GAS in fees. Accept?';
+	requestMessage += ' with '+(invokeArgs.fee||0)+' GAS in fees. Accept?';
 	return new Promise((resolve, reject) => {
 		requestAcceptance(requestMessage)
 			.then(async () => {
@@ -645,7 +645,7 @@ function deploy(deployArgs) {
 	if (deployArgs.dynamicInvoke) {
 		sysGasFee += 500;
 	}
-	return requestAcceptance("This dApp has requested permission to deploy a smart contract on "deployArgs.network". This will cost "+sysGasFee+" GAS in system costs and "+deployArgs.networkFee+" GAS in network fees. Accept?")
+	return requestAcceptance("This dApp has requested permission to deploy a smart contract on "+deployArgs.network+". This will cost "+sysGasFee+" GAS in system costs and "+deployArgs.networkFee+" GAS in network fees. Accept?")
 		.then(() => {
 			return new Promise(async (resolve, reject) => {
 				try{
