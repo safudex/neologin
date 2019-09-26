@@ -29,18 +29,6 @@ import DirectionsIcon from '@material-ui/icons/Directions';
 import VerifyEmail from './Views/VerifyEmail'
 import TOTPQR from './Views/TOTPQR'
 
-const createPromise = () => {
-	let resolver;
-	return [
-		new Promise((resolve, reject) => {
-			resolver = resolve;
-		}),
-		resolver,
-	];
-};
-
-const [promiseCode, resolverCode] = createPromise();
-
 const styles = (theme => ({
 	'@global': {
 		body: {
@@ -169,7 +157,7 @@ class Settings extends React.Component {
 				}}>
 					{
 						this.state.verifyEmailView ? <VerifyEmail wrongEmailCode={this.state.wrongEmailCode} verifyCode={this.verifyCodeEmail} navigateBack={() => this.setState({ verifyEmailView: false })} /> :
-							this.state.verifyTOTPCodeView ? <TOTPQR wrongMFACode={this.state.wrongMFACode} navigateBack={() => this.setState({ verifyTOTPCodeView: false })} verifyCode={this.verifyCodeTOTP} secretTOTP={this.state.secretTOTP} /> :
+							this.state.verifyTOTPCodeView ? <TOTPQR email={this.state.email} wrongMFACode={this.state.wrongMFACode} navigateBack={() => this.setState({ verifyTOTPCodeView: false })} verifyCode={this.verifyCodeTOTP} secretTOTP={this.state.secretTOTP} /> :
 								<>
 									<span style={{
 										fontSize: '2rem', marginBottom: '2rem', marginLeft: 'auto',
@@ -191,9 +179,8 @@ class Settings extends React.Component {
 										() => this.state.preferredMFA === 'SOFTWARE_TOKEN_MFA' ?
 											disableTOTP(this.props.cognitoUser).then(() => this.setState({ preferredMFA: '' }))
 											:
-											enableTOTP(this.props.cognitoUser, this.state.email, (secret, email) => {
-												this.setState({ verifyTOTPCodeView: true, secretTOTP: secret, email: email })
-											})
+											enableTOTP(this.props.cognitoUser, this.state.email, (secret, email) =>
+												this.setState({ verifyTOTPCodeView: true, secretTOTP: secret, email: email }))
 
 									}>{this.state.preferredMFA === 'SOFTWARE_TOKEN_MFA' ? 'Disable' : 'Enable'} TOTP</Button>
 									<h4 className={classes.subtittle}>Private key</h4>

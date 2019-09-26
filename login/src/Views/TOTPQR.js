@@ -1,8 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import QRCode from 'qrcode'
 
-export default function TOTPQR({ secretTOTP, navigateBack, verifyCode, wrongMFACode }) {
+function drawQR(secret, email) {
+  let canvas = document.getElementById('secretqr')
+  let code = "otpauth://totp/NeoLogin:" + email + "?secret=" + secret + "&issuer=NeoLogin";
+  QRCode.toCanvas(canvas, code, (error) => {
+    if (error) {
+      console.error(error);
+      alert(error);
+    } else {
+      //setTimeout(resolve, 100);
+    }
+  })
+}
+
+export default function TOTPQR({ secretTOTP, navigateBack, verifyCode, wrongMFACode, email }) {
 
   const [input, setInput] = useState('');
 
@@ -12,10 +26,12 @@ export default function TOTPQR({ secretTOTP, navigateBack, verifyCode, wrongMFAC
     setInput(value)
   }
 
+  useEffect(() => drawQR(secretTOTP, email), [])
+
   return (
     <>
       <span style={{ fontSize: '2rem', marginBottom: '2rem' }}>Enable TOTP</span>
-      <img src={'https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=' + secretTOTP + '&chld=H|1'} />
+      <canvas id="secretqr" />
       <TextField
         variant="outlined"
         margin="normal"

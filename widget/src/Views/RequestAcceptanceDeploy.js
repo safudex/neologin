@@ -8,13 +8,7 @@ import ReactDOM from 'react-dom'
 
 import './styles.css'
 
-const rejectError = {
-  type: 'CONNECTION_DENIED',
-  description: 'The user rejected the request to connect with your dApp.',
-  data: ''
-}
-
-class RequestAcceptance extends React.Component {
+class RequestAcceptanceDeploy extends React.Component {
 
   unmountComponent = () => {
     ReactDOM.unmountComponentAtNode(window.document.getElementById(this.props.contid))
@@ -27,11 +21,10 @@ class RequestAcceptance extends React.Component {
   }
 
   render() {
+    console.log(this.props.invokeArgs)
     return (
       <div>
-        <Brand closeWidget={() => {
-          this.props.reject(rejectError); this.unmountComponent();
-        }} reqNumber={parseInt(this.props.contid.split('-')[1]) + 1} />
+        <Brand closeWidget={() => { this.props.reject(); this.unmountComponent(); }} reqNumber={parseInt(this.props.contid.split('-')[1]) + 1} />
         <Grid
           container
           direction="column"
@@ -39,8 +32,26 @@ class RequestAcceptance extends React.Component {
           alignItems="center"
           style={{ height: '100%', padding: '1em' }}
         >
-          <Grid item xs>
-            <p style={{ fontSize: '0.85em' }}>{this.props.message}</p>
+          <Grid item xs style={{textAlign:'center'}}>
+            <p style={{ fontSize: '0.85em' }}>This dApp has requested permission to deploy a smart contract.</p>
+          </Grid>
+          {/* <Grid item xs>
+            <span style={{ fontWeight: 'bold', fontSize: '0.85em' }}>{this.props.invokeArgs.scriptHash}</span>
+          </Grid> */}
+          <Grid item xs style={{ width: '100%' }}>
+            <Grid
+              container
+              direction="column"
+              justify="center"
+              alignItems="flex-start"
+              style={{ padding: '1em' }}
+            >
+              <div>
+                <span style={{ fontSize: '0.85em', display: 'block' }}>Network: {this.props.deployArgs.network}</span>
+                <span style={{ fontSize: '0.85em', display: 'block' }}>System cost: {this.props.sysGasFee} GAS</span>
+                <span style={{ fontSize: '0.85em', display: 'block' }}>Fee: {this.props.deployArgs.networkFee} GAS</span>
+              </div>
+            </Grid>
           </Grid>
           <Grid item xs style={{ width: '100%' }}>
             <Grid
@@ -60,7 +71,7 @@ class RequestAcceptance extends React.Component {
               </Grid>
               <Grid item xs>
                 <button className='buttonContinue buttonReject' onClick={() => {
-                  this.props.reject(rejectError)
+                  this.props.reject()
                   this.unmountComponent()
                 }}>
                   Reject
@@ -74,4 +85,4 @@ class RequestAcceptance extends React.Component {
   }
 }
 
-export default RequestAcceptance;
+export default RequestAcceptanceDeploy;
