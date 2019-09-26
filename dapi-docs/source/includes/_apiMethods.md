@@ -7,7 +7,7 @@ Read methods do not alter the state of the blockchain. It can help you query inf
 ### getProvider
 
 ```typescript
-neoDapi.getProvider()
+neologin.getProvider()
 .then((provider: Provider) => {
   const {
     name,
@@ -40,10 +40,60 @@ neoDapi.getProvider()
   }
 });
 ```
+```javascript
+neologin.getProvider()
+.then((provider) => {
+  const {
+    name,
+    website,
+    version,
+    compatibility,
+    extra,
+  } = provider;
+
+  const {
+    theme,
+    currency,
+  } = extra;
+
+  console.log('Provider name: ' + name);
+  console.log('Provider website: ' + website);
+  console.log('Provider dAPI version: ' + version);
+  console.log('Provider dAPI compatibility: ' + JSON.stringify(compatibility));
+  console.log('Provider UI theme: ' + theme);
+  console.log('Provider Base currency: ' + currency);
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "NO_PROVIDER":
+      console.log('No provider available.');
+      break;
+    case "CONNECTION_DENIED":
+      console.log('The user rejected the request to connect with your dApp.');
+      break;
+  }
+});
+```
 
 > Example Response
 
 ```typescript
+{
+  name: 'Awesome Wallet',
+  website: 'https://www.awesome.com',
+  version: 'v0.0.1',
+  compatibility: [
+    'NEP-14',
+    'NEP-23',
+    'NEP-29'
+  ],
+  extra: {
+    theme: 'Dark Mode',
+    currency: 'USD',
+  }
+}
+```
+```javascript
 {
   name: 'Awesome Wallet',
   website: 'https://www.awesome.com',
@@ -91,7 +141,7 @@ None
 ### getNetworks
 
 ```typescript
-dapi.NEO.getNetworks()
+neologin.getNetworks()
 .then(response => {
   const {
     networks,
@@ -115,10 +165,41 @@ dapi.NEO.getNetworks()
   }
 });
 ```
+```javascript
+neologin.getNetworks()
+.then(response => {
+  const {
+    networks,
+    defaultNetwork,
+  } = response.networks;
+
+  console.log('Networks: ' + networks);
+  // eg. ["MainNet", "TestNet", "PrivateNet"]
+
+  console.log('Default network: ' + defaultNetwork);
+  // eg. "MainNet"
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "NO_PROVIDER":
+      console.log('No provider available.');
+      break;
+    case "CONNECTION_DENIED":
+      console.log('The user rejected the request to connect with your dApp');
+      break;
+  }
+});
+```
 
 > Example Response
 
 ```typescript
+{
+  networks: ["MainNet", "TestNet", "PrivateNet"],
+  defaultNetwork: "TestNet",
+}
+```
+```javascript
 {
   networks: ["MainNet", "TestNet", "PrivateNet"],
   defaultNetwork: "TestNet",
@@ -149,7 +230,7 @@ None
 ### getAccount
 
 ```typescript
-neoDapi.getAccount()
+neologin.getAccount()
 .then((account: Account) => {
   const {
     address,
@@ -170,10 +251,39 @@ neoDapi.getAccount()
   }
 });
 ```
+```javascript
+neologin.getAccount()
+.then((account) => {
+  const {
+    address,
+    label,
+  } = account;
+
+  console.log('Account address: ' + address);
+  console.log('Account label: ' + label);
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "NO_PROVIDER":
+      console.log('No provider available.');
+      break;
+    case "CONNECTION_DENIED":
+      console.log('The user rejected the request to connect with your dApp');
+      break;
+  }
+});
+```
+
 
 > Example Response
 
 ```typescript
+{
+  address: 'AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru',
+  label: 'My Spending Wallet'
+}
+```
+```javascript
 {
   address: 'AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru',
   label: 'My Spending Wallet'
@@ -199,7 +309,7 @@ Return the Account that is currently connected to the dApp.
 ### getPublicKey
 
 ```typescript
-neoDapi.getPublicKey()
+neologin.getPublicKey()
 .then((publicKeyData: PublicKeyData) => {
   const {
     address,
@@ -220,10 +330,38 @@ neoDapi.getPublicKey()
   }
 });
 ```
+```javascript
+neologin.getPublicKey()
+.then((publicKeyData) => {
+  const {
+    address,
+    publicKey,
+  } = publicKeyData;
+
+  console.log('Account address: ' + address);
+  console.log('Account public key: ' + publicKey);
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "NO_PROVIDER":
+      console.log('No provider available.');
+      break;
+    case "CONNECTION_DENIED":
+      console.log('The user rejected the request to connect with your dApp');
+      break;
+  }
+});
+```
 
 > Example Response
 
 ```typescript
+{
+  address: 'ATUaTd3LA4kZiyB6it9fdb5oJpZYMBF4DX',
+  publicKey: '03fa41b6ff75ebeff8464556629cfceae7402f5d815626a7a6542f786974b942e0'
+}
+```
+```javascript
 {
   address: 'ATUaTd3LA4kZiyB6it9fdb5oJpZYMBF4DX',
   publicKey: '03fa41b6ff75ebeff8464556629cfceae7402f5d815626a7a6542f786974b942e0'
@@ -249,7 +387,7 @@ Return the public key of the Account that is currently connected to the dApp.
 ### getBalance
 
 ```typescript
-neoDapi.getBalance({
+neologin.getBalance({
   params: {
     address: 'AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru',
     assets: ['NKN']
@@ -280,10 +418,63 @@ neoDapi.getBalance({
   }
 });
 ```
+```javascript
+neologin.getBalance({
+  params: {
+    address: 'AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru',
+    assets: ['NKN']
+  },
+  network: 'MainNet',
+})
+.then((results) => {
+  Object.keys(results).forEach(address => {
+    const balances = results[address];
+    balances.forEach(balance => {
+      const { assetID, symbol, amount } = balance
+
+      console.log('Address: ' + address);
+      console.log('Asset ID: ' + assetID);
+      console.log('Asset symbol: ' + symbol);
+      console.log('Amount: ' + amount);
+    });
+  });
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "NO_PROVIDER":
+      console.log('No provider available.');
+      break;
+    case "CONNECTION_DENIED":
+      console.log('The user rejected the request to connect with your dApp');
+      break;
+  }
+});
+```
 
 > Single Address with specific balances requested
 
 ```typescript
+// input
+{
+  params: {
+    address: 'AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru',
+    assets: ['NKN']
+  },
+  network: 'MainNet',
+}
+
+// output
+{
+  AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru: [
+    {
+      assetID: 'c36aee199dbba6c3f439983657558cfb67629599',
+      symbol: 'NKN',
+      amount: '0.00000233',
+    }
+  ],
+}
+```
+```javascript
 // input
 {
   params: {
@@ -342,10 +533,93 @@ neoDapi.getBalance({
   ]
 }
 ```
+```javascript
+// input
+{
+  params: {
+    address: 'AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru',
+  },
+  network: 'MainNet',
+}
+
+// output
+{
+  AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru: [
+    {
+      assetID: 'c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b',
+      symbol: 'NEO',
+      amount: '10',
+    },
+    {
+      assetID: '602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7',
+      symbol: 'GAS',
+      amount: '777.0001',
+    },
+    {
+      assetID: 'c36aee199dbba6c3f439983657558cfb67629599',
+      symbol: 'NKN',
+      amount: '0.00000233',
+    },
+    {
+      assetID: 'fc732edee1efdf968c23c20a9628eaa5a6ccb934',
+      symbol: 'NNC',
+      amount: '2000',
+    }
+  ]
+}
+```
 
 > Multiple address balance queries
 
 ```typescript
+// input
+{
+  params: [
+    {
+      address: 'AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru',
+    },
+    {
+      address: 'AbKNY45nRDy6B65YPVz1B6YXiTnzRqU2uQ',
+      assets: ['PHX'],
+    },
+  ],
+  network: 'MainNet',
+}
+
+// output
+{
+  AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru: [
+    {
+      assetID: 'c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b',
+      symbol: 'NEO',
+      amount: '10',
+    },
+    {
+      assetID: '602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7',
+      symbol: 'GAS',
+      amount: '777.0001',
+    },
+    {
+      assetID: 'c36aee199dbba6c3f439983657558cfb67629599',
+      symbol: 'NKN',
+      amount: '0.00000233',
+    },
+    {
+      assetID: 'fc732edee1efdf968c23c20a9628eaa5a6ccb934',
+      symbol: 'NNC',
+      amount: '2000',
+    }
+  ],
+  AbKNY45nRDy6B65YPVz1B6YXiTnzRqU2uQ: [
+    {
+      assetID: '1578103c13e39df15d0d29826d957e85d770d8c9',
+      symbol: 'PHX',
+      amount: '11000',
+    }
+  ]
+}
+```
+```javascript
 // input
 {
   params: [
@@ -443,7 +717,7 @@ The amount of addresses is n where n is the number of addresses specified in you
 ### getStorage
 
 ```typescript
-neoDapi.getStorage({
+neologin.getStorage({
   scriptHash: '505663a29d83663a838eee091249abd167e928f5',
   key: 'game.status',
   network: 'TestNet'
@@ -466,10 +740,39 @@ neoDapi.getStorage({
   }
 });
 ```
+```javascript
+neologin.getStorage({
+  scriptHash: '505663a29d83663a838eee091249abd167e928f5',
+  key: 'game.status',
+  network: 'TestNet'
+})
+.then(res => {
+  const value = res.result;
+  console.log('Storage value: ' + value);
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "NO_PROVIDER":
+      console.log('No provider available.');
+      break;
+    case "CONNECTION_REFUSED":
+      console.log('Connection dApp not connected. Please call the "connect" function.');
+      break;
+    case "RPC_ERROR":
+      console.log('There was an error when broadcasting this transaction to the network.');
+      break;
+  }
+});
+```
 
 > Example Response
 
 ```typescript
+{
+  result: 'hello world'
+}
+```
+```javascript
 {
   result: 'hello world'
 }
@@ -500,20 +803,20 @@ Returns the raw value located in contract storage
 ### invokeRead
 
 ```typescript
-neoDapi.invokeRead({
+neologin.invokeRead({
   scriptHash: '505663a29d83663a838eee091249abd167e928f5',
   operation: 'calculatorAdd',
   args: [
     {
-      type: neoDapi.Constants.ArgumentDataType.INTEGER,
+      type: neologin.Constants.ArgumentDataType.INTEGER,
       value: 2
     },
     {
-      type: neoDapi.Constants.ArgumentDataType.INTEGER,
+      type: neologin.Constants.ArgumentDataType.INTEGER,
       value: 10
     }
   ],
-  network: 'PrivNet'
+  network: 'TestNet'
 })
 .then((result: Object) => {
   console.log('Read invocation result: ' + JSON.stringify(result));
@@ -526,9 +829,42 @@ neoDapi.invokeRead({
     case CONNECTION_REFUSED:
       console.log('Connection dApp not connected. Please call the "connect" function.');
       break;
-   case RPC_ERROR:
-    console.log('There was an error when broadcasting this transaction to the network.');
-    break;
+    case RPC_ERROR:
+      console.log('There was an error when broadcasting this transaction to the network.');
+      break;
+  }
+});
+```
+```javascript
+neologin.invokeRead({
+  scriptHash: '505663a29d83663a838eee091249abd167e928f5',
+  operation: 'calculatorAdd',
+  args: [
+    {
+      type: neologin.Constants.ArgumentDataType.INTEGER,
+      value: 2
+    },
+    {
+      type: neologin.Constants.ArgumentDataType.INTEGER,
+      value: 10
+    }
+  ],
+  network: 'TestNet'
+})
+.then((result) => {
+  console.log('Read invocation result: ' + JSON.stringify(result));
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "NO_PROVIDER":
+      console.log('No provider available.');
+      break;
+    case "CONNECTION_REFUSED":
+      console.log('Connection dApp not connected. Please call the "connect" function.');
+      break;
+    case "RPC_ERROR":
+      console.log('There was an error when broadcasting this transaction to the network.');
+      break;
   }
 });
 ```
@@ -536,6 +872,19 @@ neoDapi.invokeRead({
 > Example Response
 
 ```typescript
+{
+  script: '8h89fh398f42f.....89hf2894hf9834',
+  state: 'HALT, BREAK',
+  gas_consumed: '0.13',
+  stack: [
+    {
+      type: 'Integer',
+      value: '1337'
+    }
+  ]
+}
+```
+```javascript
 {
   script: '8h89fh398f42f.....89hf2894hf9834',
   state: 'HALT, BREAK',
@@ -590,7 +939,7 @@ The wallet will return the direct response from the RPC node.
 ### verifyMessage
 
 ```typescript
-neoDapi.verifyMessage({
+neologin.verifyMessage({
   message: '058b9e03e7154e4db1e489c99256b7faHello World!',
   data: '0147fb89d0999e9d8a90edacfa26152fe695ec8b3770dcad522048297ab903822e12472364e254ff2e088fc3ebb641cc24722c563ff679bb1d1623d08bd5863d0d',
   publicKey: '0241392007396d6ef96159f047967c5a61f1af0871ecf9dc82afbedb68afbb949a',
@@ -609,10 +958,35 @@ neoDapi.verifyMessage({
   }
 });
 ```
+```javascript
+neologin.verifyMessage({
+  message: '058b9e03e7154e4db1e489c99256b7faHello World!',
+  data: '0147fb89d0999e9d8a90edacfa26152fe695ec8b3770dcad522048297ab903822e12472364e254ff2e088fc3ebb641cc24722c563ff679bb1d1623d08bd5863d0d',
+  publicKey: '0241392007396d6ef96159f047967c5a61f1af0871ecf9dc82afbedb68afbb949a',
+})
+.then(({result}) => {
+  console.log('Signature data matches provided message and public key: ' + result);
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "NO_PROVIDER":
+      console.log('No provider available.');
+      break;
+    case "CONNECTION_DENIED":
+      console.log('The user rejected the request to connect with your dApp');
+      break;
+  }
+});
+```
 
 > Example Response
 
 ```typescript
+{
+  result: true,
+}
+```
+```javascript
 {
   result: true,
 }
@@ -644,7 +1018,7 @@ Returns whether the provided signature data matches the provided message and was
 ### getBlock
 
 ```typescript
-neoDapi.getBlock({
+neologin.getBlock({
   blockHeight: 2619690,
   network: 'TestNet'
 })
@@ -653,12 +1027,31 @@ neoDapi.getBlock({
 })
 .catch(({type: string, description: string, data: any}) => {
   switch(type) {
-    case NO_PROVIDER:
-      console.log('No provider available.');
-      break;
+   case NO_PROVIDER:
+     console.log('No provider available.');
+     break;
    case RPC_ERROR:
-    console.log('There was an error when broadcasting this transaction to the network.');
-    break;
+     console.log('There was an error when broadcasting this transaction to the network.');
+     break;
+  }
+});
+```
+```javascript
+neologin.getBlock({
+  blockHeight: 2619690,
+  network: 'TestNet'
+})
+.then((result) => {
+  console.log('Block information: ' + JSON.stringify(result));
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+   case "NO_PROVIDER":
+     console.log('No provider available.');
+     break;
+   case "RPC_ERROR":
+     console.log('There was an error when broadcasting this transaction to the network.');
+     break;
   }
 });
 ```
@@ -668,6 +1061,40 @@ Get information about a specific block.
 > Example Response
 
 ```typescript
+{
+  "hash": "0xc1668a114ee680597196ed402a0e0507fd8348e6090a54250d7accfadbd74b6e",
+  "size": 686,
+  "version": 0,
+  "previousblockhash": "0xbae289c94e17ae90022673186fd6e1e48b7dd7afb89319bff0e2832db06d16b3",
+  "merkleroot": "0x07d70f7337d3869a7daa538425d78a47212fb8c6130d66d84ac48526853a4e51",
+  "time": 1557376153,
+  "index": 2619690,
+  "nonce": "8efd62ebb85ee68b",
+  "nextconsensus": "AWZo4qAxhT8fwKL93QATSjCYCgHmCY1XLB",
+  "script": {
+    "invocation": "402a1dab9e5593d1d7d2a22a36772d4541b8053d33f8b8474b7d5a20066c1bd821e051fc252ed16146930d55ecb17fbb74972fba4c4b27af81a707999ca1313dd2401520eba2dd3b54a74a798cbb716c484ba6f6f21218f099e3d622a0fbd15989f38f9b0b344daf9b89175055d3a92f49df65118e8598735d651bedd4f1811baeb140e6491c03f3057f404d2fe7db50e40e82ade405a9dc7fccd81f4ba0b499a4a29f8570d631b8d40c5995b17d9391fe9ff8c73f28a4e1eb922b7a1ce9d1a5dc0448402cfcdede54828875d45402120aa2d8f78c7bd40df5e5d3b1873fd7e4d03672ebd0904f90c90fa519c623968f55550ae55374de66dc0db9c9d865c593bb95be5640214db0cd3cea6f4ad866df4129d482b89583805d1bdb08ce8399881e70351778a3e4a4093cf69aa7b99b83347fbfd38d85ff45d6a78ca2ab8cacffbfbc8c2d16",
+    "verification": "5521030ef96257401b803da5dd201233e2be828795672b775dd674d69df83f7aec1e36210327da12b5c40200e9f65569476bbff2218da4f32548ff43b6387ec1416a231ee821025bdf3f181f53e9696227843950deb72dcd374ded17c057159513c3d0abe20b64210266b588e350ab63b850e55dbfed0feeda44410a30966341b371014b803a15af0721026ce35b29147ad09e4afe4ec4a7319095f08198fa8babbe3c56e970b143528d222103c089d7122b840a4935234e82e26ae5efd0c2acb627239dc9f207311337b6f2c12103fd95a9cb3098e6447d0de9f76cc97fd5e36830f9c7044457c15a0e81316bf28f57ae"
+  },
+  "tx": [
+    {
+      "txid": "0x07d70f7337d3869a7daa538425d78a47212fb8c6130d66d84ac48526853a4e51",
+      "size": 10,
+      "type": "MinerTransaction",
+      "version": 0,
+      "attributes": [],
+      "vin": [],
+      "vout": [],
+      "sys_fee": "0",
+      "net_fee": "0",
+      "scripts": [],
+      "nonce": 3093227147
+    }
+  ],
+  "confirmations": 70,
+  "nextblockhash": "0x2c9d6a107b21e83e09dd1b89df344a726895147d410120c46996290692ba29aa"
+}
+```
+```javascript
 {
   "hash": "0xc1668a114ee680597196ed402a0e0507fd8348e6090a54250d7accfadbd74b6e",
   "size": 686,
@@ -724,7 +1151,7 @@ The wallet will return the direct response from the RPC node.
 ### getBlockHeight
 
 ```typescript
-neoDapi.getBlockHeight({
+neologin.getBlockHeight({
   network: 'TestNet'
 })
 .then((res: {result: number}) => {
@@ -732,12 +1159,30 @@ neoDapi.getBlockHeight({
 })
 .catch(({type: string, description: string, data: any}) => {
   switch(type) {
-    case NO_PROVIDER:
-      console.log('No provider available.');
-      break;
+   case NO_PROVIDER:
+     console.log('No provider available.');
+     break;
    case RPC_ERROR:
-    console.log('There was an error when broadcasting this transaction to the network.');
-    break;
+     console.log('There was an error when broadcasting this transaction to the network.');
+     break;
+  }
+});
+```
+```javascript
+neologin.getBlockHeight({
+  network: 'TestNet'
+})
+.then((res) => {
+  console.log('Block height: ' + res.result);
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+   case "NO_PROVIDER":
+     console.log('No provider available.');
+     break;
+   case "RPC_ERROR":
+     console.log('There was an error when broadcasting this transaction to the network.');
+     break;
   }
 });
 ```
@@ -775,7 +1220,7 @@ Execute a contract invocation in read-only mode.
 ### getTransaction
 
 ```typescript
-neoDapi.getTransaction({
+neologin.getTransaction({
   txid: '7e049fd7c253dabf38e4156df30c78b30d49f307196aa89b99a47d2330789bf2',
   network: 'TestNet'
 })
@@ -787,9 +1232,28 @@ neoDapi.getTransaction({
     case NO_PROVIDER:
       console.log('No provider available.');
       break;
-   case RPC_ERROR:
-    console.log('There was an error when broadcasting this transaction to the network.');
-    break;
+    case RPC_ERROR:
+      console.log('There was an error when broadcasting this transaction to the network.');
+      break;
+  }
+});
+```
+```javascript
+neologin.getTransaction({
+  txid: '7e049fd7c253dabf38e4156df30c78b30d49f307196aa89b99a47d2330789bf2',
+  network: 'TestNet'
+})
+.then((result) => {
+  console.log('Transaction details: ' + JSON.stringify(result));
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "NO_PROVIDER":
+      console.log('No provider available.');
+      break;
+    case "RPC_ERROR":
+      console.log('There was an error when broadcasting this transaction to the network.');
+      break;
   }
 });
 ```
@@ -831,14 +1295,47 @@ Get information about a specific transaction.
   "blocktime": 1557377749
 }
 ```
+```javascript
+{
+  "txid": "0x7e049fd7c253dabf38e4156df30c78b30d49f307196aa89b99a47d2330789bf2",
+  "size": 556,
+  "type": "InvocationTransaction",
+  "version": 1,
+  "attributes": [
+    {
+      "usage": "Script",
+      "data": "296ac124021a71c449a9bad320c16429b08ad6ee"
+    },
+    {
+      "usage": "Remark",
+      "data": "cbb549adec34d741"
+    }
+  ],
+  "vin": [],
+  "vout": [],
+  "sys_fee": "0",
+  "net_fee": "0",
+  "scripts": [
+    {
+      "invocation": "4072b83e8aca62c27dc36b032b895e757db00620384e26f43cd0ecc9904bff1e652dd94a03226d6dcb0b6f91104cb40be6455aa0fc3b474a8a8e5fa43ff4b10b8d40af726dc0976f15cd8a134634074c5613ab1e59979fec37b611392975c92afa11038fd9d96ddfb306df12ae200dc3c15fa17cb9530389e28f090fd8c9721c3307",
+      "verification": "53c56b6c766b00527ac46c766b51527ac4616c766b00c36121022949376faacb0c6783da8ab63548926cb3a2e8d786063a449833f927fa8853f0ac642f006c766b51c361210292a25f5f0772d73d3fb50d42bb3cb443505b15e106789d19efa4d09c5ddca756ac635f006c766b00c361210292a25f5f0772d73d3fb50d42bb3cb443505b15e106789d19efa4d09c5ddca756ac642f006c766b51c36121022949376faacb0c6783da8ab63548926cb3a2e8d786063a449833f927fa8853f0ac62040000620400516c766b52527ac46203006c766b52c3616c7566"
+    }
+  ],
+  "script": "0400e1f505147869ef9732cdf6f6d54adaa5cae3b55a9396bceb14296ac124021a71c449a9bad320c16429b08ad6ee53c1087472616e7366657267f1dfcf0051ec48ec95c8d0569e0b95075d099d84f10400e1f50514b1fdddf658ce5ff9f83e66ede2f333ecfcc0463e14296ac124021a71c449a9bad320c16429b08ad6ee53c1087472616e7366657267f1dfcf0051ec48ec95c8d0569e0b95075d099d84f1",
+  "gas": "0",
+  "blockhash": "0x4ea57fe267a392933d2b03fa733fbf1fa12c13f7e8ae2051e45465800e1a7cdb",
+  "confirmations": 9,
+  "blocktime": 1557377749
+}
+```
 
 Execute a contract invocation in read-only mode.
 
 ##### Input Arguments
-| Parameter | Type   | Description                                                                                              |
-|:--------- |:------ |:-------------------------------------------------------------------------------------------------------- |
-| txid      | String | The id of the transaction you would like to get information about.                                       |
-| network   | String | Network alias to submit this request to. If omitted, will default the network which the wallet is set to |
+| Parameter | Type   | Description                                                                                               |
+|:--------- |:------ |:--------------------------------------------------------------------------------------------------------- |
+| txid      | String | The id of the transaction you would like to get information about.                                        |
+| network   | String | Network alias to submit this request to. If omitted, will default the network which the wallet is set to. |
 
 ##### Success Response
 The wallet will return the direct response from the RPC node.
@@ -853,7 +1350,7 @@ The wallet will return the direct response from the RPC node.
 ### getApplicationLog
 
 ```typescript
-neoDapi.getApplicationLog({
+neologin.getApplicationLog({
   txid: '7e049fd7c253dabf38e4156df30c78b30d49f307196aa89b99a47d2330789bf2',
   network: 'TestNet'
 })
@@ -865,9 +1362,28 @@ neoDapi.getApplicationLog({
     case NO_PROVIDER:
       console.log('No provider available.');
       break;
-   case RPC_ERROR:
-    console.log('There was an error when broadcasting this transaction to the network.');
-    break;
+    case RPC_ERROR:
+      console.log('There was an error when broadcasting this transaction to the network.');
+      break;
+  }
+});
+```
+```javascript
+neologin.getApplicationLog({
+  txid: '7e049fd7c253dabf38e4156df30c78b30d49f307196aa89b99a47d2330789bf2',
+  network: 'TestNet'
+})
+.then((result) => {
+  console.log('Application log of transaction execution: ' + JSON.stringify(result));
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "NO_PROVIDER":
+      console.log('No provider available.');
+      break;
+    case "RPC_ERROR":
+      console.log('There was an error when broadcasting this transaction to the network.');
+      break;
   }
 });
 ```
@@ -877,6 +1393,70 @@ Get the application log for a given transaction.
 > Example Response
 
 ```typescript
+{
+  "txid": "0x7e049fd7c253dabf38e4156df30c78b30d49f307196aa89b99a47d2330789bf2",
+  "executions": [
+    {
+      "trigger": "Application",
+      "contract": "0x72985e7f2cea98b89af54d8607bc6400814c4b45",
+      "vmstate": "HALT",
+      "gas_consumed": "5.292",
+      "stack": [],
+      "notifications": [
+        {
+          "contract": "0x849d095d07950b9e56d0c895ec48ec5100cfdff1",
+          "state": {
+            "type": "Array",
+            "value": [
+              {
+                "type": "ByteArray",
+                "value": "7472616e73666572"
+              },
+              {
+                "type": "ByteArray",
+                "value": "296ac124021a71c449a9bad320c16429b08ad6ee"
+              },
+              {
+                "type": "ByteArray",
+                "value": "7869ef9732cdf6f6d54adaa5cae3b55a9396bceb"
+              },
+              {
+                "type": "ByteArray",
+                "value": "00e1f505"
+              }
+            ]
+          }
+        },
+        {
+          "contract": "0x849d095d07950b9e56d0c895ec48ec5100cfdff1",
+          "state": {
+            "type": "Array",
+            "value": [
+              {
+                "type": "ByteArray",
+                "value": "7472616e73666572"
+              },
+              {
+                "type": "ByteArray",
+                "value": "296ac124021a71c449a9bad320c16429b08ad6ee"
+              },
+              {
+                "type": "ByteArray",
+                "value": "b1fdddf658ce5ff9f83e66ede2f333ecfcc0463e"
+              },
+              {
+                "type": "ByteArray",
+                "value": "00e1f505"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+```javascript
 {
   "txid": "0x7e049fd7c253dabf38e4156df30c78b30d49f307196aa89b99a47d2330789bf2",
   "executions": [
@@ -966,7 +1546,7 @@ Write methods will alter the state on the blockchain, and require a user signatu
 ### send
 
 ```typescript
-neoDapi.send({
+neologin.send({
   fromAddress: 'ATaWxfUAiBcQixNPq6TvKHEHPQum9bx79d',
   toAddress: 'ATaWxfUAiBcQixNPq6TvKHEHPQum9bx79d',
   asset: 'GAS',
@@ -1001,10 +1581,52 @@ neoDapi.send({
   }
 });
 ```
+```javascript
+neologin.send({
+  fromAddress: 'ATaWxfUAiBcQixNPq6TvKHEHPQum9bx79d',
+  toAddress: 'ATaWxfUAiBcQixNPq6TvKHEHPQum9bx79d',
+  asset: 'GAS',
+  amount: '0.0001',
+  remark: 'Hash puppy clothing purchase. Invoice#abc123',
+  fee: '0.0001',
+  network: 'MainNet',
+  broadcastOverride: false,
+})
+.then(({txid, nodeUrl}) => {
+  console.log('Send transaction success!');
+  console.log('Transaction ID: ' + txid);
+  console.log('RPC node URL: ' + nodeUrl);
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "NO_PROVIDER":
+      console.log('No provider available.');
+      break;
+    case "SEND_ERROR":
+      console.log('There was an error when broadcasting this transaction to the network.');
+      break;
+    case "MALFORMED_INPUT":
+      console.log('The receiver address provided is not valid.');
+      break;
+    case "CANCELED":
+      console.log('The user has canceled this transaction.');
+      break;
+    case "INSUFFICIENT_FUNDS":
+      console.log('The user has insufficient funds to execute this transaction.');
+      break;
+  }
+});
+```
 
 > Example Response
 
 ```typescript
+{
+  txid: 'ed54fb38dff371be6e3f96e4880405758c07fe6dd1295eb136fe15f311e9ff77',
+  nodeUrl: 'http://seed7.ngd.network:10332',
+}
+```
+```javascript
 {
   txid: 'ed54fb38dff371be6e3f96e4880405758c07fe6dd1295eb136fe15f311e9ff77',
   nodeUrl: 'http://seed7.ngd.network:10332',
@@ -1055,12 +1677,12 @@ In the case where the "broadcastOverride" input argument is set to True.
 
 ### invoke
 ```typescript
-neoDapi.invoke({
+neologin.invoke({
   scriptHash: '505663a29d83663a838eee091249abd167e928f5',
   operation: 'storeData',
   args: [
     {
-      type: neoDapi.Constants.ArgumentDataType.STRING,
+      type: neologin.Constants.ArgumentDataType.STRING,
       value: 'hello'
     }
   ],
@@ -1098,6 +1720,50 @@ neoDapi.invoke({
   }
 });
 ```
+```javascript
+neologin.invoke({
+  scriptHash: '505663a29d83663a838eee091249abd167e928f5',
+  operation: 'storeData',
+  args: [
+    {
+      type: neologin.Constants.ArgumentDataType.STRING,
+      value: 'hello'
+    }
+  ],
+  attachedAssets: {
+    NEO: '100',
+    GAS: '0.0001',
+  },
+  fee: '0.001',
+  network: 'TestNet',
+  broadcastOverride: false,
+  txHashAttributes: [
+    {
+      type: 'Boolean',
+      value: true,
+      txAttrUsage: 'Hash1'
+    }
+  ]
+})
+.then(({txid, nodeUrl}) => {
+  console.log('Invoke transaction success!');
+  console.log('Transaction ID: ' + txid);
+  console.log('RPC node URL: ' + nodeUrl);
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "NO_PROVIDER":
+      console.log('No provider available.');
+      break;
+    case "RPC_ERROR":
+      console.log('There was an error when broadcasting this transaction to the network.');
+      break;
+    case "CANCELED":
+      console.log('The user has canceled this transaction.');
+      break;
+  }
+});
+```
 
 > Example Response
 
@@ -1105,7 +1771,13 @@ neoDapi.invoke({
 {
   txid: 'ed54fb38dff371be6e3f96e4880405758c07fe6dd1295eb136fe15f311e9ff77',
   nodeUrl: 'http://seed7.ngd.network:10332',
-}:
+}
+```
+```javascript
+{
+  txid: 'ed54fb38dff371be6e3f96e4880405758c07fe6dd1295eb136fe15f311e9ff77',
+  nodeUrl: 'http://seed7.ngd.network:10332',
+}
 ```
 
 Invoke allows for the generic execution of smart contracts on behalf of the user. It is recommended to have a general understanding of the NEO blockchain, and to be able successfully use all other commands listed previously in this document before attempting a generic contract execution.
@@ -1206,14 +1878,14 @@ In the case where the "broadcastOverride" input argument is set to True.
 
 ### invokeMulti
 ```typescript
-neoDapi.invokeMulti({
+neologin.invokeMulti({
   invokeArgs: [
     {
       scriptHash: '505663a29d83663a838eee091249abd167e928f5',
       operation: 'storeData',
       args: [
         {
-          type: neoDapi.Constants.ArgumentDataType.STRING,
+          type: neologin.Constants.ArgumentDataType.STRING,
           value: 'hello'
         }
       ],
@@ -1228,7 +1900,7 @@ neoDapi.invokeMulti({
       operation: 'purchaseTicket',
       args: [
         {
-          type: neoDapi.Constants.ArgumentDataType.INTEGER,
+          type: neologin.Constants.ArgumentDataType.INTEGER,
           value: '10'
         }
       ],
@@ -1239,7 +1911,7 @@ neoDapi.invokeMulti({
   broadcastOverride: false,
   txHashAttributes: [
     {
-      type: neoDapi.Constants.ArgumentDataType.BOOLEAN,
+      type: neologin.Constants.ArgumentDataType.BOOLEAN,
       value: true,
       txAttrUsage: 'Hash1'
     }
@@ -1264,6 +1936,65 @@ neoDapi.invokeMulti({
   }
 });
 ```
+```javascript
+neologin.invokeMulti({
+  invokeArgs: [
+    {
+      scriptHash: '505663a29d83663a838eee091249abd167e928f5',
+      operation: 'storeData',
+      args: [
+        {
+          type: neologin.Constants.ArgumentDataType.STRING,
+          value: 'hello'
+        }
+      ],
+      attachedAssets: {
+        NEO: '100',
+        GAS: '0.0001',
+      },
+      triggerContractVerification: true,
+    },
+    {
+      scriptHash: '505663a29d83663a838eee091249abd167e928f5',
+      operation: 'purchaseTicket',
+      args: [
+        {
+          type: neologin.Constants.ArgumentDataType.INTEGER,
+          value: '10'
+        }
+      ],
+    }
+  ],
+  fee: '0.001',
+  network: 'TestNet',
+  broadcastOverride: false,
+  txHashAttributes: [
+    {
+      type: neologin.Constants.ArgumentDataType.BOOLEAN,
+      value: true,
+      txAttrUsage: 'Hash1'
+    }
+  ]
+})
+.then(({txid, nodeUrl}) => {
+  console.log('Invoke transaction success!');
+  console.log('Transaction ID: ' + txid);
+  console.log('RPC node URL: ' + nodeUrl);
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "NO_PROVIDER":
+      console.log('No provider available.');
+      break;
+    case "RPC_ERROR":
+      console.log('There was an error when broadcasting this transaction to the network.');
+      break;
+    case "CANCELED":
+      console.log('The user has canceled this transaction.');
+      break;
+  }
+});
+```
 
 > Example Response
 
@@ -1271,7 +2002,13 @@ neoDapi.invokeMulti({
 {
   txid: 'ed54fb38dff371be6e3f96e4880405758c07fe6dd1295eb136fe15f311e9ff77',
   nodeUrl: 'http://seed7.ngd.network:10332',
-}:
+}
+```
+```javascript
+{
+  txid: 'ed54fb38dff371be6e3f96e4880405758c07fe6dd1295eb136fe15f311e9ff77',
+  nodeUrl: 'http://seed7.ngd.network:10332',
+}
 ```
 
 Invoke Multi functions the same as Invoke, but accepts inputs to execute multiple invokes in the same transaction.
@@ -1380,7 +2117,7 @@ In the case where the "broadcastOverride" input argument is set to True.
 ### signMessage
 
 ```typescript
-neoDapi.signMessage({
+neologin.signMessage({
   message: 'Hello World!',
 })
 .then((signedMessage: SignedMessage) => {
@@ -1404,10 +2141,43 @@ neoDapi.signMessage({
   }
 });
 ```
+```javascript
+neologin.signMessage({
+  message: 'Hello World!',
+})
+.then((signedMessage) => {
+  const {
+    publicKey,
+    message,
+    salt,
+    data,
+  } = signedMessage;
+
+  console.log('Public key used to sign:', publicKey);
+  console.log('Original message:', message);
+  console.log('Salt added to message:', salt);
+  console.log('Signed data:', data);
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "UNKNOWN_ERROR":
+      console.log(description);
+      break;
+  }
+});
+```
 
 > Example Response
 
 ```typescript
+{
+  publicKey: '0241392007396d6ef96159f047967c5a61f1af0871ecf9dc82afbedb68afbb949a',
+  data: '0147fb89d0999e9d8a90edacfa26152fe695ec8b3770dcad522048297ab903822e12472364e254ff2e088fc3ebb641cc24722c563ff679bb1d1623d08bd5863d0d',
+  salt: '058b9e03e7154e4db1e489c99256b7fa',
+  message: 'Hello World!',
+}
+```
+```javascript
 {
   publicKey: '0241392007396d6ef96159f047967c5a61f1af0871ecf9dc82afbedb68afbb949a',
   data: '0147fb89d0999e9d8a90edacfa26152fe695ec8b3770dcad522048297ab903822e12472364e254ff2e088fc3ebb641cc24722c563ff679bb1d1623d08bd5863d0d',
@@ -1446,12 +2216,12 @@ Signs a provided messaged with an account selected by user. A salt prefix is add
 ### deploy
 
 ```typescript
-neoDapi.deploy({
-  network: 'PrivateNet',
+neologin.deploy({
+  network: 'TestNet',
   name: 'Hello world!',
   version: 'v0.0.1',
   author: 'John Smith',
-  email: 'info@o3.network',
+  email: 'neo@neologin.io',
   description: 'My first contract.',
   needsStorage: true,
   dynamicInvoke: false,
@@ -1474,6 +2244,35 @@ neoDapi.deploy({
   }
 });
 ```
+```javascript
+neologin.deploy({
+  network: 'TestNet',
+  name: 'Hello world!',
+  version: 'v0.0.1',
+  author: 'John Smith',
+  email: 'neo@neologin.io',
+  description: 'My first contract.',
+  needsStorage: true,
+  dynamicInvoke: false,
+  isPayable: false,
+  parameterList: '0710',
+  returnType: '05',
+  code: '53c56b0d57616b652075702c204e454f21680f4e656f2e52756e74696d652e4c6f6761006c7566',
+  networkFee: '0.001',
+})
+.then(({txid, nodeUrl}) => {
+  console.log('Deploy transaction success!');
+  console.log('Transaction ID: ' + txid);
+  console.log('RPC node URL: ' + nodeUrl);
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "UNKNOWN_ERROR":
+      console.log(description);
+      break;
+  }
+});
+```
 
 > Example Response
 
@@ -1481,7 +2280,13 @@ neoDapi.deploy({
 {
   txid: 'ed54fb38dff371be6e3f96e4880405758c07fe6dd1295eb136fe15f311e9ff77',
   nodeUrl: 'http://seed7.ngd.network:10332',
-}:
+}
+```
+```javascript
+{
+  txid: 'ed54fb38dff371be6e3f96e4880405758c07fe6dd1295eb136fe15f311e9ff77',
+  nodeUrl: 'http://seed7.ngd.network:10332',
+}
 ```
 
 Will deploy a compiled smart contract to the blockchain with the provided input parameters. The GAS cost for deploying the contract will be calculated by the provider, and displayed to the user upon tx acceptance or rejection.
@@ -1537,7 +2342,12 @@ In the case where the "broadcastOverride" input argument is set to True.
 ### addEventListener
 
 ```typescript
-neoDapi.addEventListener(neoDapi.Constants.EventName.ACCOUNT_CHANGED, data => {
+neologin.addEventListener(neologin.Constants.EventName.ACCOUNT_CHANGED, data => {
+  console.log(`Connected Account: ${data.address}`);
+});
+```
+```javascript
+neologin.addEventListener(neologin.Constants.EventName.ACCOUNT_CHANGED, data => {
   console.log(`Connected Account: ${data.address}`);
 });
 ```
@@ -1547,17 +2357,20 @@ Method is used to add a callback method to be triggered on a specified event.
 ### removeEventListener
 
 ```typescript
-neoDapi.removeEventListener(neoDapi.Constants.EventName.ACCOUNT_CHANGED);
+neologin.removeEventListener(neologin.Constants.EventName.ACCOUNT_CHANGED);
+```
+```javascript
+neologin.removeEventListener(neologin.Constants.EventName.ACCOUNT_CHANGED);
 ```
 
 Method is to remove existing callback event listeners.
 
 ## Events
-Events are a way for the wallet to asynchronously with the DAPP when certain changes occur to the state of the wallet that might be relevant for the
+Events are a way for the wallet to asynchronously communicate to the DAPP the ocurrence of certain changes on the state of the blockchain that might be relevant for the DAPP.
 
 
 ### READY
-On a READY event, the callback will fire with a single argument with information about the wallet provider. At any time a READY event listener is added, it will immidiately be called if the provider is already in a ready state. This provides a single flow for dapp developers since this listener should start any and all interactions with the dapi protocol.
+On a READY event, the callback will fire with a single argument with information about the wallet provider. At any time a READY event listener is added, it will immediately be called if the provider is already in a ready state. This provides a single flow for dapp developers since this listener should start any and all interactions with the dapi protocol.
 
 | Parameter     | Type     | Description                                                      |
 |:------------- |:-------- |:---------------------------------------------------------------- |
@@ -1649,7 +2462,15 @@ These are a collection of commonly used utilities for parsing responses from sma
 const hex2strInput = '68656c6c6f';
 const hex2strExpected = 'hello';
 
-const hex2strResult = neoDapi.utils.hex2str(hex2strInput);
+const hex2strResult = neologin.utils.hex2str(hex2strInput);
+
+console.log('hex2str', hex2strExpected === hex2strResult);
+```
+```javascript
+const hex2strInput = '68656c6c6f';
+const hex2strExpected = 'hello';
+
+const hex2strResult = neologin.utils.hex2str(hex2strInput);
 
 console.log('hex2str', hex2strExpected === hex2strResult);
 ```
@@ -1662,7 +2483,15 @@ Converts a hex string to a string.
 const str2hexInput = 'hello';
 const str2hexExpected = '68656c6c6f';
 
-const str2hexResult = neoDapi.utils.str2hex(str2hexInput);
+const str2hexResult = neologin.utils.str2hex(str2hexInput);
+
+console.log('str2hex', str2hexExpected === str2hexResult);
+```
+```javascript
+const str2hexInput = 'hello';
+const str2hexExpected = '68656c6c6f';
+
+const str2hexResult = neologin.utils.str2hex(str2hexInput);
 
 console.log('str2hex', str2hexExpected === str2hexResult);
 ```
@@ -1676,7 +2505,15 @@ Converts a string to a hex string.
 const hex2intInput = '00e1f505';
 const hex2intExpected = 100000000;
 
-const hex2intResult = neoDapi.utils.hex2int(hex2intInput);
+const hex2intResult = neologin.utils.hex2int(hex2intInput);
+
+console.log('hex2int', hex2intExpected === hex2intResult);
+```
+```javascript
+const hex2intInput = '00e1f505';
+const hex2intExpected = 100000000;
+
+const hex2intResult = neologin.utils.hex2int(hex2intInput);
 
 console.log('hex2int', hex2intExpected === hex2intResult);
 ```
@@ -1690,7 +2527,15 @@ Converts a hex string to an integer.
 const int2hexInput = 100000000;
 const int2hexExpected = '00e1f505';
 
-const int2hexResult = neoDapi.utils.int2hex(int2hexInput);
+const int2hexResult = neologin.utils.int2hex(int2hexInput);
+
+console.log('int2hex', int2hexExpected === int2hexResult);
+```
+```javascript
+const int2hexInput = 100000000;
+const int2hexExpected = '00e1f505';
+
+const int2hexResult = neologin.utils.int2hex(int2hexInput);
 
 console.log('int2hex', int2hexExpected === int2hexResult);
 ```
@@ -1703,7 +2548,14 @@ Converts an integer to a hex string.
 ```typescript
 const reverseHexInput = 'bc99b2a477e28581b2fd04249ba27599ebd736d3';
 const reverseHexExpected = 'd336d7eb9975a29b2404fdb28185e277a4b299bc';
-const reverseHexResult = neoDapi.utils.reverseHex(reverseHexInput);
+const reverseHexResult = neologin.utils.reverseHex(reverseHexInput);
+
+console.log('reverseHex', reverseHexExpected === reverseHexResult);
+```
+```javascript
+const reverseHexInput = 'bc99b2a477e28581b2fd04249ba27599ebd736d3';
+const reverseHexExpected = 'd336d7eb9975a29b2404fdb28185e277a4b299bc';
+const reverseHexResult = neologin.utils.reverseHex(reverseHexInput);
 
 console.log('reverseHex', reverseHexExpected === reverseHexResult);
 ```
@@ -1717,7 +2569,15 @@ Converts the endian of a hex string, big to little, or little to big.
 const address2scriptHashInput = 'Ab2fvZdmnM4HwDgVbdBrbTLz1wK5TcEyhU';
 const address2scriptHashExpected = 'd336d7eb9975a29b2404fdb28185e277a4b299bc';
 
-const address2scriptHashResult = neoDapi.utils.address2scriptHash(address2scriptHashInput);
+const address2scriptHashResult = neologin.utils.address2scriptHash(address2scriptHashInput);
+
+console.log('address2scriptHash', address2scriptHashExpected === address2scriptHashResult);
+```
+```javascript
+const address2scriptHashInput = 'Ab2fvZdmnM4HwDgVbdBrbTLz1wK5TcEyhU';
+const address2scriptHashExpected = 'd336d7eb9975a29b2404fdb28185e277a4b299bc';
+
+const address2scriptHashResult = neologin.utils.address2scriptHash(address2scriptHashInput);
 
 console.log('address2scriptHash', address2scriptHashExpected === address2scriptHashResult);
 ```
@@ -1731,7 +2591,15 @@ Converts an address to a script hash.
 const scriptHash2addressInput = 'd336d7eb9975a29b2404fdb28185e277a4b299bc';
 const scriptHash2addressExpected = 'Ab2fvZdmnM4HwDgVbdBrbTLz1wK5TcEyhU';
 
-const scriptHash2addressResult = neoDapi.utils.scriptHash2address(scriptHash2addressInput);
+const scriptHash2addressResult = neologin.utils.scriptHash2address(scriptHash2addressInput);
+
+console.log('scriptHash2address', scriptHash2addressExpected === scriptHash2addressResult);
+```
+```javascript
+const scriptHash2addressInput = 'd336d7eb9975a29b2404fdb28185e277a4b299bc';
+const scriptHash2addressExpected = 'Ab2fvZdmnM4HwDgVbdBrbTLz1wK5TcEyhU';
+
+const scriptHash2addressResult = neologin.utils.scriptHash2address(scriptHash2addressInput);
 
 console.log('scriptHash2address', scriptHash2addressExpected === scriptHash2addressResult);
 ```

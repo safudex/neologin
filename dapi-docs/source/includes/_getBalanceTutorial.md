@@ -1,7 +1,7 @@
 ## Getting asset balances
 
-```
-neoDapi.getBalance({
+```typescript
+neologin.getBalance({
   params: {
     address: 'AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru',
   },
@@ -31,6 +31,37 @@ neoDapi.getBalance({
   }
 });
 ```
+```javascript
+neologin.getBalance({
+  params: {
+    address: 'AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru',
+  },
+  network: 'MainNet',
+})
+.then(results => {
+  Object.keys(results).forEach(address => {
+    const balances = results[address];
+    balances.forEach(balance => {
+      const { assetID, symbol, amount } = balance
+
+      console.log('Address: ' + address);
+      console.log('Asset ID: ' + assetID);
+      console.log('Asset symbol: ' + symbol);
+      console.log('Amount: ' + amount);
+    });
+  });
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case "NO_PROVIDER":
+      console.log('No provider available.');
+      break;
+    case "CONNECTION_DENIED":
+      console.log('The user rejected the request to connect with your dApp');
+      break;
+  }
+});
+```
 
 Whether it be for the account the user has provided to your dApp via getAccount, or you would like to get asset balance information for another account, the `getBalance` method can be used. By default, for a provided address, the wallet provider will query the status of the NEO block for the latest asset balances for NEO, GAS, and any NEP5 tokens. This balance request does not require permission from the user, and will return the balances immidiately in the resolve of the returned Promise.
 
@@ -38,8 +69,18 @@ In this first example, we have requested the default balances for the address `A
 
 ### Advanced attributes
 
+```typescript
+neologin.getBalance({
+  params: {
+    address: 'AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru',
+    assets: ['GAS'],
+    fetchUTXO: true,
+  },
+  network: 'MainNet',
+})
 ```
-neoDapi.getBalance({
+```javascript
+neologin.getBalance({
   params: {
     address: 'AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru',
     assets: ['GAS'],

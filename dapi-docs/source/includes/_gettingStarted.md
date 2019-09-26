@@ -23,6 +23,9 @@ window.neologin
 ```javascript
 window.neologin
 ```
+
+Just add a script tag referencing `https://neologin.io/neologin.js` to your HTML.
+
 <!--
 When installing via CDN, it's always recommended to reference a specific version of the neo-dapi package, to protect your app from possible method interface updates. In this example the version referenced in the url is 2.0.4.
 -->
