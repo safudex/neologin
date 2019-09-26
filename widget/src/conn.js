@@ -171,13 +171,17 @@ const rpcUrls = {
 	"MainNet": "https://seed4.cityofzion.io",
 	"TestNet": "https://test4.cityofzion.io",
 };
+/*
+ * Update networks so if the hard-coded ones are taken down or have downtime the rest continue working fine -> Commented because it leads to mixed content problems
 supportedNetworks.map(network => {
 	const provider = new api.neoscan.instance(network);
-	provider.getRPCEndpoint().then(nodeUrl => {
-		rpcUrls[network] = nodeUrl;
-	});
+	provider.getRPCEndpoint()
+		.then(nodeUrl => {
+			rpcUrls[network] = nodeUrl;
+		})
+		.catch(e => e);
 })
-
+*/
 // See https://github.com/CityOfZion/neon-js/blob/master/examples/browser/README.md
 function rpcCall(call, args, network, constructResponse, unsupportedCall = false){
 	return new Promise(async (resolve, reject) => {
