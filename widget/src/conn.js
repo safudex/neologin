@@ -304,7 +304,7 @@ function getBalance(balanceArgs) {
 
 // Does NOT need to be accepted
 function getStorage(storageArgs) {
-	return rpcCall("getStorage", [storageArgs.scriptHash, storageArgs.key], storageArgs.network, (res)=>{return {result:u.hexstring2str(res)}});
+	return rpcCall("getStorage", [storageArgs.scriptHash, storageArgs.key], storageArgs.network, (res)=>{return {result:(res === null? "" : res)}});
 }
 
 // Does NOT need to be accepted
@@ -329,7 +329,7 @@ function invokeRead(invokeArgs) {
 		});
 	}
 
-	return rpcCall("invokeScript", [script], invokeArgs.network, (res)=>res.result);
+	return rpcCall("invokeScript", [script], invokeArgs.network, res => res);
 }
 
 // Does NOT need to be accepted
