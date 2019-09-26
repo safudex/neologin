@@ -1,5 +1,5 @@
 import connectToParent from 'penpal/lib/connectToParent';
-import Neon, { u, api, sc, tx, wallet, CONST } from "@cityofzion/neon-js";
+import Neon, { u, api, sc, tx, wallet, CONST, settings } from "@cityofzion/neon-js";
 import { server } from './config';
 import React from 'react'
 import ReactDOM from 'react-dom'
@@ -11,7 +11,7 @@ import { v4 as uuid } from 'uuid';
 let acct = null;
 let defaultNetwork = "MainNet";
 const supportedNetworks = ["MainNet", "TestNet"];
-Neon.settings.httpsOnly = true; // Ensure neon-js only talks to RPC endpoint (Neo node) using HTTPS
+settings.httpsOnly = true; // Ensure neon-js only talks to RPC endpoint (Neo node) using HTTPS
 
 let totalRequests = 0
 let calledLogin = false
