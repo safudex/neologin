@@ -146,7 +146,7 @@ neologin.getNetworks()
   const {
     networks,
     defaultNetwork,
-  } = response.networks;
+  } = response;
 
   console.log('Networks: ' + networks);
   // eg. ["MainNet", "TestNet", "PrivateNet"]
@@ -171,7 +171,7 @@ neologin.getNetworks()
   const {
     networks,
     defaultNetwork,
-  } = response.networks;
+  } = response;
 
   console.log('Networks: ' + networks);
   // eg. ["MainNet", "TestNet", "PrivateNet"]
