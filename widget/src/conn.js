@@ -182,6 +182,7 @@ supportedNetworks.map(network => {
 		.catch(e => e);
 })
 */
+
 // See https://github.com/CityOfZion/neon-js/blob/master/examples/browser/README.md
 function rpcCall(call, args, network, constructResponse, unsupportedCall = false){
 	return new Promise(async (resolve, reject) => {
@@ -390,7 +391,7 @@ function send(sendArgs) {
 		});
 	}
 	return new Promise((resolve, reject) => {
-		requestAcceptance('This dApp has requested permission to send some of your funds. Accept?', sendArgs)
+		requestAcceptance('This dApp has requested permission to send '+sendArgs.amount+' '+sendArgs.asset+' on '+sendArgs.network+' to '+sendArgs.toAddress+' with '+(sendArgs.fee||0)+' GAS in fees. Accept?')
 			.then(async () => {
 				let transaction;
 				try{
@@ -448,8 +449,21 @@ function send(sendArgs) {
 // Needs to be accepted every time
 // See https://cityofzion.io/neon-js/docs/en/examples/smart_contract.html
 function invoke(invokeArgs) {
+	let requestMessage = "This dApp has requested permission to invoke the smart contract at "+invokeArgs.scriptHash+' on '+sendArgs.network;
+	if(invokeArgs.assetIntentOverrides !== undefined){
+		requestMessage += ". The amount of GAS or NEO that will be spent on this transaction could not be estimated, please make sure that this is a legitimate transaction";
+	} else if (invokeArgs.attachedAssets !== undefined) {
+		requestMessage += " and send ";
+		["NEO, GAS"].map((asset) => {
+			if(invokeArgs.attachedAssets[asset]){
+				requestMessage += invokeArgs.attachedAssets[asset]+" "+asset+",";
+			}
+		});
+		requestMessage += " to it";
+	}
+	requestMessage += ' with '+(sendArgs.fee||0)+' GAS in fees. Accept?';
 	return new Promise((resolve, reject) => {
-		requestAcceptance("This dApp has requested permission to invoke a smart contract, this may spend some of your funds. Accept?")
+		requestAcceptance(requestMessage)
 			.then(async () => {
 				let transaction;
 				try{
@@ -631,7 +645,7 @@ function deploy(deployArgs) {
 	if (deployArgs.dynamicInvoke) {
 		sysGasFee += 500;
 	}
-	return requestAcceptance("This dApp has requested permission to deploy a smart contract. This will cost "+sysGasFee+" GAS in system costs and "+deployArgs.networkFee+" GAS in network fees. Accept?")
+	return requestAcceptance("This dApp has requested permission to deploy a smart contract on "deployArgs.network". This will cost "+sysGasFee+" GAS in system costs and "+deployArgs.networkFee+" GAS in network fees. Accept?")
 		.then(() => {
 			return new Promise(async (resolve, reject) => {
 				try{
