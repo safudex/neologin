@@ -89,7 +89,6 @@ connection.promise.then(parent => {
 				network,
 				blockHeight: lastBlockHeight[network]+1
 			})
-				.catch(e => e)
 				.then( block => {
 					lastBlockHeight[network] = block.index;
 					parent.sendEvent('BLOCK_HEIGHT_CHANGED', {
@@ -111,7 +110,8 @@ connection.promise.then(parent => {
 							return true;
 						}
 					});
-				});
+				})
+				.catch(e => e);
 		}, 1000); // Run every second
 	});
 });
@@ -387,12 +387,6 @@ function send(sendArgs) {
 	}
 	return new Promise((resolve, reject) => {
 		requestAcceptance('This dApp has requested permission to send some of your funds. Accept?', sendArgs)
-			.catch(() =>
-				reject({
-					type: 'CANCELED',
-					description: 'There was an error when broadcasting this transaction to the network.',
-				})
-			)
 			.then(async () => {
 				let transaction;
 				try{
@@ -437,7 +431,13 @@ function send(sendArgs) {
 					});
 					return;
 				}
-			});
+			})
+			.catch(() =>
+				reject({
+					type: 'CANCELED',
+					description: 'There was an error when broadcasting this transaction to the network.',
+				})
+			);
 	});
 }
 
@@ -446,12 +446,6 @@ function send(sendArgs) {
 function invoke(invokeArgs) {
 	return new Promise((resolve, reject) => {
 		requestAcceptance("This dApp has requested permission to invoke a smart contract, this may spend some of your funds. Accept?")
-			.catch(() =>
-				reject({
-					type: 'CANCELED',
-					description: 'There was an error when broadcasting this transaction to the network.',
-				})
-			)
 			.then(async () => {
 				let transaction;
 				try{
@@ -560,7 +554,13 @@ function invoke(invokeArgs) {
 					});
 					return;
 				}
-			});
+			})
+			.catch(() =>
+				reject({
+					type: 'CANCELED',
+					description: 'There was an error when broadcasting this transaction to the network.',
+				})
+			);
 	});
 }
 
