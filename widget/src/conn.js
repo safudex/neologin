@@ -83,7 +83,7 @@ connection.promise.then(parent => {
 	
 	//TODO: Add event listeners for CONNECTED, BLOCK_HEIGHT_CHANGED and TRANSACTION_CONFIRMED
 	supportedNetworks.map(async network => {
-		lastBlockHeight[network] = await getBlockHeight({network});
+		lastBlockHeight[network] = (await getBlockHeight({network})).result;
 		setInterval(()=>{
 			getBlock({
 				network,
