@@ -88,28 +88,30 @@ connection.promise.then(parent => {
 			getBlock({
 				network,
 				blockHeight: lastBlockHeight[network]+1
-			}).then( block => {
-				lastBlockHeight[network] = block.index;
-				parent.sendEvent('BLOCK_HEIGHT_CHANGED', {
-					network,
-					blockHeight: block.index,
-					blockTime: block.time,
-					blockHash: block.hash,
-					tx: block.tx
+			})
+				.catch(e => e)
+				.then( block => {
+					lastBlockHeight[network] = block.index;
+					parent.sendEvent('BLOCK_HEIGHT_CHANGED', {
+						network,
+						blockHeight: block.index,
+						blockTime: block.time,
+						blockHash: block.hash,
+						tx: block.tx
+					});
+					const txids = block.tx.map(txx => txx.txid.substr(2));
+					pendingTransactions[network] = pendingTransactions[network].filter(pendingTx => {
+						if(txids.includes(pendingTx)){
+							parent.sendEvent('TRANSACTION_CONFIRMED', {
+								txid: pendingTx,
+								blockHeight: block.index,
+							});
+							return false;
+						} else {
+							return true;
+						}
+					});
 				});
-				const txids = block.tx.map(txx => txx.txid.substr(2));
-				pendingTransactions[network] = pendingTransactions[network].filter(pendingTx => {
-					if(txids.includes(pendingTx)){
-						parent.sendEvent('TRANSACTION_CONFIRMED', {
-							txid: pendingTx,
-							blockHeight: block.index,
-						});
-						return false;
-					} else {
-						return true;
-					}
-				});
-			});
 		}, 1000); // Run every second
 	});
 });
