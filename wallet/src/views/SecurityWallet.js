@@ -43,12 +43,12 @@ class SecurityWallet extends React.Component {
                     <Grid item>
                         <Button variant="contained" color="primary" style={{ marginTop: '1rem' }}
                             onClick={() => {
-                                window.open(server.includes("localhost") ? server + "?settings=true" : server + "/login?settings=true/", 'NeoLogin - Login', 'width=400,height=660')
+                                window.open(server.includes("localhost") ? server + "?settings=true" : server + "?settings=true/", 'NeoLogin - Login', 'width=400,height=660')
                             }}>
                             OPEN SETTINGS
                         </Button>
                     </Grid>
-                    <Grid item style={{ margin: '1rem 0 0 0', width: '100%' }}>
+                    {/* <Grid item style={{ margin: '1rem 0 0 0', width: '100%' }}>
                         2 FACTOR AUTHENTICATION
                     </Grid>
                     <Grid item>
@@ -72,7 +72,7 @@ class SecurityWallet extends React.Component {
                                 label="SMS 2FA"
                             />
                         </FormGroup>
-                    </Grid>
+                    </Grid>*/}
                 </Grid>
             </div>
         )
