@@ -38,7 +38,7 @@
 							<p>A simple and easy to integrate wallet provider<br />
 							for NEO dApps.</p>
 							<ul class="actions">
-								<li><a class="button primary" onclick="window.neologin.getAccount().then(({ address }) => alert('Your address is:\n' + address))">Try me</a></li>
+								<li><a class="button primary" onclick="window.neologin.getAccount().then(({ address }) => window.setTimeout(()=>alert('Your address is:\n' + address), 10))">Try me</a></li>
 							</ul>
 						</div>
 					</section>
