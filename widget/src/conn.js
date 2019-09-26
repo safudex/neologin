@@ -165,9 +165,15 @@ function getNetwork(network){
 }
 
 const rpcUrls = {
-	"MainNet": "https://seed4.cityofzion.io:443",
-	"TestNet": "https://test4.cityofzion.io:443",
+	"MainNet": "https://seed4.cityofzion.io",
+	"TestNet": "https://test4.cityofzion.io",
 };
+supportedNetworks.map(network => {
+	const provider = new api.neoscan.instance(network);
+	provider.getRPCEndpoint().then(nodeUrl => {
+		rpcUrls[network] = nodeUrl;
+	});
+})
 
 // See https://github.com/CityOfZion/neon-js/blob/master/examples/browser/README.md
 function rpcCall(call, args, network, constructResponse, unsupportedCall = false){
