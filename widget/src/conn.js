@@ -385,7 +385,7 @@ function send(sendArgs) {
 			.then(() => {
 				requestAcceptanceSend(sendArgs, 'This dApp has requested permission to send ' + sendArgs.amount + ' ' + sendArgs.asset + ' on ' + sendArgs.network + ' to ' + sendArgs.toAddress + ' with ' + (sendArgs.fee || 0) + ' GAS in fees. Accept?').then(async () => {
 					if (sendArgs.fromAddress !== acct.address) {
-						return Promise.reject({
+						return reject({
 							type: 'MALFORMED_INPUT',
 							description: 'From address is not a properly formatted address.'
 						});
@@ -437,11 +437,13 @@ function send(sendArgs) {
 					reject({
 						type: 'CANCELED',
 						description: 'There was an error when broadcasting this transaction to the network.',
-					})
+					});
 				)
 			}).catch((e) => {
-				console.log('first catch')
-				console.log(e)
+				reject({
+					type: 'CANCELED',
+					description: 'There was an error when broadcasting this transaction to the network.',
+				});
 			})
 	});
 }
