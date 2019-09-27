@@ -441,7 +441,7 @@ function send(sendArgs) {
 					reject({
 						type: 'CANCELED',
 						description: 'There was an error when broadcasting this transaction to the network.',
-					});
+					})
 				)
 			}).catch((e) => {
 				reject({
