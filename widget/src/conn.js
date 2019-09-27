@@ -330,8 +330,12 @@ function invokeRead(invokeArgs) {
 
 // Does NOT need to be accepted
 function verifyMessage(verifyArgs) {
+	const parameterHexString = u.str2hexstring(verifyArgs.message);
+	const lengthHex = u.num2VarInt(parameterHexString.length / 2);
+	const concatenatedString = lengthHex + parameterHexString;
+	const messageHex = '010001f0' + concatenatedString + '0000';
 	return Promise.resolve({
-		result: Neon.verify.message(verifyArgs.message, verifyArgs.data, verifyArgs.publicKey)
+		result: Neon.verify.message(messageHex, verifyArgs.data, verifyArgs.publicKey)
 	});
 }
 
