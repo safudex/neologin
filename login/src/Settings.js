@@ -173,14 +173,14 @@ class Settings extends React.Component {
 									/>
 									<h4 className={classes.subtittle}>Security</h4>
 									<Button className={classes.settingItem} color='primary' variant="contained" disabled={this.state.emailIsVerified} onClick={() => {
-										verifyEmail(this.props.cognitoUser).then(() => this.setState({ verifyEmailView: true }))
+										verifyEmail(this.props.cognitoUser).then(() => this.setState({ verifyEmailView: true, wrongEmailCode: false }))
 									}}>Verify email</Button>
 									<Button className={classes.settingItem} color='primary' variant="contained" onClick={
 										() => this.state.preferredMFA === 'SOFTWARE_TOKEN_MFA' ?
 											disableTOTP(this.props.cognitoUser).then(() => this.setState({ preferredMFA: '' }))
 											:
 											enableTOTP(this.props.cognitoUser, this.state.email, (secret, email) =>
-												this.setState({ verifyTOTPCodeView: true, secretTOTP: secret, email: email }))
+												this.setState({ verifyTOTPCodeView: true, secretTOTP: secret, email: email, wrongMFACode: false }))
 
 									}>{this.state.preferredMFA === 'SOFTWARE_TOKEN_MFA' ? 'Disable' : 'Enable'} TOTP</Button>
 									<h4 className={classes.subtittle}>Private key</h4>

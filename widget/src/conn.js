@@ -762,77 +762,71 @@ function successfulSignIn(account) {
 }
 
 function requestAcceptance(message) {
-	var requestContainer = createRequestContainer()
 	return new Promise((resolve, reject) => {
 		if (!calledPermission || userGivesPermission) {
 			calledPermission = true
 			if (userGivesPermission)
 				resolve()
-			else
-				ReactDOM.render(<RequestAcceptance message={"This dApp is requesting access to your NeoLogin wallet."} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
-					totalRequests++
-					displayWidget(document.getElementById(requestContainer.id).clientHeight)
-				});
+			else {
+				var requestContainer = createRequestContainer()
+				ReactDOM.render(<RequestAcceptance
+					message={"This dApp is requesting access to your NeoLogin wallet."}
+					resolve={() => {
+						userGivesPermission = true;
+						connection.promise.then(parent =>
+							parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" }));
+						resolve()
+					}}
+					reject={reject}
+					closeWidget={() => { calledPermission = false; closeWidget() }}
+					closeRequest={closeRequest}
+					contid={requestContainer.id}
+				/>, document.getElementById(requestContainer.id), () => {
+					displayRequest(requestContainer)
+				})
+			}
 		}
 	});
 }
 
 function requestAcceptanceSend(sendArgs, message) {
-	var requestContainer = createRequestContainer()
 	return new Promise((resolve, reject) => {
-		if (!calledPermission || userGivesPermission) {
-			calledPermission = true
-			//if (userGivesPermission)
-			//	resolve()
-			//else
-			ReactDOM.render(<RequestAcceptanceSend sendArgs={sendArgs} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
-				totalRequests++
-				displayWidget(document.getElementById(requestContainer.id).clientHeight)
-			});
-		}
+		var requestContainer = createRequestContainer()
+		ReactDOM.render(<RequestAcceptanceSend sendArgs={sendArgs} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+			displayRequest(requestContainer)
+		});
 	});
 }
 
 function requestAcceptanceSignMessage(message) {
-	var requestContainer = createRequestContainer()
 	return new Promise((resolve, reject) => {
-		if (!calledPermission || userGivesPermission) {
-			calledPermission = true
-			ReactDOM.render(<RequestAcceptanceSignMessage message={message} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
-				totalRequests++
-				displayWidget(document.getElementById(requestContainer.id).clientHeight)
-			});
-		}
+		var requestContainer = createRequestContainer()
+		ReactDOM.render(<RequestAcceptanceSignMessage message={message} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+			displayRequest(requestContainer)
+		});
 	});
 }
 
 function requestAcceptanceInvoke(invokeArgs, goodEstimation) {
-	var requestContainer = createRequestContainer()
 	return new Promise((resolve, reject) => {
-		if (!calledPermission || userGivesPermission) {
-			calledPermission = true
-			ReactDOM.render(<RequestAcceptanceInvoke goodEstimation={goodEstimation} invokeArgs={invokeArgs} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
-				totalRequests++
-				displayWidget(document.getElementById(requestContainer.id).clientHeight)
-			});
-		}
+		var requestContainer = createRequestContainer()
+		ReactDOM.render(<RequestAcceptanceInvoke goodEstimation={goodEstimation} invokeArgs={invokeArgs} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+			displayRequest(requestContainer)
+		});
 	});
 }
 
 function requestAcceptanceDeploy(deployArgs, sysGasFee) {
-	var requestContainer = createRequestContainer()
 	return new Promise((resolve, reject) => {
-		if (!calledPermission || userGivesPermission) {
-			calledPermission = true
-			ReactDOM.render(<RequestAcceptanceDeploy sysGasFee={sysGasFee} deployArgs={deployArgs} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
-				totalRequests++
-				displayWidget(document.getElementById(requestContainer.id).clientHeight)
-			});
-		}
+		var requestContainer = createRequestContainer()
+		ReactDOM.render(<RequestAcceptanceDeploy sysGasFee={sysGasFee} deployArgs={deployArgs} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+			displayRequest(requestContainer)
+		});
 	});
 }
 
 function createRequestContainer() {
+	console.log('called')
 	var requestContainer = document.createElement("div");
 	requestContainer.id = 'request-' + totalRequests
 	requestContainer.style.top = '0'
@@ -842,6 +836,11 @@ function createRequestContainer() {
 	var mainContainer = document.getElementById("root");
 	mainContainer.appendChild(requestContainer);
 	return requestContainer;
+}
+
+function displayRequest(requestContainer) {
+	totalRequests++
+	window.setTimeout(() => displayWidget(document.getElementById(requestContainer.id).clientHeight), 10)
 }
 
 function closeRequest() {
