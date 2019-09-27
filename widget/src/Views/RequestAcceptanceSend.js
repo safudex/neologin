@@ -47,7 +47,7 @@ class RequestAcceptanceSend extends React.Component {
             >{/* sendArgs.network + ' to ' + sendArgs.toAddress + ' with ' + (sendArgs.fee || 0) + ' GAS in fees. Accept?' */}
               <div>
                 <span style={{ fontSize: '0.85em', display: 'block' }}>Network: {this.props.sendArgs.network}</span>
-                <span>To: </span><span style={{ fontSize: '0.80em' }}>{this.props.sendArgs.toAddress}</span>
+                <span style={{ fontSize: '0.85em' }}>To: </span><span style={{ fontSize: '0.80em' }}>{this.props.sendArgs.toAddress}</span>
                 <span style={{ fontSize: '0.85em', display: 'block' }}>Fee: {this.props.sendArgs.fee || 0} GAS</span>
               </div>
             </Grid>
