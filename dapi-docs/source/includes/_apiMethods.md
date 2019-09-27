@@ -718,8 +718,8 @@ The amount of addresses is n where n is the number of addresses specified in you
 
 ```typescript
 neologin.getStorage({
-  scriptHash: '505663a29d83663a838eee091249abd167e928f5',
-  key: 'game.status',
+  scriptHash: 'b3a14d99a3fb6646c78bf2f4e2f25a7964d2956a',
+  key: '74657374',
   network: 'TestNet'
 })
 .then(res => {
@@ -742,8 +742,8 @@ neologin.getStorage({
 ```
 ```javascript
 neologin.getStorage({
-  scriptHash: '505663a29d83663a838eee091249abd167e928f5',
-  key: 'game.status',
+  scriptHash: 'b3a14d99a3fb6646c78bf2f4e2f25a7964d2956a',
+  key: '74657374',
   network: 'TestNet'
 })
 .then(res => {
