@@ -183,18 +183,19 @@ class SignUp extends React.Component {
 							<Typography component="p">
 								Please download your private key, after that you will be returned to the dApp webpage. 
 							</Typography>
-							<Button
-								fullWidth
-								variant="contained"
-								color="primary"
-								className={classes.submit}
-								onClick={async () => {
-									await downloadPrivkey(this.state.privkey);
-									this.state.handleLogin(this.state.privkey, false);
-								}}
-							>
-								Download
-							</Button>
+							<a download="private-key.txt" href={'data:text/plain;base64,' + window.btoa(craftDownloadMessage(this.state.privkey))}>
+								<Button
+									fullWidth
+									variant="contained"
+									color="primary"
+									className={classes.submit}
+									onClick={async () => {
+										this.state.handleLogin(this.state.privkey, false);
+									}}
+								>
+									Download
+								</Button>
+							</a>
 							{/*
 							<Button
 								fullWidth
@@ -330,8 +331,8 @@ function downloadFile(data) {
 		.catch(() => alert('Could not be downloaded, please copy paste the following string into a local file: ' + data));
 }
 
-function downloadPrivkey(privkey) {
-	downloadFile("This file contains your private key, which you will need in case you ever lose or forget your NeoLogin password.\nThis file must be kept in a safe place and not shared with anyone else, as doing so will put your funds and wallet at risk of being stolen.\nPrivate Key: " + privkey);
+function craftDownloadMessage(privkey) {
+	return "This file contains your private key, which you will need in case you ever lose or forget your NeoLogin password.\nThis file must be kept in a safe place and not shared with anyone else, as doing so will put your funds and wallet at risk of being stolen.\nPrivate Key: " + privkey;
 }
 
 SignUp.propTypes = {
