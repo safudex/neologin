@@ -148,14 +148,14 @@ class SignUp extends React.Component {
 
 		register(this.state.email, this.state.password1, this.state.newsletter ? "true" : "false")
 			.then(privkey => {
-				/*
 				this.setState({
 					privkey: privkey,
 					registered: true,
 				});
-				*/
+				/*
 				downloadFile("This file contains your private key, which you will need in case you ever lose or forget your NeoLogin password.\nThis file must be kept in a safe place and not shared with anyone else, as doing so will put your funds and wallet at risk of being stolen.\nPrivate Key: " + privkey);
 				this.state.handleLogin(privkey, false);
+				*/
 			})
 			.catch(err => {
 				this.setState({
@@ -176,22 +176,26 @@ class SignUp extends React.Component {
 					</Avatar> */}
 					<img src={logo} style={{ height: '5em', marginBottom: '2em' }} />
 					<Typography component="h1" variant="h5" style={{ color: '#6A737D' }}>
-						{this.state.registered ? "Sucess!" : "Sign up"}
+						{this.state.registered ? "Welcome!" : "Sign up"}
 					</Typography>
 					{this.state.registered ? (
-						<div>
+						<div style={{ marginTop: '2em' }}>
 							<Typography component="p">
-								You should store your private key, given that if you lose your password the private key will be the only means of recovery. You can either download a file cointaining or just directly copy-paste it somewhere safe
+								Please download your private key, after that you will be returned to the dApp webpage. 
 							</Typography>
 							<Button
 								fullWidth
 								variant="contained"
 								color="primary"
 								className={classes.submit}
-								onClick={() => downloadFile(this.state.privkey)}
+								onClick={async () => {
+									await downloadPrivkey(this.state.privkey);
+									this.state.handleLogin(this.state.privkey, false);
+								}}
 							>
 								Download
 							</Button>
+							{/*
 							<Button
 								fullWidth
 								variant="contained"
@@ -212,6 +216,7 @@ class SignUp extends React.Component {
 							>
 								Continue
 							</Button>
+							*/}
 						</div>
 					) : (
 						<form className={classes.form} onSubmit={this.handleSubmit}>
@@ -309,7 +314,7 @@ function validateEmail(email) {
 }
 
 function downloadFile(data) {
-	fetch('data:text/plain;base64,' + window.btoa(data))
+	return fetch('data:text/plain;base64,' + window.btoa(data))
 		.then(resp => resp.blob())
 		.then(blob => {
 			const url = window.URL.createObjectURL(blob);
@@ -322,7 +327,11 @@ function downloadFile(data) {
 			a.click();
 			window.URL.revokeObjectURL(url);
 		})
-		.catch(() => alert('Could not be downloaded, please copy paste the following string: ' + data));
+		.catch(() => alert('Could not be downloaded, please copy paste the following string into a local file: ' + data));
+}
+
+function downloadPrivkey(privkey) {
+	downloadFile("This file contains your private key, which you will need in case you ever lose or forget your NeoLogin password.\nThis file must be kept in a safe place and not shared with anyone else, as doing so will put your funds and wallet at risk of being stolen.\nPrivate Key: " + privkey);
 }
 
 SignUp.propTypes = {
