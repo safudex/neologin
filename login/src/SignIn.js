@@ -275,13 +275,11 @@ class SignIn extends React.Component {
 										<span style={{ color: '#2e5aac' }}>Forgot password?</span>
 									</Link>
 								</Grid>
-								´{
-									this.state.openSettings ? <Grid item>
-										<Link href="#" variant="body2" onClick={this.state.signUpClick}>
-											<span style={{ color: '#2e5aac' }}>Don't have an account? Sign Up</span>
-										</Link>
-									</Grid> : null
-								}
+								<Grid item>
+									<Link href="#" variant="body2" onClick={this.state.signUpClick}>
+										<span style={{ color: '#2e5aac' }}>Don't have an account? Sign Up</span>
+									</Link>
+								</Grid>
 							</Grid>
 						)}
 					</form>
