@@ -556,9 +556,14 @@ function invoke(invokeArgs) {
 									if (!attr.txAttrUsage.startsWith("Hash")) {
 										return;
 									}
+									let paddedStr = u.str2hexstring(String(attr.value));
+									let i = paddedStr.length;
+									while (i++<64){
+										paddedStr = "0" + paddedStr;
+									}
 									transaction.addAttribute(
 										tx.TxAttrUsage[attr.txAttrUsage],
-										u.str2hexstring(String(attr.value)) //TODO: Do type conversion
+										u.reverseHex(paddedStr) //TODO: Do type conversion
 									);
 								});
 							}
