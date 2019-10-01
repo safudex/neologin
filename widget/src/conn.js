@@ -369,15 +369,15 @@ async function sendTransaction(transaction, broadcastOverride, network, resolve)
 		});
 	} else {
 		// Send raw transaction
-		const nodeURL = rpcUrls[getNetwork(network)];
-		const client = Neon.create.rpcClient(nodeURL);
+		const nodeUrl = rpcUrls[getNetwork(network)];
+		const client = Neon.create.rpcClient(nodeUrl);
 		await client.sendRawTransaction(transaction);
 
 		// Sucess!
 		pendingTransactions[network].push(txid);
 		resolve({
 			txid,
-			nodeURL
+			nodeUrl
 		});
 	}
 }
@@ -457,7 +457,7 @@ function send(sendArgs) {
 // Needs to be accepted every time
 // See https://cityofzion.io/neon-js/docs/en/examples/smart_contract.html
 function invoke(invokeArgs) {
-	let requestMessage = "This dApp has requested permission to invoke the smart contract at " + invokeArgs.scriptHash + ' on ' + invokeArgs.network;
+	let requestMessage = "This dApp has requested permission to invoke the smart contract at " + invokeArgs.scriptHash + ' on ' + getNetwork(invokeArgs.network);
 	if (invokeArgs.assetIntentOverrides !== undefined) {
 		requestMessage += ". The amount of GAS or NEO that will be spent on this transaction could not be estimated, please make sure that this is a legitimate transaction";
 	} else if (invokeArgs.attachedAssets !== undefined) {
@@ -473,7 +473,7 @@ function invoke(invokeArgs) {
 	return new Promise((resolve, reject) => {
 		requestAcceptance()
 			.then(() => {
-				requestAcceptanceInvoke(invokeArgs, (invokeArgs.assetIntentOverrides !== undefined))
+				requestAcceptanceInvoke(invokeArgs, getNetwork(invokeArgs.network), (invokeArgs.assetIntentOverrides !== undefined))
 					.then(async () => {
 						let transaction;
 						try {
@@ -481,7 +481,7 @@ function invoke(invokeArgs) {
 							const apiProvider = new api.neoscan.instance(endpoint);
 
 							// Create contract transaction using Neoscan API
-							let balance = await apiProvider.getBalance(invokeArgs.fromAddress);
+							let balance = await apiProvider.getBalance(acct.address);
 							const script = Neon.create.script({
 								scriptHash: invokeArgs.scriptHash,
 								operation: invokeArgs.operation,
@@ -556,16 +556,30 @@ function invoke(invokeArgs) {
 							}
 							if (invokeArgs.txHashAttributes) {
 								invokeArgs.txHashAttributes.map((attr) => {
-									if (!attr.startsWith("Hash")) {
+									if (!attr.txAttrUsage.startsWith("Hash")) {
 										return;
 									}
+									let paddedStr = u.str2hexstring(String(attr.value));
+									let i = paddedStr.length;
+									while (i++<64){
+										paddedStr = "0" + paddedStr;
+									}
 									transaction.addAttribute(
-										Neon.tx.TxAttrUsage[attr.txAttrUsage],
-										attr.value //TODO: Do type conversion
+										tx.TxAttrUsage[attr.txAttrUsage],
+										u.reverseHex(paddedStr.substring(0,64)) //TODO: Do type conversion
 									);
 								});
 							}
-							transaction = transaction.sign(acct.privateKey);
+							transaction.sign(acct.privateKey);
+							try {
+								await sendTransaction(transaction, invokeArgs.broadcastOverride, invokeArgs.network, resolve);
+							} catch (e) {
+								reject({
+									type: 'RPC_ERROR',
+									description: "There was an error when broadcasting this transaction to the network.",
+								});
+								return;
+							}
 						} catch (e) {
 							reject({
 								type: 'MALFORMED_INPUT',
@@ -574,15 +588,6 @@ function invoke(invokeArgs) {
 							return;
 						}
 
-						try {
-							await sendTransaction(transaction, invokeArgs.broadcastOverride, invokeArgs.network, resolve);
-						} catch (e) {
-							reject({
-								type: 'RPC_ERROR',
-								description: "There was an error when broadcasting this transaction to the network.",
-							});
-							return;
-						}
 					})
 					.catch(() =>
 						reject({
@@ -820,10 +825,10 @@ function requestAcceptanceSignMessage(message) {
 	});
 }
 
-function requestAcceptanceInvoke(invokeArgs, goodEstimation) {
+function requestAcceptanceInvoke(invokeArgs, network, goodEstimation) {
 	return new Promise((resolve, reject) => {
 		var requestContainer = createRequestContainer()
-		ReactDOM.render(<RequestAcceptanceInvoke goodEstimation={goodEstimation} invokeArgs={invokeArgs} resolve={resolve} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+		ReactDOM.render(<RequestAcceptanceInvoke goodEstimation={goodEstimation} invokeArgs={invokeArgs} network={network} resolve={resolve} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
 			displayRequest(requestContainer)
 		});
 	});
