@@ -36,7 +36,7 @@ class RequestAcceptanceInvoke extends React.Component {
             <p style={{ fontSize: '0.85em' }}>This dApp has requested permission to invoke the smart contract:</p>
           </Grid>
           <Grid item xs>
-            <span style={{ fontWeight: 'bold', fontSize: '0.85em' }}>{this.props.invokeArgs.scriptHash}</span>
+            <span style={{ fontSize: '0.75em' }}>{this.props.invokeArgs.scriptHash}</span>
           </Grid>
           <Grid item xs style={{ width: '100%' }}>
             <Grid

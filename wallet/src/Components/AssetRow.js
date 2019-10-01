@@ -136,7 +136,7 @@ class AssetRow extends React.Component {
                         </Grid>
                     </Grid>
                     <Grid item style={{ width: '100%' }}>
-                        <Grid container direction="row" style={{
+                        <Grid container direction={this.props.isMobile ? "column" : "row"} style={{
                             background: '#2d2d37',
                             padding: '8px 15px'
                         }}>
@@ -144,7 +144,7 @@ class AssetRow extends React.Component {
                                 <label className="label" for="toAddress">address</label>
                                 <input type="text" name="toAddress" id="toAddress" onChange={this.handleInputChange} />
                             </Grid>
-                            <Grid item style={{ width: '1rem' }}>
+                            <Grid item style={{ width: '1rem', height: this.props.isMobile ? '1rem' : '1px' }}>
                             </Grid>
                             <Grid item>
                                 <label className="label" for="amount">Amount</label>
@@ -161,8 +161,8 @@ class AssetRow extends React.Component {
                                 padding: '8px 15px',
                                 borderRadius: '0px 0px 5px 5px'
                             }}>
-                            <Grid item style={{ marginBottom: '0.5rem' }}>
-                                <input type="submit" value="Send" class="primary" onClick={this.send} />
+                            <Grid item style={{ marginBottom: '0.5rem', width: this.props.isMobile ? '100%' : 'unset' }}>
+                                <input style={{ width: this.props.isMobile ? '100%' : 'unset' }} type="submit" value="Send" class="primary" onClick={this.send} />
                             </Grid>
                         </Grid>
                     </Grid>
