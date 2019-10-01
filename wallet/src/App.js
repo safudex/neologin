@@ -166,7 +166,7 @@ function App() {
               mainBalance.length != 0 ?
                 mainBalance.map((balance) =>
                   <Grid item style={{ width: isMobile ? '90%' : '50%', margin: '0.3rem 0rem' }}>
-                    <AssetRow symbol={balance.symbol} amount={balance.amount} address={address} network={network} getBalance={() => this.getBalance(address, network)} />
+                    <AssetRow isMobile={isMobile} symbol={balance.symbol} amount={balance.amount} address={address} network={network} getBalance={() => this.getBalance(address, network)} />
                   </Grid>
                 )
                 :

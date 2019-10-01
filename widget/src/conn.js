@@ -11,6 +11,7 @@ import RequestAcceptanceSignMessage from './Views/RequestAcceptanceSignMessage'
 import { v4 as uuid } from 'uuid';
 import RequestAcceptanceInvoke from './Views/RequestAcceptanceInvoke';
 import RequestAcceptanceDeploy from './Views/RequestAcceptanceDeploy';
+import InsufficientFunds from './Views/InsufficientFunds';
 
 let acct = null;
 let defaultNetwork = "MainNet";
@@ -417,6 +418,7 @@ function send(sendArgs) {
 								type: 'INSUFFICIENT_FUNDS',
 								description: "Account doesn't have enough funds.",
 							});
+							displayInsufficientFundsView()
 							return;
 						}
 						transaction = transaction.sign(acct.privateKey);
@@ -548,6 +550,7 @@ function invoke(invokeArgs) {
 										type: 'INSUFFICIENT_FUNDS',
 										description: "Account doesn't have enough funds.",
 									});
+									displayInsufficientFundsView()
 									return;
 								}
 							}
@@ -709,6 +712,7 @@ function deploy(deployArgs) {
 										type: 'INSUFFICIENT_FUNDS',
 										description: "Account doesn't have enough funds.",
 									});
+									displayInsufficientFundsView()
 									return;
 								}
 								transaction = transaction.sign(acct.privateKey);
@@ -766,7 +770,7 @@ function successfulSignIn(account) {
 	//});
 }
 
-function requestAcceptance(message) {
+function requestAcceptance() {
 	return new Promise((resolve, reject) => {
 		if (!calledPermission || userGivesPermission) {
 			calledPermission = true
@@ -797,7 +801,16 @@ function requestAcceptance(message) {
 function requestAcceptanceSend(sendArgs, message) {
 	return new Promise((resolve, reject) => {
 		var requestContainer = createRequestContainer()
-		ReactDOM.render(<RequestAcceptanceSend sendArgs={sendArgs} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+		ReactDOM.render(<RequestAcceptanceSend sendArgs={sendArgs} resolve={resolve} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+			displayRequest(requestContainer)
+		});
+	});
+}
+
+function displayInsufficientFundsView() {
+	return new Promise((resolve, reject) => {
+		var requestContainer = createRequestContainer()
+		ReactDOM.render(<InsufficientFunds address={acct.address} reject={reject} closeWidget={() => { closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
 			displayRequest(requestContainer)
 		});
 	});
@@ -806,7 +819,7 @@ function requestAcceptanceSend(sendArgs, message) {
 function requestAcceptanceSignMessage(message) {
 	return new Promise((resolve, reject) => {
 		var requestContainer = createRequestContainer()
-		ReactDOM.render(<RequestAcceptanceSignMessage message={message} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+		ReactDOM.render(<RequestAcceptanceSignMessage message={message} resolve={resolve} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
 			displayRequest(requestContainer)
 		});
 	});
@@ -815,7 +828,7 @@ function requestAcceptanceSignMessage(message) {
 function requestAcceptanceInvoke(invokeArgs, network, goodEstimation) {
 	return new Promise((resolve, reject) => {
 		var requestContainer = createRequestContainer()
-		ReactDOM.render(<RequestAcceptanceInvoke goodEstimation={goodEstimation} invokeArgs={invokeArgs} network={network} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+		ReactDOM.render(<RequestAcceptanceInvoke goodEstimation={goodEstimation} invokeArgs={invokeArgs} network={network} resolve={resolve} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
 			displayRequest(requestContainer)
 		});
 	});
@@ -824,7 +837,7 @@ function requestAcceptanceInvoke(invokeArgs, network, goodEstimation) {
 function requestAcceptanceDeploy(deployArgs, sysGasFee) {
 	return new Promise((resolve, reject) => {
 		var requestContainer = createRequestContainer()
-		ReactDOM.render(<RequestAcceptanceDeploy sysGasFee={sysGasFee} deployArgs={deployArgs} resolve={() => { userGivesPermission = true; connection.promise.then(parent => parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" })); resolve() }} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+		ReactDOM.render(<RequestAcceptanceDeploy sysGasFee={sysGasFee} deployArgs={deployArgs} resolve={resolve} reject={reject} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
 			displayRequest(requestContainer)
 		});
 	});
