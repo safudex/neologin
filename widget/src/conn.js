@@ -563,7 +563,7 @@ function invoke(invokeArgs) {
 									}
 									transaction.addAttribute(
 										tx.TxAttrUsage[attr.txAttrUsage],
-										u.reverseHex(paddedStr) //TODO: Do type conversion
+										u.reverseHex(paddedStr.substring(0,64)) //TODO: Do type conversion
 									);
 								});
 							}
