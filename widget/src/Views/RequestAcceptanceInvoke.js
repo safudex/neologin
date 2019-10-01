@@ -47,26 +47,29 @@ class RequestAcceptanceInvoke extends React.Component {
               style={{ padding: '1em' }}
             >{/* sendArgs.network + ' to ' + sendArgs.toAddress + ' with ' + (sendArgs.fee || 0) + ' GAS in fees. Accept?' */}
               <div>
-                <span style={{ fontSize: '0.85em', display: 'block' }}>Network: {this.props.invokeArgs.network}</span>
+                <span style={{ fontSize: '0.85em', display: 'block' }}>Network: {this.props.network}</span>
                 {
-                  ["NEO", "GAS"].map((asset, i) =>
-                    (this.props.invokeArgs.attachedAssets[asset]) ?
-                      <span key={i} style={{ fontSize: '0.85em', display: 'block' }}>Amount: {this.props.invokeArgs.attachedAssets[asset]} {asset}</span>
-                      : null
-                  )
-                }
-                <span style={{ fontSize: '0.85em', display: 'block' }}>Fee: {this.props.invokeArgs.fee || 0} GAS</span>
-                {
-                  this.props.goodEstimation ?
-                    <span style={{ fontSize: '0.85em', display: 'block', color: '#B33A3A' }}>The amount of GAS or NEO that will be spent on this transaction could not be estimated, please make sure that this is a legitimate transaction</span>
-                    : null
-                }
-              </div>
-            </Grid>
-          </Grid>
-          <Grid item xs style={{ width: '100%' }}>
-            <Grid
-              container
+					(this.props.invokeArgs.attachedAssets !== undefined)?
+						["NEO", "GAS"].map((asset, i) =>
+							(this.props.invokeArgs.attachedAssets[asset]) ?
+								<span key={i} style={{ fontSize: '0.85em', display: 'block' }}>Amount: {this.props.invokeArgs.attachedAssets[asset]} {asset}</span>
+							: null
+						)
+						: null
+
+				}
+				<span style={{ fontSize: '0.85em', display: 'block' }}>Fee: {this.props.invokeArgs.fee || 0} GAS</span>
+				{
+					this.props.goodEstimation ?
+						<span style={{ fontSize: '0.85em', display: 'block', color: '#B33A3A' }}>The amount of GAS or NEO that will be spent on this transaction could not be estimated, please make sure that this is a legitimate transaction</span>
+						: null
+				}
+			</div>
+		</Grid>
+	</Grid>
+	<Grid item xs style={{ width: '100%' }}>
+		<Grid
+			container
               direction="row"
               justify="center"
               alignItems="center"
