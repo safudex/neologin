@@ -267,11 +267,11 @@ function getApiProvider(network){
 }
 
 // Does NOT need to be accepted
-function getBalance(balanceArgs) {
-	if (balanceArgs.params.constructor !== Array) {
-		balanceArgs.params = [balanceArgs.params];
-	}
-	return new Promise(async (resolve, reject) => {
+async function getBalance(balanceArgs) {
+	try {
+		if (balanceArgs.params.constructor !== Array) {
+			balanceArgs.params = [balanceArgs.params];
+		}
 		const { endpoint } = getApiProvider(balanceArgs.network);
 		let balances = await Promise.all(
 			balanceArgs.params.map(
@@ -303,8 +303,13 @@ function getBalance(balanceArgs) {
 		for (let i = 0; i < balances.length; i++) {
 			final[balances[i].address] = balances[i].balance;
 		}
-		resolve(final);
-	})
+		return final;
+	} catch (e) {
+		throw {
+			type: "MALFORMED_INPUT",
+			description: "An error was encountered when processing this account." 
+		};
+	}
 }
 
 // Does NOT need to be accepted
