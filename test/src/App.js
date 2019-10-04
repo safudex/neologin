@@ -3,6 +3,8 @@ import logo from './logo.svg';
 import './App.css';
 import neologin from './provider.js'
 
+window.neologin = neologin;
+
 function App() {
   const [result, setResult] = useState('');
   return (
