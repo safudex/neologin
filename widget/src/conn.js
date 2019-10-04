@@ -276,27 +276,27 @@ function getBalance(balanceArgs) {
 		let balances = await Promise.all(
 			balanceArgs.params.map(
 				(param) => fetch(endpoint + "/v1/get_balance/" + param.address)
-					.then(res => res.json())
-					.then(res => {
-						let balance = [];
-						for (let i = 0; i < res.balance.length; i++) {
-							if (param.assets === undefined || param.assets.includes(res.balance[i].asset_symbol)) {
-								let newAsset = {
-									assetID: res.balance[i].asset_hash,
-									symbol: res.balance[i].asset_symbol,
-									amount: String(res.balance[i].amount),
-								};
-								if (param.fetchUTXO) {
-									newAsset.unspent = res.balance[i].unspent.map((utxo) => (utxo.value = String(utxo.value), utxo)); // Convert type of value field from Number to String
-								}
-								balance.push(newAsset);
+				.then(res => res.json())
+				.then(res => {
+					let balance = [];
+					for (let i = 0; i < res.balance.length; i++) {
+						if (param.assets === undefined || param.assets.includes(res.balance[i].asset_symbol)) {
+							let newAsset = {
+								assetID: res.balance[i].asset_hash,
+								symbol: res.balance[i].asset_symbol,
+								amount: String(res.balance[i].amount),
+							};
+							if (param.fetchUTXO) {
+								newAsset.unspent = res.balance[i].unspent.map((utxo) => (utxo.value = String(utxo.value), utxo)); // Convert type of value field from Number to String
 							}
+							balance.push(newAsset);
 						}
-						return {
-							balance: balance,
-							address: res.address
-						};
-					})
+					}
+					return {
+						balance: balance,
+						address: res.address
+					};
+				})
 			)
 		);
 		let final = {};
@@ -396,14 +396,11 @@ async function sendTransaction(transaction, broadcastOverride, network) {
 	}
 }
 
-function processGeneralError(error){
+function processGeneralError(error, defaultError = { type: 'MALFORMED_INPUT', description: "Some input provided was wrong." }){
 	if (error && error.type) { // If the error has been created by ourselves let it pass
 		throw error;
 	} else {
-		throw {
-			type: 'MALFORMED_INPUT',
-			description: "Some input provided was wrong.",
-		};
+		throw defaultError;
 	}
 }
 
@@ -585,7 +582,7 @@ async function invokeMulti(invokeMultiArgs) {
 			gas: 0
 		});
 		invokeMultiArgs.invokeArgs.map(arg =>
-			addScriptAttribute(transaction, arg.triggerContractVerification, invokeMultiArgs.assetIntentOverrides, arg.attachedAssets, invokeMultiArgs.fee, balance);
+			addScriptAttribute(transaction, arg.triggerContractVerification, invokeMultiArgs.assetIntentOverrides, arg.attachedAssets, invokeMultiArgs.fee, balance)
 		);
 		if (invokeMultiArgs.assetIntentOverrides) {
 			addExplicitIntents(transaction, invokeMultiArgs.assetIntentOverrides);
@@ -633,9 +630,11 @@ async function signMessage(signArgs) {
 	}
 }
 
+let requestAcceptanceInvokeMulti = requestAcceptanceInvoke; //TODO: Fix
+
 // Needs to be accepted every time
 // See https://github.com/NeoResearch/neocompiler-eco/blob/master/public/js/eco-scripts/invoke_deploy_NeonJS.js
-function deploy(deployArgs) {
+async function deploy(deployArgs) {
 	let sysGasFee = 100;
 	if (deployArgs.needsStorage) {
 		sysGasFee += 400;
@@ -643,83 +642,50 @@ function deploy(deployArgs) {
 	if (deployArgs.dynamicInvoke) {
 		sysGasFee += 500;
 	}
-	return new Promise((resolve, reject) => {
-		requestAcceptance()
-			.then(() => {
-				requestAcceptanceDeploy(deployArgs, sysGasFee)
-					.then(async () => {
-						try {
-							if (!deployArgs.code) {
-								throw "ERROR (DEPLOY): Empty script (avm)!";
-							}
-							const sb = Neon.create.scriptBuilder();
-							sb.emitPush(u.str2hexstring(deployArgs.description)) // description
-								.emitPush(u.str2hexstring(deployArgs.email)) // email
-								.emitPush(u.str2hexstring(deployArgs.author)) // author
-								.emitPush(u.str2hexstring(deployArgs.version)) // code_version
-								.emitPush(u.str2hexstring(deployArgs.name)) // name
-								.emitPush(0x00 | (deployArgs.needsStorage ? 0x01 : 0x00) | (deployArgs.dynamicInvoke ? 0x02 : 0x00) | (deployArgs.isPayable ? 0x04 : 0x00)) // storage: {none: 0x00, storage: 0x01, dynamic: 0x02, storage+dynamic:0x03}
-								.emitPush(deployArgs.returnType) // expects hexstring  (_emitString) // usually '05'
-								.emitPush(deployArgs.parameterList) // expects hexstring  (_emitString) // usually '0710'
-								.emitPush(deployArgs.code) //script
-								.emitSysCall('Neo.Contract.Create');
+	await requestAcceptance();
+	await requestAcceptanceDeploy(deployArgs, sysGasFee);
+	try {
+		if (!deployArgs.code) {
+			throw {
+				type: 'MALFORMED_INPUT',
+				description: "ERROR (DEPLOY): Empty script (avm)!"
+			};
+		}
+		const sb = Neon.create.scriptBuilder();
+		sb.emitPush(u.str2hexstring(deployArgs.description)) // description
+			.emitPush(u.str2hexstring(deployArgs.email)) // email
+			.emitPush(u.str2hexstring(deployArgs.author)) // author
+			.emitPush(u.str2hexstring(deployArgs.version)) // code_version
+			.emitPush(u.str2hexstring(deployArgs.name)) // name
+			.emitPush(0x00 | (deployArgs.needsStorage ? 0x01 : 0x00) | (deployArgs.dynamicInvoke ? 0x02 : 0x00) | (deployArgs.isPayable ? 0x04 : 0x00)) // storage: {none: 0x00, storage: 0x01, dynamic: 0x02, storage+dynamic:0x03}
+			.emitPush(deployArgs.returnType) // expects hexstring  (_emitString) // usually '05'
+			.emitPush(deployArgs.parameterList) // expects hexstring  (_emitString) // usually '0710'
+			.emitPush(deployArgs.code) //script
+			.emitSysCall('Neo.Contract.Create');
 
-							let transaction;
-							try {
-								const { endpoint, apiProvider } = getApiProvider(deployArgs.network);
+		const { endpoint, apiProvider } = getApiProvider(deployArgs.network);
 
-								// Create contract transaction using Neoscan API
-								let balance = await apiProvider.getBalance(acct.address);
-								let transaction = new tx.InvocationTransaction({
-									script: sb.str,
-									gas: sysGasFee
-								});
+		let balance = await apiProvider.getBalance(acct.address);
+		let transaction = new tx.InvocationTransaction({
+			script: sb.str,
+			gas: sysGasFee
+		});
 
-								transaction.addAttribute(
-									tx.TxAttrUsage.Script,
-									u.reverseHex(acct.scriptHash)
-								);
+		transaction.addAttribute(
+			tx.TxAttrUsage.Script,
+			u.reverseHex(acct.scriptHash)
+		);
 
-								try {
-									transaction = transaction.calculate(balance, null, Number(deployArgs.networkFee));
-								} catch (e) {
-									reject({
-										type: 'INSUFFICIENT_FUNDS',
-										description: "Account doesn't have enough funds.",
-									});
-									displayInsufficientFundsView()
-									return;
-								}
-								transaction = transaction.sign(acct.privateKey);
-							} catch (e) {
-								reject({
-									type: 'MALFORMED_INPUT',
-									description: "Some input provided was wrong.",
-								});
-								return;
-							}
+		calculateUTXOs(transaction, balance, deployArgs.networkFee);
+		transaction = transaction.sign(acct.privateKey);
 
-							try {
-								await sendTransaction(transaction, deployArgs.broadcastOverride, deployArgs.network, resolve);
-							} catch (e) { // Should it be UNKNOWN_ERROR to maintain compatibility?
-								reject({
-									type: 'RPC_ERROR',
-									description: "There was an error when broadcasting this transaction to the network.",
-								});
-								return;
-							}
-						} catch (e) {
-							reject({
-								type: 'UNKNOWN_ERROR',
-								description: 'There was an unknown error.',
-								data: ''
-							})
-						}
-					}).catch(() => reject({
-						type: 'CANCELED'
-					}))
-			}).catch((e) => reject(e))
-	})
+		return await sendTransaction(transaction, deployArgs.broadcastOverride, deployArgs.network);
+	} catch (e) {
+		processGeneralError(e, {
+			type: 'UNKNOWN_ERROR',
+			description: 'There was an unknown error.',
+		});
+	}
 }
 
 function closeWidget() {

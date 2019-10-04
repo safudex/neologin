@@ -456,12 +456,12 @@ function App() {
               author: 'John Smith',
               email: 'neo@neologin.io',
               description: 'My first contract.',
-              needsStorage: true,
+              needsStorage: false,
               dynamicInvoke: false,
               isPayable: false,
               parameterList: '0710',
               returnType: '05',
-              code: '53c56b0d57616b652075702c204e454f21680f4e656f2e52756e74696d652e4c6f6761006c7566',
+              code: '00c56b6114c7a944c6e2c7522da8e60474932cfd4287f4e01b6168184e656f2e52756e74696d652e436865636b5769746e65737364320051c576000f4f574e45522069732063616c6c6572c46168124e656f2e52756e74696d652e4e6f7469667951616c756600616c7566',
               networkFee: '0.001',
             })
               .then(({ txid, nodeUrl }) => {
@@ -477,7 +477,6 @@ function App() {
                     break;
                 }
               })
-
           }> deploy</button>
         </div>
         </div>
