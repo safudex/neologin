@@ -4,7 +4,6 @@ import { server } from './config';
 import React from 'react'
 import ReactDOM from 'react-dom'
 import LoginButton from './Views/LoginButton'
-import UserData from './Views/UserData';
 import RequestAcceptance from './Views/RequestAcceptance'
 import RequestAcceptanceSend from './Views/RequestAcceptanceSend'
 import RequestAcceptanceSignMessage from './Views/RequestAcceptanceSignMessage'
@@ -12,6 +11,7 @@ import { v4 as uuid } from 'uuid';
 import RequestAcceptanceInvoke from './Views/RequestAcceptanceInvoke';
 import RequestAcceptanceDeploy from './Views/RequestAcceptanceDeploy';
 import InsufficientFunds from './Views/InsufficientFunds';
+import RequestAcceptanceInvokeMulti from './Views/RequestAcceptanceInvokeMulti';
 
 let acct = null;
 let defaultNetwork = "MainNet";
@@ -130,15 +130,15 @@ let backlogCalledSignIn = [];
 
 function signIn() {
 	return new Promise((resolve, reject) => {
-		backlogCalledSignIn.push({resolve, reject});
+		backlogCalledSignIn.push({ resolve, reject });
 		if (!calledLogin) {
-			console.log('inn')
+
 			calledLogin = true
 			let storedPrivkey = window.localStorage.getItem('privkey');
 			if (storedPrivkey === null) {
 				window.addEventListener("message",
 					(event) => {
-						console.log(event.origin, server)
+
 						if (event.origin !== server || !event.data.privkey) {
 							return;
 						}
@@ -148,7 +148,7 @@ function signIn() {
 							window.localStorage.setItem('privkey', event.data.privkey);
 						}
 						successfulSignIn(acct)
-						backlogCalledSignIn.map(({resolve}) => resolve());
+						backlogCalledSignIn.map(({ resolve }) => resolve());
 					},
 					false
 				);
@@ -156,7 +156,7 @@ function signIn() {
 			} else {
 				acct = Neon.create.account(storedPrivkey);
 				successfulSignIn(acct)
-				backlogCalledSignIn.map(({resolve}) => resolve());
+				backlogCalledSignIn.map(({ resolve }) => resolve());
 			}
 		}
 	});
@@ -260,7 +260,7 @@ const neoscanEndpoints = {
 	"TestNet": "https://neoscan-testnet.io/api/test_net"
 };
 
-function getApiProvider(network){
+function getApiProvider(network) {
 	const endpoint = neoscanEndpoints[network];
 	const apiProvider = new api.neoscan.instance(endpoint);
 	return { endpoint, apiProvider };
@@ -276,27 +276,27 @@ function getBalance(balanceArgs) {
 		let balances = await Promise.all(
 			balanceArgs.params.map(
 				(param) => fetch(endpoint + "/v1/get_balance/" + param.address)
-				.then(res => res.json())
-				.then(res => {
-					let balance = [];
-					for (let i = 0; i < res.balance.length; i++) {
-						if (param.assets === undefined || param.assets.includes(res.balance[i].asset_symbol)) {
-							let newAsset = {
-								assetID: res.balance[i].asset_hash,
-								symbol: res.balance[i].asset_symbol,
-								amount: String(res.balance[i].amount),
-							};
-							if (param.fetchUTXO) {
-								newAsset.unspent = res.balance[i].unspent.map((utxo) => (utxo.value = String(utxo.value), utxo)); // Convert type of value field from Number to String
+					.then(res => res.json())
+					.then(res => {
+						let balance = [];
+						for (let i = 0; i < res.balance.length; i++) {
+							if (param.assets === undefined || param.assets.includes(res.balance[i].asset_symbol)) {
+								let newAsset = {
+									assetID: res.balance[i].asset_hash,
+									symbol: res.balance[i].asset_symbol,
+									amount: String(res.balance[i].amount),
+								};
+								if (param.fetchUTXO) {
+									newAsset.unspent = res.balance[i].unspent.map((utxo) => (utxo.value = String(utxo.value), utxo)); // Convert type of value field from Number to String
+								}
+								balance.push(newAsset);
 							}
-							balance.push(newAsset);
 						}
-					}
-					return {
-						balance: balance,
-						address: res.address
-					};
-				})
+						return {
+							balance: balance,
+							address: res.address
+						};
+					})
 			)
 		);
 		let final = {};
@@ -368,7 +368,7 @@ function getApplicationLog(appLogArgs) {
 }
 
 async function sendTransaction(transaction, broadcastOverride, network) {
-	try{
+	try {
 		const txid = transaction.hash;
 		if (broadcastOverride) {
 			return {
@@ -396,7 +396,7 @@ async function sendTransaction(transaction, broadcastOverride, network) {
 	}
 }
 
-function processGeneralError(error, defaultError = { type: 'MALFORMED_INPUT', description: "Some input provided was wrong." }){
+function processGeneralError(error, defaultError = { type: 'MALFORMED_INPUT', description: "Some input provided was wrong." }) {
 	if (error && error.type) { // If the error has been created by ourselves let it pass
 		throw error;
 	} else {
@@ -439,7 +439,7 @@ async function send(sendArgs) {
 	}
 }
 
-function calculateUTXOs(transaction, balance, fee){
+function calculateUTXOs(transaction, balance, fee) {
 	try {
 		if (fee) {
 			return transaction.calculate(balance, null, Number(fee))
@@ -455,7 +455,7 @@ function calculateUTXOs(transaction, balance, fee){
 	}
 }
 
-function addScriptAttribute(transaction, triggerContractVerification, assetIntentOverrides, attachedAssets, fee, balance){
+function addScriptAttribute(transaction, triggerContractVerification, assetIntentOverrides, attachedAssets, fee, balance) {
 	if (triggerContractVerification) {
 		transaction.addAttribute(
 			tx.TxAttrUsage.Script,
@@ -488,8 +488,8 @@ function addScriptAttribute(transaction, triggerContractVerification, assetInten
 	}
 }
 
-function addExplicitIntents(transaction, assetIntentOverrides){
-	assetIntentOverrides.outputs.map(output => 
+function addExplicitIntents(transaction, assetIntentOverrides) {
+	assetIntentOverrides.outputs.map(output =>
 		transaction.addOutput(
 			new tx.TransactionOutput({
 				assetId: CONST.ASSET_ID[output.asset],
@@ -497,31 +497,31 @@ function addExplicitIntents(transaction, assetIntentOverrides){
 				scriptHash: wallet.getScriptHashFromAddress(output.address)
 			})
 		));
-	transaction.inputs = assetIntentOverrides.inputs.map(input => 
+	transaction.inputs = assetIntentOverrides.inputs.map(input =>
 		new tx.TransactionInput({
 			prevHash: input.txid,
 			prevIndex: input.index
 		}));
 }
 
-function addHashAttributes(transaction, txHashAttributes){
+function addHashAttributes(transaction, txHashAttributes) {
 	txHashAttributes.map((attr) => {
 		if (!attr.txAttrUsage.startsWith("Hash")) {
 			return; //Throw?
 		}
 		let paddedStr = u.str2hexstring(String(attr.value));
 		let i = paddedStr.length;
-		while (i++<64){
+		while (i++ < 64) {
 			paddedStr = "0" + paddedStr;
 		}
 		transaction.addAttribute(
 			tx.TxAttrUsage[attr.txAttrUsage],
-			u.reverseHex(paddedStr.substring(0,64)) //TODO: Do type conversion
+			u.reverseHex(paddedStr.substring(0, 64)) //TODO: Do type conversion
 		);
 	});
 }
 
-function addAssets(transaction, attachedAssets, scriptHash){
+function addAssets(transaction, attachedAssets, scriptHash) {
 	["NEO, GAS"].map((asset) => {
 		if (attachedAssets[asset]) {
 			transaction = transaction.addIntent(asset, Number(attachedAssets[asset]), wallet.getAddressFromScriptHash(scriptHash));
@@ -567,7 +567,7 @@ async function invoke(invokeArgs) {
 
 // Needs to be accepted every time
 async function invokeMulti(invokeMultiArgs) {
-	await requestAcceptance();
+	await requestAcceptance()
 	await requestAcceptanceInvokeMulti(invokeMultiArgs, (invokeMultiArgs.assetIntentOverrides !== undefined));
 	try {
 		const { endpoint, apiProvider } = getApiProvider(invokeMultiArgs.network);
@@ -629,8 +629,6 @@ async function signMessage(signArgs) {
 		};
 	}
 }
-
-let requestAcceptanceInvokeMulti = requestAcceptanceInvoke; //TODO: Fix
 
 // Needs to be accepted every time
 // See https://github.com/NeoResearch/neocompiler-eco/blob/master/public/js/eco-scripts/invoke_deploy_NeonJS.js
@@ -694,7 +692,6 @@ function closeWidget() {
 
 function displayWidget(wheight) {
 	connection.promise.then((parent) => parent.displayWidget(wheight))
-	console.log('displayed!!')
 }
 
 function showLoginButton() {
@@ -712,7 +709,7 @@ let backlogRequestedAcceptance = [];
 
 function requestAcceptance() {
 	return new Promise((resolve, reject) => {
-		backlogRequestedAcceptance.push({resolve, reject});
+		backlogRequestedAcceptance.push({ resolve, reject });
 		if (!calledPermission || userGivesPermission) {
 			calledPermission = true
 			if (userGivesPermission)
@@ -725,10 +722,10 @@ function requestAcceptance() {
 						userGivesPermission = true;
 						connection.promise.then(parent =>
 							parent.sendEvent('CONNECTED', { address: acct.address, label: "My Spending Wallet" }));
-						backlogRequestedAcceptance.map(({resolve}) => resolve());
+						backlogRequestedAcceptance.map(({ resolve }) => resolve());
 					}}
 					reject={(error) => {
-						backlogRequestedAcceptance.map(({reject}) => reject(error));
+						backlogRequestedAcceptance.map(({ reject }) => reject(error));
 						backlogRequestedAcceptance = [];
 					}}
 					closeWidget={() => { calledPermission = false; closeWidget() }}
@@ -750,7 +747,7 @@ const failedAcceptanceRequestError = {
 function requestAcceptanceSend(sendArgs) {
 	return new Promise((resolve, reject) => {
 		var requestContainer = createRequestContainer()
-		ReactDOM.render(<RequestAcceptanceSend sendArgs={sendArgs} resolve={resolve} reject={()=>reject(failedAcceptanceRequestError)} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+		ReactDOM.render(<RequestAcceptanceSend sendArgs={sendArgs} resolve={resolve} reject={() => reject(failedAcceptanceRequestError)} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
 			displayRequest(requestContainer)
 		});
 	});
@@ -759,7 +756,7 @@ function requestAcceptanceSend(sendArgs) {
 function displayInsufficientFundsView() {
 	return new Promise((resolve, reject) => {
 		var requestContainer = createRequestContainer()
-		ReactDOM.render(<InsufficientFunds address={acct.address} reject={()=>reject(failedAcceptanceRequestError)} closeWidget={() => { closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+		ReactDOM.render(<InsufficientFunds address={acct.address} reject={() => reject(failedAcceptanceRequestError)} closeWidget={() => { closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
 			displayRequest(requestContainer)
 		});
 	});
@@ -768,7 +765,7 @@ function displayInsufficientFundsView() {
 function requestAcceptanceSignMessage(message) {
 	return new Promise((resolve, reject) => {
 		var requestContainer = createRequestContainer()
-		ReactDOM.render(<RequestAcceptanceSignMessage message={message} resolve={resolve} reject={()=>reject(failedAcceptanceRequestError)} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+		ReactDOM.render(<RequestAcceptanceSignMessage message={message} resolve={resolve} reject={() => reject(failedAcceptanceRequestError)} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
 			displayRequest(requestContainer)
 		});
 	});
@@ -777,7 +774,16 @@ function requestAcceptanceSignMessage(message) {
 function requestAcceptanceInvoke(invokeArgs, network, goodEstimation) {
 	return new Promise((resolve, reject) => {
 		var requestContainer = createRequestContainer()
-		ReactDOM.render(<RequestAcceptanceInvoke goodEstimation={goodEstimation} invokeArgs={invokeArgs} network={network} resolve={resolve} reject={()=>reject(failedAcceptanceRequestError)} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+		ReactDOM.render(<RequestAcceptanceInvoke goodEstimation={goodEstimation} invokeArgs={invokeArgs} network={network} resolve={resolve} reject={() => reject(failedAcceptanceRequestError)} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+			displayRequest(requestContainer)
+		});
+	});
+}
+
+function requestAcceptanceInvokeMulti(invokeMultiArgs, goodEstimation) {
+	return new Promise((resolve, reject) => {
+		var requestContainer = createRequestContainer()
+		ReactDOM.render(<RequestAcceptanceInvokeMulti goodEstimation={goodEstimation} invokeMultiArgs={invokeMultiArgs} resolve={resolve} reject={() => reject(failedAcceptanceRequestError)} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} updateWidgetHeight={(h) => connection.promise.then((parent) => parent.updateWidgetHeight(h))} />, document.getElementById(requestContainer.id), () => {
 			displayRequest(requestContainer)
 		});
 	});
@@ -786,20 +792,24 @@ function requestAcceptanceInvoke(invokeArgs, network, goodEstimation) {
 function requestAcceptanceDeploy(deployArgs, sysGasFee) {
 	return new Promise((resolve, reject) => {
 		var requestContainer = createRequestContainer()
-		ReactDOM.render(<RequestAcceptanceDeploy sysGasFee={sysGasFee} deployArgs={deployArgs} resolve={resolve} reject={()=>reject(failedAcceptanceRequestError)} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+		ReactDOM.render(<RequestAcceptanceDeploy sysGasFee={sysGasFee} deployArgs={deployArgs} resolve={resolve} reject={() => reject(failedAcceptanceRequestError)} closeWidget={() => { calledPermission = false; closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
 			displayRequest(requestContainer)
 		});
 	});
 }
 
 function createRequestContainer() {
-	console.log('called')
 	var requestContainer = document.createElement("div");
 	requestContainer.id = 'request-' + totalRequests
-	requestContainer.style.top = '0'
-	requestContainer.style.position = 'fixed'
-	requestContainer.style.width = '100%'
-	requestContainer.style.background = 'white'
+	let containerStyle = {
+		top: '0',
+		position: 'fixed',
+		width: '100%',
+		background: 'white',
+	}
+	for (let style in containerStyle) {
+		requestContainer.style[style] = containerStyle[style];
+	}
 	var mainContainer = document.getElementById("root");
 	mainContainer.appendChild(requestContainer);
 	return requestContainer;

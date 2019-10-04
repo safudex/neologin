@@ -34,16 +34,6 @@ class SendWallet extends React.Component {
         neologin.getAccount()
             .then((account) => {
                 this.setState({ address: account.address })
-                console.log(this.state.address,
-                    this.state.toAddress,
-                    this.state.asset,
-                    this.state.amount,
-                    this.state.remark,
-                    this.state.fee,
-                    this.props.network,
-                    false
-                )
-
                 neologin.send({
                     fromAddress: this.state.address,
                     toAddress: this.state.toAddress,
@@ -91,8 +81,6 @@ class SendWallet extends React.Component {
             <div>
                 <Grid container direction="column">
                     <Grid item style={{ margin: '1rem 0 0 0', width: '100%' }}>
-                        {/* <Grid container> */}
-                        {/* <Grid item> */}
                         <TextField
                             fullWidth
                             id="standard-name"
@@ -101,8 +89,6 @@ class SendWallet extends React.Component {
                             name="toAddress"
                             onChange={this.handleInputChange}
                         />
-                        {/* </Grid> */}
-                        {/* </Grid> */}
                     </Grid>
                     <Grid item>
                         <TextField

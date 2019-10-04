@@ -277,6 +277,30 @@ function getPrivKey(cognitoUser, password) {
 	});
 }
 
+function forgotPassword(email) {
+	return new Promise((resolve, reject) => {
+		let userData = {
+			Username: email,
+			Pool: userPool,
+		}
+		let cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+
+		cognitoUser.forgotPassword({
+			onSuccess: function (result) {
+				console.log('call result: ' + result);
+			},
+			onFailure: function (err) {
+				alert(err.message);
+				console.log(err);
+			},
+			inputVerificationCode() {
+				resolve(cognitoUser)
+				/* cognitoUser.confirmPassword(verificationCode, newPassword, this); */
+			}
+		})
+	});
+}
+
 function decrypt(ciphertext, key) {
 	return import("cryptr")
 		.then((Cryptr) => {
@@ -361,4 +385,4 @@ import("cryptr");
 import("zxcvbn");
 import("@cityofzion/neon-js");
 
-export { register, login, addPhone, enableTOTP, disableTOTP, verifyEmail, verifyPhone, getUserData, updateUserData, downloadPrivKey }; 
+export { register, login, addPhone, enableTOTP, disableTOTP, verifyEmail, verifyPhone, getUserData, updateUserData, downloadPrivKey, forgotPassword }; 

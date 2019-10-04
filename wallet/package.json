@@ -5,6 +5,7 @@
   "homepage": "https://neologin.io/wallet",
   "dependencies": {
     "@material-ui/core": "^4.4.2",
+    "@material-ui/icons": "^4.4.3",
     "neologin": "^1.1.1",
     "qrcode": "^1.4.2",
     "react": "^16.9.0",

@@ -1,7 +1,5 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-import logo from '../logo.svg';
-import logo2 from '../logo2.png';
 
 import Brand from './Brand'
 import ReactDOM from 'react-dom'
@@ -21,7 +19,6 @@ class RequestAcceptanceInvoke extends React.Component {
   }
 
   render() {
-    console.log(this.props.invokeArgs)
     return (
       <div>
         <Brand closeWidget={() => { this.props.reject(); this.unmountComponent(); }} reqNumber={parseInt(this.props.contid.split('-')[1]) + 1} />
@@ -45,7 +42,7 @@ class RequestAcceptanceInvoke extends React.Component {
               justify="center"
               alignItems="flex-start"
               style={{ padding: '1em' }}
-            >{/* sendArgs.network + ' to ' + sendArgs.toAddress + ' with ' + (sendArgs.fee || 0) + ' GAS in fees. Accept?' */}
+            >
               <div>
                 <span style={{ fontSize: '0.85em', display: 'block' }}>Network: {this.props.network}</span>
                 {

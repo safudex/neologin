@@ -77,6 +77,8 @@ function App() {
           case "CONNECTION_DENIED":
             console.log('The user rejected the request to connect with your dApp');
             break;
+          default:
+            break
         }
       })
   }, [])
@@ -94,7 +96,6 @@ function App() {
         Object.keys(results).forEach(address => {
           const balances = results[address];
           setBalance(balances)
-          console.log(results)
         });
       })
       .catch(({ type, description, data }) => {
@@ -105,11 +106,13 @@ function App() {
           case "CONNECTION_DENIED":
             console.log('The user rejected the request to connect with your dApp');
             break;
+          default:
+            break;
         }
       });
   }
 
-  neologin.addEventListener(neologin.Constants.EventName.BLOCK_HEIGHT_CHANGED, data => getBalance(address, network));
+  /* neologin.addEventListener(neologin.Constants.EventName.BLOCK_HEIGHT_CHANGED, data => getBalance(address, network)); */
 
   return (
     <div style={{ minHeight: '100vh', background: '#21242c', color: 'white', paddingBottom: '5rem' }}>
@@ -164,14 +167,14 @@ function App() {
               <span>{address}</span>
             </Grid>
             {
-              mainBalance.length != 0 ?
+              mainBalance.length !== 0 ?
                 mainBalance.map((balance) =>
                   <Grid item style={{ width: isMobile ? '90%' : '50%', margin: '0.3rem 0rem' }}>
                     <AssetRow isMobile={isMobile} symbol={balance.symbol} amount={balance.amount} address={address} network={network} getBalance={() => this.getBalance(address, network)} />
                   </Grid>
                 )
                 :
-                address == '' ? null :
+                address === '' ? null :
                   <Grid item style={{ margin: '0.3rem 0rem' }}>
                     <p>You have nothing:)</p>
                   </Grid>

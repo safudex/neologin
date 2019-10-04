@@ -3,7 +3,6 @@ import './App.css';
 import './conn'
 
 function App() {
-  console.log(window.innerWidth)
   return (
     <div id="content"></div>
   );

@@ -25,12 +25,14 @@ class App extends React.Component {
 				registerScreen: false,
 				lostPasswordScreen: false,
 				openSettings: false,
-				preferredMFA: ''
+				preferredMFA: '',
 			};
 		}
 
 		this.handleLogin = this.handleLogin.bind(this)
 	}
+
+	passwordChangedOK = () => this.setState({ passwordChanged: true })
 
 	handleLogin(privkey, rememberMe, cognitoUser, preferredMFA) {
 		var url_string = window.location.href
@@ -82,6 +84,7 @@ class App extends React.Component {
 					lostPasswordScreen: false,
 					loginScreen: true,
 				})}
+				cognitoUser={this.state.cognitoUser}
 				handleLogin={this.handleLogin}
 			/>;
 		}

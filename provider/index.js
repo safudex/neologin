@@ -64,7 +64,8 @@ const connection = connectToChild({
 	methods: {
 		sendEvent,
 		displayWidget,
-		closeWidget
+		closeWidget,
+		updateWidgetHeight
 	}
 });
 
@@ -114,21 +115,22 @@ function setIframeStyle(w, h) {
 
 function displayWidget(widgetHeight) {
 	heights.push(widgetHeight)
-    iframe.style['height'] = widgetHeight + 'px';
-    console.log(heights)
+	iframe.style['height'] = widgetHeight + 'px';
+}
+
+function updateWidgetHeight(widgetHeight) {
+	heights[heights.length - 1] = widgetHeight
+	iframe.style['height'] = widgetHeight + 'px';
 }
 
 function closeWidget() {
 	heights.pop()
 	if (heights.length) {
 		iframe.style['height'] = heights[heights.length - 1] + 'px';
-		console.log(heights[heights.length - 1], '<----')
-		console.log(iframe.style['height'])
 	}
 	else {
 		iframe.style['height'] = '0px';
 	}
-	console.log(heights)
 }
 
 function getWindowSize() {

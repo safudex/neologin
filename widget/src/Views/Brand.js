@@ -14,9 +14,9 @@ function Brand({ closeWidget, reqNumber }) {
         style={{ textAlign: 'center', padding: '8px 0', background: '#fff' }}
       >
         <Grid item xs={1}>
-          <Grid container container direction="row" justify="flex-end" alignItems="center">
+          <Grid container direction="row" justify="flex-end" alignItems="center">
             <Grid item>
-              <span className='pendingRequestBadge'>{reqNumber == 1 ? null : reqNumber}</span>
+              <span className='pendingRequestBadge'>{reqNumber === 1 ? null : reqNumber}</span>
             </Grid>
           </Grid>
         </Grid>

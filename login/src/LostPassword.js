@@ -24,6 +24,8 @@ import AccountCircle from '@material-ui/icons/EmailOutlined';
 import SearchIcon from '@material-ui/icons/Search';
 import DirectionsIcon from '@material-ui/icons/Directions';
 
+import { forgotPassword } from './loginAPI';
+
 const styles = (theme => ({
 	'@global': {
 		body: {
@@ -84,6 +86,7 @@ class LostPassword extends React.Component {
 			handleLogin: props.handleLogin,
 			emailCompleted: false,
 			codeCompleted: false,
+			recovered: false
 		};
 
 		this.handleInputChange = this.handleInputChange.bind(this);
@@ -119,15 +122,38 @@ class LostPassword extends React.Component {
 					console.log(err)
 				});
 			*/
+			forgotPassword(this.state.email).then(cognitoUser => {
+				this.setState({
+					emailCompleted: true,
+					wrongEmail: false
+				});
+				this.setState({ cognitoUser: cognitoUser })
+			})
+				.catch(err => {
+					this.setState({
+						wrongEmail: "Email is not registered"
+					});
+					console.log(err)
+				});
 		} else {
 			if (this.state.password.length <= 6) {
 				alert("Password is too weak");
 				return;
 			}
-			if (this.state.password.privkey <= 100) {
+			if (this.state.privkey <= 100) {
 				alert("Wrong privkey");
 				return;
 			}
+			this.state.cognitoUser.confirmPassword(this.state.code, this.state.password, {
+				onSuccess: (result) => {
+					console.log('call result: ' + result);
+					this.setState({ recovered: true })
+				},
+				onFailure: (err) => {
+					alert(err.message);
+					console.log(err)
+				}
+			});
 			/*
 			Auth.forgotPasswordSubmit(this.state.email, this.state.code, this.state.password)
 				.then(async data => {
@@ -229,11 +255,19 @@ class LostPassword extends React.Component {
 				/>
 			</div>
 		}
-
+		if (this.state.recovered) {
+			body = <div>
+				<h1 align="center">Password changed</h1>
+				<button className='buttonContinue buttonBack' onClick={this.state.goBackClick}>
+					Go back to sign in
+		</button>
+			</div>
+		}
 		const goBackButton = <button className='buttonContinue buttonBack' onClick={this.state.goBackClick}>
 			Go back to sign in
-	</button>
-	{/* <Button
+		</button>
+
+		{/* <Button
 			fullWidth
 			variant="contained"
 			color="secondary"
