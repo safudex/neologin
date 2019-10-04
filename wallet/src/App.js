@@ -107,8 +107,9 @@ function App() {
             break;
         }
       });
-
   }
+
+  neologin.addEventListener(neologin.Constants.EventName.BLOCK_HEIGHT_CHANGED, data => getBalance(address, network));
 
   return (
     <div style={{ minHeight: '100vh', background: '#21242c', color: 'white', paddingBottom: '5rem' }}>
