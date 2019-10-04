@@ -1,7 +1,5 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-import logo from '../logo.svg';
-import logo2 from '../logo2.png';
 
 import Brand from './Brand'
 import ReactDOM from 'react-dom'
@@ -21,7 +19,6 @@ class RequestAcceptanceDeploy extends React.Component {
   }
 
   render() {
-    console.log(this.props.invokeArgs)
     return (
       <div>
         <Brand closeWidget={() => { this.props.reject(); this.unmountComponent(); }} reqNumber={parseInt(this.props.contid.split('-')[1]) + 1} />
@@ -35,9 +32,6 @@ class RequestAcceptanceDeploy extends React.Component {
           <Grid item xs style={{textAlign:'center'}}>
             <p style={{ fontSize: '0.85em' }}>This dApp has requested permission to deploy a smart contract.</p>
           </Grid>
-          {/* <Grid item xs>
-            <span style={{ fontWeight: 'bold', fontSize: '0.85em' }}>{this.props.invokeArgs.scriptHash}</span>
-          </Grid> */}
           <Grid item xs style={{ width: '100%' }}>
             <Grid
               container

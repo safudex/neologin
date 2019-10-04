@@ -1,11 +1,8 @@
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 
-import copyIcon from '../imgs/copy.png'
-
 import neologin from 'neologin';
-
+import Send from '@material-ui/icons/Send';
 
 import Collapse from '@material-ui/core/Collapse';
 import './assetrow.css'
@@ -31,12 +28,13 @@ class AssetRow extends React.Component {
         this.state = {
             open: false,
             toAddress: '',
-            amount: ''
+            amount: '',
+            rotate: false
         };
     }
 
     unCollapse = () => {
-        this.setState({ open: !this.state.open })
+        this.setState({ open: !this.state.open, rotate: !this.state.rotate })
     }
 
     handleInputChange = (event) => {
@@ -84,6 +82,8 @@ class AssetRow extends React.Component {
                     case "INSUFFICIENT_FUNDS":
                         console.log('The user has insufficient funds to execute this transaction.');
                         break;
+                    default:
+                        break;
                 }
             });
 
@@ -102,10 +102,8 @@ class AssetRow extends React.Component {
                         background: '#2d2d37',
                         padding: '8px 15px',
                         borderRadius: this.state.open ? '5px 5px 0px 0px' : '5px',
-                        cursor: 'pointer',
                         transitionDelay: !this.state.open ? '281ms' : '0ms'
                     }}
-                        onClick={this.unCollapse}
                     >
                         <Grid item>
                             <div class="badge">
@@ -117,10 +115,36 @@ class AssetRow extends React.Component {
                             </div>
                         </Grid>
                         <Grid item xs style={{ paddingLeft: '15px' }}>
-                            <span style={{ display: 'block' }}>{ASSETS[this.props.symbol].name}</span>{/* 
-                    <span style={{display:'block'}}>BTC</span> */}
+                            <span style={{ display: 'block' }}>{ASSETS[this.props.symbol].name}</span>
                         </Grid>
                         <Grid item>{this.props.amount} {this.props.symbol}</Grid>
+                        <Grid item style={{ marginLeft: '1rem' }}>
+                            <Send
+                                onClick={() => {
+                                    this.unCollapse()
+                                }}
+                                style={!this.state.rotate ?
+                                    {
+                                        cursor: 'pointer',
+                                        alignItems: 'center',
+                                        display: 'flex',
+                                        webkitTransition: '-webkit-transform .2s',
+                                        msTransition: '-ms-transform .2s',
+                                        transition: 'transform .2s',
+                                        justifyContent: 'center',
+                                    } : {
+                                        justifyContent: 'center',
+                                        transform: 'rotate(90deg)',
+                                        msTransform: 'rotate(90deg)',
+                                        webkitTransform: 'rotate(90deg)',
+                                        webkitTransition: '-webkit-transform .2s',
+                                        msTransition: '-ms-transform .2s',
+                                        transition: 'transform .2s',
+                                        cursor: 'pointer',
+                                        alignItems: 'center',
+                                        display: 'flex',
+                                    }} />
+                        </Grid>
                     </Grid>
                 </Grid>
                 <Collapse in={this.state.open} timeout="auto" style={{ width: '100%' }}>

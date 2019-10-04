@@ -5,7 +5,6 @@ import ReactDOM from 'react-dom'
 
 import './styles.css'
 
-import logo from '../logobox.png';
 import Brand from './Brand'
 
 function LoginButton({ closeWidget }) {
@@ -22,9 +21,6 @@ function LoginButton({ closeWidget }) {
         alignItems="center"
         style={{ height: '100%', padding: '1em' }}
       >
-        {/* <Grid item xs>
-          <img src={logo} width='65px' />
-        </Grid> */}
         <Grid item xs>
           <p style={{ fontSize: '0.85em' }}>To continue, log in to NeoLogin.</p>
         </Grid>
@@ -39,9 +35,5 @@ function LoginButton({ closeWidget }) {
     </div>
   );
 }
-
-{/* <Button variant="contained" color="primary" fullWidth onClick={() => {
-				  window.open(server.includes("localhost")? server : server+"/login/", 'NeoLogin - Login', 'width=400,height=620')
-              }}>hhh</Button> */}
 
 export default LoginButton;

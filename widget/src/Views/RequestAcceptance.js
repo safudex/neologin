@@ -1,7 +1,5 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-import logo from '../logo.svg';
-import logo2 from '../logo2.png';
 
 import Brand from './Brand'
 import ReactDOM from 'react-dom'

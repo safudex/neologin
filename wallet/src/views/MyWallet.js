@@ -35,16 +35,10 @@ class MyWallet extends React.Component {
                     network: this.props.network,
                 })
                     .then((results) => {
-                        console.log('reeees', results)
                         Object.keys(results).forEach(address => {
                             const balances = results[address];
                             balances.forEach(balance => {
                                 const { assetID, symbol, amount } = balance
-
-                                console.log('Address: ' + address);
-                                console.log('Asset ID: ' + assetID);
-                                console.log('Asset symbol: ' + symbol);
-                                console.log('Amount: ' + amount);
                                 this.setState((oldState) => ({ balance: [...oldState.balance, balance] }))
                             });
                         });
