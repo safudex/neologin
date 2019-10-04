@@ -382,7 +382,7 @@ function App() {
                 }
               ],
               attachedAssets: {
-                NEO: '100',
+                NEO: '1',
                 GAS: '0.0001',
               },
               fee: '0.001',

@@ -75,9 +75,7 @@ let neologin = { removeEventListener, addEventListener };
 for (let i = 0; i < promiseMethods.length; i++) {
 	let method = promiseMethods[i];
 	neologin[method] = function (...args) {
-		return connection.promise.then((child) => {
-			return child
-		}).then((child) => child[method](...args));
+		return connection.promise.then(child => child[method](...args));
 	};
 }
 
