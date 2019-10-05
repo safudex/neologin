@@ -1,28 +1,12 @@
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
 
 import logo from './logoboxtxt.png';
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import InputBase from '@material-ui/core/InputBase';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import AccountCircle from '@material-ui/icons/EmailOutlined';
-import SearchIcon from '@material-ui/icons/Search';
-import DirectionsIcon from '@material-ui/icons/Directions';
 
 import { forgotPassword } from './loginAPI';
 
@@ -52,24 +36,6 @@ const styles = (theme => ({
 	},
 }));
 
-const useStyles = makeStyles(theme => ({
-	root: {
-		padding: '2px 4px',
-		display: 'flex',
-		alignItems: 'center'
-	},
-	input: {
-		marginLeft: theme.spacing(1),
-		flex: 1,
-	},
-	iconButton: {
-		padding: 10,
-	},
-	divider: {
-		height: 28,
-		margin: 4,
-	},
-}));
 
 class LostPassword extends React.Component {
 	constructor(props) {
@@ -146,7 +112,7 @@ class LostPassword extends React.Component {
 			}
 			this.state.cognitoUser.confirmPassword(this.state.code, this.state.password, {
 				onSuccess: (result) => {
-					this.setState({ recovered: true })
+					this.setState({ codeCompleted: true })
 				},
 				onFailure: (err) => {
 					alert(err.message);
@@ -254,26 +220,10 @@ class LostPassword extends React.Component {
 				/>
 			</div>
 		}
-		if (this.state.recovered) {
-			body = <div>
-				<h1 align="center">Password changed</h1>
-				<button className='buttonContinue buttonBack' onClick={this.state.goBackClick}>
-					Go back to sign in
-		</button>
-			</div>
-		}
+		
 		const goBackButton = <button className='buttonContinue buttonBack' onClick={this.state.goBackClick}>
 			Go back to sign in
 		</button>
-
-		{/* <Button
-			fullWidth
-			variant="contained"
-			color="secondary"
-			onClick={this.state.goBackClick}
-		>
-			Go Back to Sign In
-						</Button> */}
 
 		const { classes } = this.props;
 		return (
@@ -286,22 +236,13 @@ class LostPassword extends React.Component {
 					</Typography>
 					{this.state.codeCompleted ?
 						<div>
-							<Typography component="h2" variant="h4">
+							<Typography component="h2" variant="h5">
 								Password recovery succeeded
 						</Typography>
 							{goBackButton}
 						</div> :
 						<form className={classes.form} onSubmit={this.handleSubmit}>
 							{body}
-							{/* <Button
-								type="submit"
-								fullWidth
-								variant="contained"
-								color="primary"
-								className={classes.submit}
-							>
-								Reset password
-						</Button> */}
 							<button className='buttonContinue' type="submit" style={{ margin: '0.5rem 0' }}>
 								RESET PASSWORD
 							</button>

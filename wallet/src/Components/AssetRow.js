@@ -106,8 +106,8 @@ class AssetRow extends React.Component {
                     }}
                     >
                         <Grid item>
-                            <div class="badge">
-                                <div class="crypto">
+                            <div className="badge">
+                                <div className="crypto">
                                     <svg width="20" height="20" viewBox="0 0 226 226">
                                         {ASSETS[this.props.symbol].icon}
                                     </svg>
@@ -128,7 +128,7 @@ class AssetRow extends React.Component {
                                         cursor: 'pointer',
                                         alignItems: 'center',
                                         display: 'flex',
-                                        webkitTransition: '-webkit-transform .2s',
+                                        WebkitTransition: '-webkit-transform .2s',
                                         msTransition: '-ms-transform .2s',
                                         transition: 'transform .2s',
                                         justifyContent: 'center',
@@ -136,8 +136,8 @@ class AssetRow extends React.Component {
                                         justifyContent: 'center',
                                         transform: 'rotate(90deg)',
                                         msTransform: 'rotate(90deg)',
-                                        webkitTransform: 'rotate(90deg)',
-                                        webkitTransition: '-webkit-transform .2s',
+                                        WebkitTransform: 'rotate(90deg)',
+                                        WebkitTransition: '-webkit-transform .2s',
                                         msTransition: '-ms-transform .2s',
                                         transition: 'transform .2s',
                                         cursor: 'pointer',
@@ -165,13 +165,13 @@ class AssetRow extends React.Component {
                             padding: '8px 15px'
                         }}>
                             <Grid item xs>
-                                <label className="label" for="toAddress">address</label>
+                                <label className="label" htmlFor="toAddress">address</label>
                                 <input type="text" name="toAddress" id="toAddress" onChange={this.handleInputChange} />
                             </Grid>
                             <Grid item style={{ width: '1rem', height: this.props.isMobile ? '1rem' : '1px' }}>
                             </Grid>
                             <Grid item>
-                                <label className="label" for="amount">Amount</label>
+                                <label className="label" htmlFor="amount">Amount</label>
                                 <input type="text" name="amount" id="amount" onChange={this.handleInputChange} />
                             </Grid>
                         </Grid>
@@ -186,7 +186,7 @@ class AssetRow extends React.Component {
                                 borderRadius: '0px 0px 5px 5px'
                             }}>
                             <Grid item style={{ marginBottom: '0.5rem', width: this.props.isMobile ? '100%' : 'unset' }}>
-                                <input style={{ width: this.props.isMobile ? '100%' : 'unset' }} type="submit" value="Send" class="primary" onClick={this.send} />
+                                <input style={{ width: this.props.isMobile ? '100%' : 'unset' }} type="submit" value="Send" className="primary" onClick={this.send} />
                             </Grid>
                         </Grid>
                     </Grid>
