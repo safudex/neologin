@@ -10,11 +10,9 @@ let userPool = new AmazonCognitoIdentity.CognitoUserPool({
 function verifyAttribute(attribute, cognitoUser, resolve) {
 	cognitoUser.getAttributeVerificationCode(attribute, {
 		onSuccess: function (result) {
-			console.log('code sent: ' + result);
 			resolve();
 		},
 		onFailure: function (err) {
-			console.log('Code not sent')
 			alert(err.message || JSON.stringify(err));
 		}/* ,
 		inputVerificationCode:  function () {
@@ -139,7 +137,6 @@ function enableTOTP(cognitoUser, email, openQRView) {
 				cognitoUser.associateSoftwareToken(this);
 			},
 			associateSecretCode: function (secretCode) {
-				console.log(secretCode);
 				openQRView(secretCode, email)
 				resolve()
 				//var challengeAnswer = prompt('Please input the TOTP code.', '');
@@ -179,7 +176,6 @@ function disableTOTP(cognitoUser) {
 				reject(err)
 				alert(err.message || JSON.stringify(err));
 			}
-			console.log('call result ' + result);
 			resolve(result)
 		});
 	})
@@ -209,7 +205,6 @@ function addPhone(phone, cognitoUser) {
 				alert(err.message || JSON.stringify(err));
 				return;
 			}
-			console.log('call result: ' + result);
 			resolve();
 		});
 	});
@@ -251,7 +246,6 @@ function register(email, password, newsletter) {
 				return;
 			}
 			var cognitoUser = result.user;
-			console.log('user name is ' + cognitoUser.getUsername());
 			resolve(privkey);
 		});
 	});
@@ -265,7 +259,6 @@ function getPrivKey(cognitoUser, password) {
 				return;
 			}
 			for (let i = 0; i < result.length; i++) {
-				console.log('attribute ' + result[i].getName() + ' has value ' + result[i].getValue());
 				if (result[i].getName() == "custom:privkey") {
 					//Decrypt
 					let privkey = decrypt(result[i].getValue(), password);
@@ -286,9 +279,7 @@ function forgotPassword(email) {
 		let cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
 
 		cognitoUser.forgotPassword({
-			onSuccess: function (result) {
-				console.log('call result: ' + result);
-			},
+			onSuccess: function (result) {},
 			onFailure: function (err) {
 				alert(err.message);
 				console.log(err);
@@ -334,7 +325,6 @@ function getUserData(cognitoUser) {
 			}
 			let data = {}
 			for (let i = 0; i < result.length; i++) {
-				console.log('attribute ' + result[i].getName() + ' has value ' + result[i].getValue());
 				data[result[i].getName()] = result[i].getValue()
 			}
 			resolve(data)
@@ -356,7 +346,6 @@ function updateUserData(cognitoUser, name, value) {
 				alert(err.message || JSON.stringify(err));
 				return;
 			}
-			console.log('call result: ' + result);
 			resolve(result);
 		});
 	});

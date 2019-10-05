@@ -146,7 +146,6 @@ class LostPassword extends React.Component {
 			}
 			this.state.cognitoUser.confirmPassword(this.state.code, this.state.password, {
 				onSuccess: (result) => {
-					console.log('call result: ' + result);
 					this.setState({ recovered: true })
 				},
 				onFailure: (err) => {

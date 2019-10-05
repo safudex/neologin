@@ -100,7 +100,6 @@ class Settings extends React.Component {
 	verifyCodeEmail = (verificationCode) => {
 		this.props.cognitoUser.verifyAttribute('email', verificationCode, {
 			onSuccess: (result) => {
-				console.log('code verified!! ' + result);
 				this.setState({ verifyEmailView: false })
 			},
 			onFailure: (err) => {
@@ -127,7 +126,6 @@ class Settings extends React.Component {
 						alert(err.message || JSON.stringify(err));
 						return;
 					}
-					console.log('call result ' + result);
 					this.setState({ verifyTOTPCodeView: false, preferredMFA: 'SOFTWARE_TOKEN_MFA' })
 				});
 			},

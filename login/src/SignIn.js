@@ -135,7 +135,6 @@ class SignIn extends React.Component {
 	}
 
 	async handleSubmit(event) {
-		console.log('dddd')
 		event.preventDefault();
 		try {
 			const user = await login(this.state.email, this.state.password);
@@ -172,7 +171,6 @@ class SignIn extends React.Component {
 			} else {
 				// The user directly signs in
 				this.state.handleLogin(user.privkey, this.state.rememberMe, user.cognitoUser);
-				console.log(user);
 			}
 		} catch (err) {
 			if (err.code === 'UserNotConfirmedException') {
