@@ -50,8 +50,7 @@ function removeEventListener(ev) {
 }
 
 const iframe = document.createElement('iframe');
-//iframe.src = 'https://neologin.io/widget/';
-iframe.src = 'http://localhost:3002';
+iframe.src = 'https://neologin.io/widget/';
 
 document.addEventListener("DOMContentLoaded", () => {
 	document.body.appendChild(iframe);
