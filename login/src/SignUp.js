@@ -13,7 +13,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
-import { register } from './loginAPI';
+import { register, downloadPrivKey } from './loginAPI';
 import logo from './logoboxtxt.png';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -148,14 +148,13 @@ class SignUp extends React.Component {
 
 		register(this.state.email, this.state.password1, this.state.newsletter ? "true" : "false")
 			.then(privkey => {
+				/*
 				this.setState({
 					privkey: privkey,
 					registered: true,
 				});
-				/*
-				downloadFile("This file contains your private key, which you will need in case you ever lose or forget your NeoLogin password.\nThis file must be kept in a safe place and not shared with anyone else, as doing so will put your funds and wallet at risk of being stolen.\nPrivate Key: " + privkey);
-				this.state.handleLogin(privkey, false);
 				*/
+				downloadPrivKey("This file contains your private key, which you will need in case you ever lose or forget your NeoLogin password.\nThis file must be kept in a safe place and not shared with anyone else, as doing so will put your funds and wallet at risk of being stolen.\nPrivate Key: " + privkey).then(() => this.state.handleLogin(privkey, false));
 			})
 			.catch(err => {
 				this.setState({

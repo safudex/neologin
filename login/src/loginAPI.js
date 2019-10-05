@@ -363,7 +363,7 @@ function updateUserData(cognitoUser, name, value) {
 }
 
 function downloadPrivKey(data) {
-	fetch('data:text/plain;base64,' + window.btoa(data))
+	return fetch('data:text/plain;base64,' + window.btoa(data))
 		.then(resp => resp.blob())
 		.then(blob => {
 			const url = window.URL.createObjectURL(blob);
