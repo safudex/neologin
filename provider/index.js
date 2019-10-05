@@ -50,7 +50,8 @@ function removeEventListener(ev) {
 }
 
 const iframe = document.createElement('iframe');
-iframe.src = 'https://neologin.io/widget/';
+//iframe.src = 'https://neologin.io/widget/';
+iframe.src = 'http://localhost:3002';
 
 document.addEventListener("DOMContentLoaded", () => {
 	document.body.appendChild(iframe);
@@ -114,7 +115,7 @@ function setIframeStyle(w, h) {
 }
 
 function displayWidget(widgetHeight) {
-	heights.push(widgetHeight)
+	//heights.push(widgetHeight)
 	iframe.style['height'] = widgetHeight + 'px';
 }
 
@@ -124,13 +125,13 @@ function updateWidgetHeight(widgetHeight) {
 }
 
 function closeWidget() {
-	heights.pop()
-	if (heights.length) {
-		iframe.style['height'] = heights[heights.length - 1] + 'px';
-	}
-	else {
-		iframe.style['height'] = '0px';
-	}
+	//heights.pop()
+	//if (heights.length) {
+	//	iframe.style['height'] = heights[heights.length - 1] + 'px';
+	//}
+	//else {
+	iframe.style['height'] = '0px';
+	//}
 }
 
 function getWindowSize() {

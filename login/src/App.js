@@ -32,8 +32,6 @@ class App extends React.Component {
 		this.handleLogin = this.handleLogin.bind(this)
 	}
 
-	passwordChangedOK = () => this.setState({ passwordChanged: true })
-
 	handleLogin(privkey, rememberMe, cognitoUser, preferredMFA) {
 		var url_string = window.location.href
 		var url = new URL(url_string);
