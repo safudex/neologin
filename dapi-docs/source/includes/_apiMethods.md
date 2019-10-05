@@ -1816,6 +1816,9 @@ Available types are "String"|"Boolean"|"Hash160"|"Hash256"|"Integer"|"ByteArray"
 <aside class =notice>
 Available txAttrUsages are Hash1'|'Hash2'|'Hash3'|'Hash4'|'Hash5'|'Hash6'|'Hash7'|'Hash8'|'Hash9'|'Hash10'|'Hash11'|'Hash12'|'Hash13'|'Hash14'|'Hash15'
 </aside>
+<aside class="warning">
+The encoding used for the value of these transaction attributes is different than the one used by O3, so if your smart contract relies on these values we recommend double-testing this part to make sure they work great.
+</aside>
 
 ###### AttachedAssets
 | Parameter | Type    | Description                                            |
@@ -2031,6 +2034,10 @@ Invoke Multi functions the same as Invoke, but accepts inputs to execute multipl
 | args                        | Argument[]      | A list of arguments necessary to perform on the operation you wish to call                                       |
 | attachedAssets              | AttachedAssets? | Describes the assets to attach with the smart contract, e.g. attaching assets to mint tokens during a token sale |
 | triggerContractVerification | Boolean?        | Adds the instruction to invoke the contract verifican trigger                                                    |
+
+<aside class="warning">
+The specific encoding of transactions using multiple `attachedAssets` or `triggerContractVerification` is not guaranteed to be equal to the encoding used by O3.
+</aside>
 
 ###### Argument
 | Parameter | Type   | Description                                               |
