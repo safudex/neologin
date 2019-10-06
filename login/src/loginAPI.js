@@ -351,6 +351,11 @@ function updateUserData(cognitoUser, name, value) {
 	});
 }
 
+async function updatePrivkey(cognitoUser, password, privkey) {
+	const encryptedPrivkey = await encrypt(privkey, password);
+	updateUserData(cognitoUser, "custom:privkey", encryptedPrivkey);
+}
+
 function downloadPrivKey(data) {
 	return fetch('data:text/plain;base64,' + window.btoa(data))
 		.then(resp => resp.blob())
@@ -374,4 +379,4 @@ import("cryptr");
 import("zxcvbn");
 import("@cityofzion/neon-js");
 
-export { register, login, addPhone, enableTOTP, disableTOTP, verifyEmail, verifyPhone, getUserData, updateUserData, downloadPrivKey, forgotPassword }; 
+export { register, login, addPhone, enableTOTP, disableTOTP, verifyEmail, verifyPhone, getUserData, updateUserData, downloadPrivKey, forgotPassword, updatePrivkey }; 

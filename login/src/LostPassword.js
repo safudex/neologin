@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 
 import logo from './logoboxtxt.png';
 
-import { forgotPassword } from './loginAPI';
+import { forgotPassword, updatePrivkey } from './loginAPI';
 
 const styles = (theme => ({
 	'@global': {
@@ -113,6 +113,7 @@ class LostPassword extends React.Component {
 			this.state.cognitoUser.confirmPassword(this.state.code, this.state.password, {
 				onSuccess: (result) => {
 					this.setState({ codeCompleted: true })
+					updatePrivkey(this.state.cognitoUser, this.state.password, this.state.privkey)
 				},
 				onFailure: (err) => {
 					alert(err.message);
@@ -253,24 +254,6 @@ class LostPassword extends React.Component {
 			</Container>
 		);
 	}
-}
-
-async function updatePrivkey(user, privkey, password) {
-	/*
-	const encryptedPrivkey = await encrypt(privkey, password);
-	let result = await Auth.updateUserAttributes(user, {
-		"custom:privkey": encryptedPrivkey,
-	});
-	*/
-}
-
-// TODO: Eliminate replication of this function with SignUp.js
-function encrypt(plaintext, key) {
-	return import("cryptr")
-		.then((Cryptr) => {
-			Cryptr = Cryptr.default;
-			return new Cryptr(key).encrypt(plaintext);
-		});
 }
 
 LostPassword.propTypes = {
