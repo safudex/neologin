@@ -1,7 +1,7 @@
 {
   "name": "neologin",
-  "version": "1.2.1",
-  "description": "Easy peasy NEO dAPI provider",
+  "version": "1.2.2",
+  "description": "A simple and easy to integrate wallet provider for NEO dApps",
   "main": "index.js",
   "files": [
     "index.js",
