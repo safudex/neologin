@@ -114,7 +114,6 @@ function setIframeStyle(w, h) {
 }
 
 function displayWidget(widgetHeight) {
-	//heights.push(widgetHeight)
 	iframe.style['height'] = widgetHeight + 'px';
 }
 
@@ -124,13 +123,7 @@ function updateWidgetHeight(widgetHeight) {
 }
 
 function closeWidget() {
-	//heights.pop()
-	//if (heights.length) {
-	//	iframe.style['height'] = heights[heights.length - 1] + 'px';
-	//}
-	//else {
 	iframe.style['height'] = '0px';
-	//}
 }
 
 function getWindowSize() {
