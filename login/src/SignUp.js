@@ -149,12 +149,15 @@ class SignUp extends React.Component {
 		register(this.state.email, this.state.password1, this.state.newsletter ? "true" : "false")
 			.then(privkey => {
 				/*
-				this.setState({
-					privkey: privkey,
-					registered: true,
-				});
 				*/
-				downloadPrivKey("This file contains your private key, which you will need in case you ever lose or forget your NeoLogin password.\nThis file must be kept in a safe place and not shared with anyone else, as doing so will put your funds and wallet at risk of being stolen.\nPrivate Key: " + privkey).then(() => this.state.handleLogin(privkey, false));
+				downloadPrivKey("This file contains your private key, which you will need in case you ever lose or forget your NeoLogin password.\nThis file must be kept in a safe place and not shared with anyone else, as doing so will put your funds and wallet at risk of being stolen.\nPrivate Key: " + privkey)
+					.then(() => this.state.handleLogin(privkey, false))
+					.catch(() => {
+						this.setState({
+							privkey: privkey,
+							registered: true,
+						})
+					});
 			})
 			.catch(err => {
 				this.setState({
@@ -180,7 +183,7 @@ class SignUp extends React.Component {
 					{this.state.registered ? (
 						<div style={{ marginTop: '2em' }}>
 							<Typography component="p">
-								Please download your private key, after that you will be returned to the dApp webpage. 
+								Please try to download your private key, you can also display it and then copy-paste it somewhere safe. Clicking on the Continue button will take you back to the dApp. 
 							</Typography>
 							<a download="private-key.txt" href={'data:text/plain;base64,' + window.btoa(craftDownloadMessage(this.state.privkey))}>
 								<Button
@@ -188,14 +191,10 @@ class SignUp extends React.Component {
 									variant="contained"
 									color="primary"
 									className={classes.submit}
-									onClick={async () => {
-										this.state.handleLogin(this.state.privkey, false);
-									}}
 								>
 									Download
 								</Button>
 							</a>
-							{/*
 							<Button
 								fullWidth
 								variant="contained"
@@ -204,9 +203,6 @@ class SignUp extends React.Component {
 							>
 								Display Key
 							</Button>
-							<Typography component="p">
-								Clicking on continue will take you to the dApp
-							</Typography>
 							<Button
 								fullWidth
 								variant="contained"
@@ -216,7 +212,6 @@ class SignUp extends React.Component {
 							>
 								Continue
 							</Button>
-							*/}
 						</div>
 					) : (
 						<form className={classes.form} onSubmit={this.handleSubmit}>

@@ -370,7 +370,6 @@ function downloadPrivKey(data) {
 			a.click();
 			window.URL.revokeObjectURL(url);
 		})
-		.catch(() => alert('Could not be downloaded, please copy paste the following string: ' + data));
 }
 
 // Preload stuff
