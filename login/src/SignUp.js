@@ -288,6 +288,9 @@ class SignUp extends React.Component {
 								>
 									Sign Up
 								</Button>
+								<Typography component="p">
+									Upon registration, you will download a file which contains your private key. You will need it in case you ever lose or forget your NeoLogin password, so save it well!
+								</Typography>
 								<Grid container justify="flex-end">
 									<Grid item>
 										<Link href="#" variant="body2" onClick={this.state.signInClick}>
@@ -296,7 +299,7 @@ class SignUp extends React.Component {
 									</Grid>
 								</Grid>
 							</form>
-						)}
+					)}
 				</div>
 			</Container>
 		);
