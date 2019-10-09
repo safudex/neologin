@@ -12,6 +12,8 @@ import RequestAcceptanceInvoke from './Views/RequestAcceptanceInvoke';
 import RequestAcceptanceDeploy from './Views/RequestAcceptanceDeploy';
 import InsufficientFunds from './Views/InsufficientFunds';
 import RequestAcceptanceInvokeMulti from './Views/RequestAcceptanceInvokeMulti';
+import { default as encryptRaw, ivProvider } from './crypt/encrypt';
+import { default as decryptRaw } from './crypt/decrypt';
 
 let acct = null;
 let defaultNetwork = "MainNet";
@@ -45,6 +47,9 @@ let rawMethods = {
 	invokeMulti,
 	signMessage,
 	deploy,
+	encrypt,
+	decrypt,
+	ivProvider
 	//Methods implemented in the client SDK
 	//addEventListener,
 	//removeEventListener
@@ -52,7 +57,7 @@ let rawMethods = {
 
 let methods = {};
 
-const unathenticatedMethods = ['getProvider', 'getNetworks', 'getBalance', 'getStorage', 'invokeRead', 'verifyMessage', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog'];
+const unathenticatedMethods = ['getProvider', 'getNetworks', 'getBalance', 'getStorage', 'invokeRead', 'verifyMessage', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog', 'ivProvider'];
 const requireNetworkCheckMethods = ['getBalance', 'getStorage', 'invokeRead', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog', 'send', 'invoke', 'invokeMulti', 'deploy'];
 
 Object.keys(rawMethods).map((key) => {
@@ -691,6 +696,22 @@ async function deploy(deployArgs) {
 	}
 }
 
+function encrypt({ recipientPublicKey, data, ivProvider }) {
+	try {
+		return Promise.resolve(encryptRaw({ recipientPublicKey, 'wif': wallet.getWIFFromPrivateKey(acct.privateKey), data, 'ivProvider': ivProvider ? ivProvider : this.ivProvider }))
+	} catch (error) {
+		return Promise.reject(error)
+	}
+}
+
+function decrypt({ senderPublicKey, iv, mac, data }) {
+	try {
+		return Promise.resolve(decryptRaw({ senderPublicKey, 'wif': wallet.getWIFFromPrivateKey(acct.privateKey), iv, mac, data }))
+	} catch (error) {
+		return Promise.reject(error)
+	}
+}
+
 function closeWidget() {
 	connection.promise.then((parent) => parent.closeWidget())
 }
@@ -831,7 +852,7 @@ function closeRequest() {
 
 const observer = new MutationObserver((mutationsList, observer) => {
 	const container = document.getElementById('request-' + (totalRequests - 1)) || document.getElementById('content');
-    displayWidget(container? container.clientHeight : 0);
+	displayWidget(container ? container.clientHeight : 0);
 });
 observer.observe(document.getElementById("root"), {
 	attributes: true,
