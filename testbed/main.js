@@ -40,6 +40,8 @@ const getBlockInputEle = document.getElementById("getBlockInput");
 const getBlockheightInputEle = document.getElementById("getBlockheightInput");
 const getTransactionInputEle = document.getElementById("getTransactionInput");
 const getApplicationLogInputEle = document.getElementById("getApplicationLogInput");
+const encryptInputEle = document.getElementById("encryptInputEle");
+const decryptInputEle = document.getElementById("decryptInputEle");
 
 const deployNameEle = document.getElementById("deployName");
 const deployVersionEle = document.getElementById("deployVersion");

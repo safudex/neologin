@@ -132,6 +132,8 @@ a {
                     <li class="nav-item"><a class="nav-link" href="#collapse-getBlockHeight">getBlockHeight</a></li>
                     <li class="nav-item"><a class="nav-link" href="#collapse-getTransaction">getTransaction</a></li>
                     <li class="nav-item"><a class="nav-link" href="#collapse-getApplicationLog">getApplicationLog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#collapse-encrypt">encrypt</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#collapse-decrypt">decrypt</a></li>
                   </ul>
                 </div>
               </li>
@@ -483,6 +485,46 @@ a {
                     <div class="card-footer">
                       <h6>Result</h6>
                       <pre><div class="p-3 border rounded" id="getApplicationLog-result"></div></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="collapse-encrypt" class="method">
+                <div class="card" id="encrypt">
+                  <div class="card-header py-4">
+                    <h3 class="mt-0">encrypt</h3>
+                    <p class="small mb-0">Encrypt message with public key.</p>
+                  </div>
+                  <div>
+                    <div class="card-body">
+                      <h6>Input</h6>
+                      <textarea class="form-control mb-2" id="encrypt-input" placeholder="encrypt input" rows="4">{{encryptInput}}</textarea>
+                      <button class="btn btn-primary btn-sm" onclick="encrypt('encrypt-input','encrypt-result')">Run</button>
+                    </div>
+                    <div class="card-footer">
+                      <h6>Result</h6>
+                      <pre><div class="p-3 border rounded" id="encrypt-result"></div></pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="collapse-decrypt" class="method">
+                <div class="card" id="decrypt">
+                  <div class="card-header py-4">
+                    <h3 class="mt-0">decrypt</h3>
+                    <p class="small mb-0">Decrypt message with public key.</p>
+                  </div>
+                  <div>
+                    <div class="card-body">
+                      <h6>Input</h6>
+                      <textarea class="form-control mb-2" id="decrypt-input" placeholder="decrypt input" rows="6">{{decryptInput}}</textarea>
+                      <button class="btn btn-primary btn-sm" onclick="decrypt('decrypt-input','decrypt-result')">Run</button>
+                    </div>
+                    <div class="card-footer">
+                      <h6>Result</h6>
+                      <pre><div class="p-3 border rounded" id="decrypt-result"></div></pre>
                     </div>
                   </div>
                 </div>
