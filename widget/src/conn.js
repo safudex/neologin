@@ -695,19 +695,32 @@ async function deploy(deployArgs) {
 	}
 }
 
-function encrypt({ recipientPublicKey, data, ivProvider }) {
+async function encrypt({ recipientPublicKey, data, ivProvider }) {
+	await requestAcceptance();
 	try {
 		return Promise.resolve(encryptRaw({ recipientPublicKey, 'wif': wallet.getWIFFromPrivateKey(acct.privateKey), data, 'ivProvider': ivProvider ? ivProvider : this.ivProvider }))
 	} catch (error) {
-		return Promise.reject(error)
+		processGeneralError(error)
 	}
 }
 
-function decrypt({ senderPublicKey, iv, mac, data }) {
+async function decrypt({ senderPublicKey, iv, mac, data }) {
+	await requestAcceptance();
 	try {
-		return Promise.resolve(decryptRaw({ senderPublicKey, 'wif': wallet.getWIFFromPrivateKey(acct.privateKey), iv, mac, data }))
+		let dataBuffer = decryptRaw({ senderPublicKey, 'wif': wallet.getWIFFromPrivateKey(acct.privateKey), iv, mac, data })
+		console.log(dataBuffer)
+		return Promise.resolve({
+			dataBuffer,
+			data: new TextDecoder("utf-8").decode(dataBuffer)
+		})
 	} catch (error) {
-		return Promise.reject(error)
+		if (error.message.includes('Bad MAC'))
+			return Promise.reject({
+				type: 'BAD_MAC',
+				description: error.message
+			})
+		else
+			processGeneralError(error)
 	}
 }
 
