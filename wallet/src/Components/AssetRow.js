@@ -53,8 +53,6 @@ class AssetRow extends React.Component {
             toAddress: this.state.toAddress,
             asset: this.props.symbol,
             amount: this.state.amount,
-            remark: 'Hash puppy clothing purchase. Invoice#abc123',
-            fee: '0.0001',
             network: this.props.network,
             broadcastOverride: false,
         })
