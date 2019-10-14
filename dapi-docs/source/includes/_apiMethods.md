@@ -1539,6 +1539,172 @@ The wallet will return the direct response from the RPC node.
 | description | String? | A description of the error which has occured |
 | data        | String? | Any raw data associated with the error       |
 
+
+### Encrypt
+
+```typescript
+neologin.encrypt({
+  recipientPublicKey: "03ca7443e1ec9e9c502ebe5a8f6d76f02f9b74bf9063bf3921ad9b76d389218529",
+  data: "Guess what"
+})
+.then(({iv, data, mac}: EncryptOutput) => {
+  console.log('Data encrypted success!');
+  console.log('Iv: 'iv);
+  console.log('Mac: ' + mac);
+  console.log('Encrypted data: ' + data);
+})
+.catch(({type: string, description: string, data: any}) => {
+  switch(type) {
+    case MALFORMED_INPUT:
+      console.log('Input not valid.');
+      break;
+  }
+});
+```
+```javascript
+neologin.send({
+  recipientPublicKey: "03ca7443e1ec9e9c502ebe5a8f6d76f02f9b74bf9063bf3921ad9b76d389218529",
+  data: "Guess what"
+})
+.then(({txid, nodeUrl}) => {
+  console.log('Data encrypted success!');
+  console.log('Iv: 'iv);
+  console.log('Mac: ' + mac);
+  console.log('Encrypted data: ' + data);
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case MALFORMED_INPUT:
+      console.log('Input not valid.');
+      break;
+  }
+});
+```
+
+> Example Response
+
+```typescript
+{
+  iv: "459d0efdfcd2091f6c6d2dbe2a763a1e",
+  mac: "16f413e85e85594180e889db139306e4aab75df4a6d6c5e211473e8b4d3527f3",
+  data: "73bb2f041bf8cad3cbb514b092dadcd3"
+}
+```
+```javascript
+{
+  iv: "459d0efdfcd2091f6c6d2dbe2a763a1e",
+  mac: "16f413e85e85594180e889db139306e4aab75df4a6d6c5e211473e8b4d3527f3",
+  data: "73bb2f041bf8cad3cbb514b092dadcd3"
+}
+```
+
+Encrypts data using a public key. Aes 256 cbc encryption.
+
+##### Input Arguments
+| Parameter          | Type             | Description                                              |
+|:------------------ |:---------------- |:-------------------------------------------------------- |
+| recipientPublicKey | String           | Recipient's public key                                   |
+| data               | String or Buffer | Data you want to encrypt                                 |
+| ivProvider         | function?        | Function that generates an initialization vector (nonce) |
+
+##### Success Response
+| Parameter | Type   | Description                                         |
+|:--------- |:------ |:--------------------------------------------------- |
+| iv        | String | Initialization vector (nonce). Necessary to decrypt |
+| mac       | String | Message authentication code. Necessary to decrypt   |
+| data      | String | Encrypted data. Necessary to decrypt                |
+
+##### Error Response
+| Parameter   | Type    | Description                                  |
+|:----------- |:------- |:-------------------------------------------- |
+| type        | String  | The type of error which has occured          |
+| description | String? | A description of the error which has occured |
+| data        | String? | Any raw data associated with the error       |
+
+### Decrypt
+
+```typescript
+neologin.decrypt({
+  senderPublicKey: "029c6fac1f105c2eef68a220018eada4740d013e0cf0091e9aa1fb95f2e328d1c8",
+  iv: "3ad568936c20b8e15c1e2c6ca72db446",
+  mac: "a27507c744d99405e772ff1f96ec276eadb1ba50373bbeb74a5a5d2935269a8d",
+  data: "4580a73371ef75f4c14b3b46835ea055"
+})
+.then(({bufferData, data}: DecryptOutput) => {
+  console.log('Data decrypted success!');
+  console.log('Decrypted data: ' + data);
+})
+.catch(({type: string, description: string, data: any}) => {
+  switch(type) {
+    case MALFORMED_INPUT:
+      console.log('Input not valid.');
+      break;
+    case BAD_MAC:
+      console.log('Bad mac')
+  }
+});
+```
+```javascript
+neologin.send({
+  senderPublicKey: "029c6fac1f105c2eef68a220018eada4740d013e0cf0091e9aa1fb95f2e328d1c8",
+  iv: "3ad568936c20b8e15c1e2c6ca72db446",
+  mac: "a27507c744d99405e772ff1f96ec276eadb1ba50373bbeb74a5a5d2935269a8d",
+  data: "4580a73371ef75f4c14b3b46835ea055"
+})
+.then(({bufferData, data}) => {
+  console.log('Data decrypted success!');
+  console.log('Decrypted data: ' + data);
+})
+.catch(({type, description, data}) => {
+  switch(type) {
+    case MALFORMED_INPUT:
+      console.log('Input not valid.');
+      break;
+    case BAD_MAC:
+      console.log('Bad mac')
+  }
+});
+```
+
+> Example Response
+
+```typescript
+{
+  bufferData: Uint8Array(10), //[71, 117, 101, 115, 115, 32, 119, 104, 97, 116]
+  data: "Guess what"
+}
+```
+```javascript
+{
+  bufferData: Uint8Array(10), //[71, 117, 101, 115, 115, 32, 119, 104, 97, 116]
+  data: "Guess what"
+}
+```
+
+Decrypts data using user's private key. Data must have been encrypted with his public key. Aes 256 cbc decryption.
+
+##### Input Arguments
+| Parameter       | Type   | Description                 |
+|:--------------- |:------ |:-------------------------   |
+| senderPublicKey | String | Sender's public key         |
+| iv              | String | Initialization vector       |
+| mac             | String | Message authentication code |
+| data            | String | Data encypted               |
+
+##### Success Response
+| Parameter  | Type       | Description    |
+|:---------- |:---------- |:-------------- |
+| bufferData | Uint8Array | Decrypted data |
+| data       | String     | Decrypted data |
+
+##### Error Response
+| Parameter   | Type    | Description                                  |
+|:----------- |:------- |:-------------------------------------------- |
+| type        | String  | The type of error which has occured          |
+| description | String? | A description of the error which has occured |
+| data        | String? | Any raw data associated with the error       |
+
+
 ## Write Methods
 
 Write methods will alter the state on the blockchain, and require a user signature.
