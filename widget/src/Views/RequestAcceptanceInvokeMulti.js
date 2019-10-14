@@ -48,14 +48,14 @@ class RequestAcceptanceInvokeMulti extends React.Component {
                         <Grid container direction="row">
                             <Grid item onClick={() => { if (this.state.actualIndex !== 0) this.setState({ actualIndex: this.state.actualIndex - 1 }) }}
                                 style={{ transform: 'translateY(-4px)', cursor: this.state.actualIndex === 0 ? 'default' : 'pointer', opacity: this.state.actualIndex === 0 ? '0.2' : '1' }}>
-                                🡠
+                                &#x1F860;
             </Grid>
                             <Grid item style={{ margin: '0px 14px' }}>
                                 <span>{this.state.actualIndex + 1} / {this.state.totalContracts}</span>
                             </Grid>
                             <Grid item onClick={() => { if (this.state.actualIndex !== this.state.totalContracts - 1) this.setState({ actualIndex: this.state.actualIndex + 1 }) }}
                                 style={{ transform: 'translateY(-4px)', cursor: this.state.actualIndex === this.state.totalContracts - 1 ? 'default' : 'pointer', opacity: this.state.actualIndex === this.state.totalContracts - 1 ? '0.2' : '1' }}>
-                                🡢
+                                &#x1F862;
             </Grid>
                         </Grid>
                     </Grid>
