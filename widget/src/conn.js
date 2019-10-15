@@ -352,7 +352,7 @@ function verifyMessage(verifyArgs) {
 	const concatenatedString = lengthHex + parameterHexString;
 	const messageHex = '010001f0' + concatenatedString + '0000';
 	return Promise.resolve({
-		result: Neon.verify.message(messageHex, verifyArgs.data, verifyArgs.publicKey)
+		result: Neon.verify.hex(messageHex, verifyArgs.data, verifyArgs.publicKey)
 	});
 }
 
