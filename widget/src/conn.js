@@ -516,18 +516,50 @@ function addExplicitIntents(transaction, assetIntentOverrides) {
 function addHashAttributes(transaction, txHashAttributes) {
 	txHashAttributes.map((attr) => {
 		if (!attr.txAttrUsage.startsWith("Hash")) {
-			return; //Throw?
+			throw {
+				type: "MALFORMED_INPUT",
+				description: `${attr.txAttrUsage} is not a hash attribute.`
+			};
 		}
-		let paddedStr = u.str2hexstring(String(attr.value));
-		let i = paddedStr.length;
-		while (i++ < 64) {
-			paddedStr = "0" + paddedStr;
+		let parsedValue = zeroPad(attr.value, 64, true);
+		switch (attr.type) {
+			case "Boolean":
+				parsedValue = zeroPad(!!attr.value ? 0x51 : 0x00, 64, true);
+				break;
+			case "Address":
+				parsedValue = zeroPad(u.reverseHex(wallet.getScriptHashFromAddress(attr.value)), 64, true);
+				break;
+			case "Integer":
+				const h = Number(attr.value).toString(16);
+				parsedValue = zeroPad(u.reverseHex(h.length % 2 ? '0' + h : h), 64, true);
+				break;
+			case "String":
+				parsedValue = zeroPad(str2hex(attr.value), 64, true);
+				break;
 		}
 		transaction.addAttribute(
 			tx.TxAttrUsage[attr.txAttrUsage],
-			u.reverseHex(paddedStr.substring(0, 64)) //TODO: Do type conversion
+			parsedValue
 		);
 	});
+
+	function zeroPad(input, length, padEnd = false) {
+		const zero = '0';
+		input = String(input);
+		if (padEnd) {
+			return input + zero.repeat(length - input.length);
+		}
+		return zero.repeat(length - input.length) + input;
+	}
+
+	function str2hex(str) {
+		var arr = [];
+		for (var i = 0, l = str.length; i < l; i++) {
+			var hex = Number(str.charCodeAt(i)).toString(16);
+			arr.push(hex.length > 1 && hex || "0" + hex);
+		}
+		return arr.join('');
+	}
 }
 
 function addAssets(transaction, attachedAssets, scriptHash) {
