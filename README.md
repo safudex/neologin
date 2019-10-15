@@ -90,3 +90,6 @@ amplify push # Deploy the backend
 ```
 
 After the backend has been deployed, you'll have to modify all the references to `neologin.io` present in the code to point to your own backend services.
+
+## Acknowledgements
+NeoLogin has been heavily inspired by [Portis](https://www.portis.io/).
