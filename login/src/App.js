@@ -36,7 +36,6 @@ class App extends React.Component {
 		var url_string = window.location.href
 		var url = new URL(url_string);
 		var settings = url.searchParams.get("settings");
-		//if (settings == 'true') {
 		if (settings && settings.includes("true")) {
 			this.setState({ settings: true, cognitoUser: cognitoUser, privkey: privkey, preferredMFA: preferredMFA })
 		}

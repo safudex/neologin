@@ -169,6 +169,8 @@ class Settings extends React.Component {
 										}
 										label="Newsletter"
 									/>
+									<h4 className={classes.subtittle}>Private key</h4>
+									<Button className={classes.settingItem} color='primary' variant="contained" onClick={() => downloadPrivKey(this.props.privkey)}>DOWNLOAD</Button>
 									<h4 className={classes.subtittle}>Security</h4>
 									<Button className={classes.settingItem} color='primary' variant="contained" disabled={this.state.emailIsVerified} onClick={() => {
 										verifyEmail(this.props.cognitoUser).then(() => this.setState({ verifyEmailView: true, wrongEmailCode: false }))
@@ -181,8 +183,10 @@ class Settings extends React.Component {
 												this.setState({ verifyTOTPCodeView: true, secretTOTP: secret, email: email, wrongMFACode: false }))
 
 									}>{this.state.preferredMFA === 'SOFTWARE_TOKEN_MFA' ? 'Disable' : 'Enable'} TOTP</Button>
-									<h4 className={classes.subtittle}>Private key</h4>
-									<Button className={classes.settingItem} color='primary' variant="contained" onClick={() => downloadPrivKey(this.props.privkey)}>DOWNLOAD</Button>
+									<Button className={classes.settingItem} style={{ background: 'darkred' }} color='primary' variant="contained" onClick={() => {
+										window.localStorage.removeItem('privkey')
+										window.close()
+									}} >Logout</Button>
 								</>
 					}
 				</div>
