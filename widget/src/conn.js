@@ -154,7 +154,6 @@ function signIn() {
 							window.localStorage.setItem('privkey', event.data.privkey);
 						}
 						successfulSignIn(acct)
-						backlogCalledSignIn.map(({ resolve }) => resolve());
 					},
 					false
 				);
@@ -162,7 +161,6 @@ function signIn() {
 			} else {
 				acct = Neon.create.account(storedPrivkey);
 				successfulSignIn(acct)
-				backlogCalledSignIn.map(({ resolve }) => resolve());
 			}
 		}
 	});
@@ -778,6 +776,9 @@ function showLoginButton() {
 function successfulSignIn(account) {
 	window.document.getElementById('content').innerHTML = '';
 	closeWidget()
+	backlogCalledSignIn.map(({ resolve }) => resolve());
+	backlogCalledSignIn = [];
+	calledLogin = false;
 }
 
 let backlogRequestedAcceptance = [];
