@@ -780,7 +780,7 @@ function showLoginButton(reject) {
 }
 
 function successfulSignIn(account) {
-	window.document.getElementById('content').innerHTML = '';
+	ReactDOM.unmountComponentAtNode(window.document.getElementById('content'))
 	closeWidget()
 	backlogCalledSignIn.map(({ resolve }) => resolve());
 	backlogCalledSignIn = [];
