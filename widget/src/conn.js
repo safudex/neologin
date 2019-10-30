@@ -49,6 +49,7 @@ let rawMethods = {
 	deploy,
 	encrypt,
 	decrypt,
+	disconnect,
 	ivProvider
 	//Methods implemented in the client SDK
 	//addEventListener,
@@ -57,7 +58,7 @@ let rawMethods = {
 
 let methods = {};
 
-const unathenticatedMethods = ['getProvider', 'getNetworks', 'getBalance', 'getStorage', 'invokeRead', 'verifyMessage', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog', 'ivProvider'];
+const unathenticatedMethods = ['getProvider', 'getNetworks', 'getBalance', 'getStorage', 'invokeRead', 'verifyMessage', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog', 'ivProvider', 'disconnect'];
 const requireNetworkCheckMethods = ['getBalance', 'getStorage', 'invokeRead', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog', 'send', 'invoke', 'invokeMulti', 'deploy'];
 
 Object.keys(rawMethods).map((key) => {
@@ -165,6 +166,14 @@ function signIn() {
 			}
 		}
 	});
+}
+
+async function disconnect() {
+	if(acct === null){
+		throw "User has not logged in";
+	}
+	window.localStorage.removeItem('privkey');
+	acct = null;
 }
 
 const providerInfo = {
