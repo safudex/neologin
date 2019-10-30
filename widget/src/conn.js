@@ -157,7 +157,7 @@ function signIn() {
 					},
 					false
 				);
-				showLoginButton();
+				showLoginButton(reject);
 			} else {
 				acct = Neon.create.account(storedPrivkey);
 				successfulSignIn(acct)
@@ -767,9 +767,15 @@ function displayWidget(wheight) {
 	connection.promise.then((parent) => parent.displayWidget(wheight))
 }
 
-function showLoginButton() {
-	ReactDOM.render(<LoginButton closeWidget={() => { closeWidget(); calledLogin = false; }} />, document.getElementById('content'), () =>
-		displayWidget(document.getElementById('content').clientHeight)
+function showLoginButton(reject) {
+	const rejectError = {
+		type: 'CONNECTION_DENIED',
+		description: 'The user rejected the request to connect with your dApp.',
+	}
+	ReactDOM.render(
+		<LoginButton closeWidget={() => { reject(rejectError); closeWidget(); calledLogin = false; }} />,
+		document.getElementById('content'),
+		() => displayWidget(document.getElementById('content').clientHeight)
 	);
 }
 
