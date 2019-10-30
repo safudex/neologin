@@ -140,13 +140,7 @@ function createPromisedOrder(address, pair){
 	})
 }
 
-async function NEO2GAS(address, privateKey, amount){
-	let filledOrder = createPromisedOrder(address, "GAS_NEO")
-
-	// DEPOSIT
-	await depositNEO(address, privateKey, amount)
-
-	// TRADE
+async function tradeNEO2GAS(address, privateKey, amount, filledOrder){
 	// Create order
 	const order = await createOrder({
 		pair: 'GAS_NEO',
@@ -165,6 +159,16 @@ async function NEO2GAS(address, privateKey, amount){
 
 	// Wait for order to complete
 	await filledOrder;
+}
+
+async function NEO2GAS(address, privateKey, amount){
+	let filledOrder = createPromisedOrder(address, "GAS_NEO")
+
+	// DEPOSIT
+	await depositNEO(address, privateKey, amount)
+
+	// TRADE
+	await tradeNEO2GAS(address, privateKey, amount, filledOrder)
 
 	// WITHDRAW
 	await withdraw(address, privateKey, filledOrder, "GAS")
@@ -175,7 +179,9 @@ async function ETH2NEO(){
 }
 
 async function ETH2GAS(){
+	// ETH -> SWTH
 
+	// SWTH -> GAS
 }
 
 export { NEO2GAS, ETH2NEO, ETH2GAS }; 
