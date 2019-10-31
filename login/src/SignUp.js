@@ -17,13 +17,9 @@ import { register, downloadPrivKey } from './loginAPI';
 import logo from './logoboxtxt.png';
 
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import InputBase from '@material-ui/core/InputBase';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import AccountCircle from '@material-ui/icons/EmailOutlined';
-import SearchIcon from '@material-ui/icons/Search';
-import DirectionsIcon from '@material-ui/icons/Directions';
+
+import Switch from '@material-ui/core/Switch';
+import Collapse from '@material-ui/core/Collapse';
 
 const styles = (theme => ({
 	'@global': {
@@ -86,6 +82,8 @@ class SignUp extends React.Component {
 			handleLogin: props.handleLogin,
 			registered: false,
 			privkey: null,
+			showMore: false,
+			syncPrivKey: true
 		};
 
 		this.handleInputChange = this.handleInputChange.bind(this);
@@ -96,7 +94,6 @@ class SignUp extends React.Component {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.name;
-
 		this.setState({
 			[name]: value
 		}, () => this.validate());
@@ -146,12 +143,12 @@ class SignUp extends React.Component {
 			return;
 		}
 
-		register(this.state.email, this.state.password1, this.state.newsletter ? "true" : "false")
+		register(this.state.email, this.state.password1, this.state.newsletter ? "true" : "false", this.state.syncPrivKey)
 			.then(privkey => {
 				/*
 				*/
 				downloadPrivKey("This file contains your private key, which you will need in case you ever lose or forget your NeoLogin password.\nThis file must be kept in a safe place and not shared with anyone else, as doing so will put your funds and wallet at risk of being stolen.\nPrivate Key: " + privkey)
-					.then(() => this.state.handleLogin(privkey, false))
+					.then(() => this.state.handleLogin(privkey, !this.state.syncPrivKey))
 					.catch(() => {
 						this.setState({
 							privkey: privkey,
@@ -183,7 +180,7 @@ class SignUp extends React.Component {
 					{this.state.registered ? (
 						<div style={{ marginTop: '2em' }}>
 							<Typography component="p">
-								Please try to download your private key, you can also display it and then copy-paste it somewhere safe. Clicking on the Continue button will take you back to the dApp. 
+								Please try to download your private key, you can also display it and then copy-paste it somewhere safe. Clicking on the Continue button will take you back to the dApp.
 							</Typography>
 							<a download="private-key.txt" href={'data:text/plain;base64,' + window.btoa(craftDownloadMessage(this.state.privkey))}>
 								<Button
@@ -214,7 +211,7 @@ class SignUp extends React.Component {
 							</Button>
 						</div>
 					) : (
-						<form className={classes.form} onSubmit={this.handleSubmit}>
+							<form className={classes.form} onSubmit={this.handleSubmit}>
 								<Grid container spacing={2}>
 									<Grid item xs={12}>
 										<TextField
@@ -264,6 +261,24 @@ class SignUp extends React.Component {
 										/>
 									</Grid>
 									<Grid item xs={12}>
+										<div className={classes.root}>
+											<p style={{ margin: '0', cursor: 'pointer', color: '#78818c' }} onClick={() => this.setState({ showMore: !this.state.showMore })}>Advanced settings</p>
+											{/* <FormControlLabel
+												control={<Switch checked={checked} onChange={handleChange} />}
+												label="Show"
+											/> */}
+											<Collapse in={this.state.showMore}>
+												<FormControlLabel
+													control={<Switch checked={this.state.syncPrivKey} color="primary" name="syncPrivKey" onChange={this.handleInputChange} />}
+													label="Sync my encrypted key across devices"
+												/>
+												<p style={{ color: 'darkred' }}>
+													Warning: If you disable this option you assume all responsability for your keys, as they will not be recoverable once deleted from the website's storage.
+												</p>
+											</Collapse>
+										</div>
+									</Grid>
+									<Grid item xs={12}>
 										<FormControlLabel
 											control={<Checkbox value="newsletter" color="primary" name="newsletter" checked={this.state.newsletter} onChange={this.handleInputChange} />}
 											label="I want to receive inspiration, marketing promotions and updates via email."
@@ -299,7 +314,7 @@ class SignUp extends React.Component {
 									</Grid>
 								</Grid>
 							</form>
-					)}
+						)}
 				</div>
 			</Container>
 		);
