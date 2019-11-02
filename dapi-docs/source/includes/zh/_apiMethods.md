@@ -908,7 +908,7 @@ neologin.invokeRead({
 | value     | String | 你正在使用的参数的String代表。|
 
 <aside class =notice>
-Available types are "String"|"Boolean"|"Hash160"|"Hash256"|"Integer"|"ByteArray"|"Array"|"Address"
+可用的类型是 "String"|"Boolean"|"Hash160"|"Hash256"|"Integer"|"ByteArray"|"Array"|"Address"
 </aside>
 
 ##### 成功返回
@@ -1956,7 +1956,7 @@ neologin.invoke({
 | value     | String | 你正在使用的参数的String代表。|
 
 <aside class =notice>
-Available types are "String"|"Boolean"|"Hash160"|"Hash256"|"Integer"|"ByteArray"|"Array"|"Address"
+可用的类型是 "String"|"Boolean"|"Hash160"|"Hash256"|"Integer"|"ByteArray"|"Array"|"Address"
 </aside>
 
 ###### TxHashAttribute
@@ -1967,7 +1967,7 @@ Available types are "String"|"Boolean"|"Hash160"|"Hash256"|"Integer"|"ByteArray"
 | txAttrUsage | String | 属性的使用值。|
 
 <aside class =notice>
-Available txAttrUsages are Hash1'|'Hash2'|'Hash3'|'Hash4'|'Hash5'|'Hash6'|'Hash7'|'Hash8'|'Hash9'|'Hash10'|'Hash11'|'Hash12'|'Hash13'|'Hash14'|'Hash15'
+可用TxAttrUsage是 'Hash1'|'Hash2'|'Hash3'|'Hash4'|'Hash5'|'Hash6'|'Hash7'|'Hash8'|'Hash9'|'Hash10'|'Hash11'|'Hash12'|'Hash13'|'Hash14'|'Hash15'
 </aside>
 
 ###### AttachedAssets
@@ -2195,7 +2195,7 @@ neologin.invokeMulti({
 | value     | String | 你正在使用的参数的String代表。|
 
 <aside class =notice>
-Available types are "String"|"Boolean"|"Hash160"|"Hash256"|"Integer"|"ByteArray"|"Array"|"Address"
+可用的类型是 "String"|"Boolean"|"Hash160"|"Hash256"|"Integer"|"ByteArray"|"Array"|"Address"
 </aside>
 
 ###### TxHashAttribute
@@ -2207,7 +2207,7 @@ Available types are "String"|"Boolean"|"Hash160"|"Hash256"|"Integer"|"ByteArray"
 | txAttrUsage | String | 属性的使用值。 |
 
 <aside class =notice>
-Available txAttrUsages are Hash1'|'Hash2'|'Hash3'|'Hash4'|'Hash5'|'Hash6'|'Hash7'|'Hash8'|'Hash9'|'Hash10'|'Hash11'|'Hash12'|'Hash13'|'Hash14'|'Hash15'
+可用TxAttrUsage是 'Hash1'|'Hash2'|'Hash3'|'Hash4'|'Hash5'|'Hash6'|'Hash7'|'Hash8'|'Hash9'|'Hash10'|'Hash11'|'Hash12'|'Hash13'|'Hash14'|'Hash15'
 </aside>
 
 ###### AttachedAssets
@@ -2356,7 +2356,7 @@ neologin.signMessage({
 |:--------- |:------ |:------------------------------------------------------------ |
 | publicKey | String | 用于信息签名的公钥。|
 | data      | String | 签了名的数据 |
-| salt      | String | The salt prefix added to the original message before signing |
+| salt      | String | Salt前缀将在签名之前添加到原始消息中。| 
 | message   | String | 原始信息 |
 
 ##### 错误返回
@@ -2461,7 +2461,7 @@ neologin.deploy({
 | parameterList     | String   | 合同中Main函数的输入参数类型列表。(https://docs.neo.org/en-us/sc/Parameter.html) |
 | returnType        | String   | 合同中的输出Return Type参数类型列表。(https://docs.neo.org/en-us/sc/Parameter.html) |
 | code              | String   | 已编译的智能合约avm的hex。|
-| networkFee        | String   | The network fee to execute the transaction, in addition to the deploy fee which will be added automatically             |
+| networkFee        | String   | 用于执行交易的Network费用，还有自动添加的部署费用。| 
 | broadcastOverride | Boolean? | 如果此标志设置为True,那么线上钱包供应者将返回已经签了名的交易而不是广播到节点。|
 
 ##### 成功返回
