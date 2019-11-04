@@ -47,25 +47,6 @@ const styles = (theme => ({
 	},
 }));
 
-const useStyles = makeStyles(theme => ({
-	root: {
-		padding: '2px 4px',
-		display: 'flex',
-		alignItems: 'center'
-	},
-	input: {
-		marginLeft: theme.spacing(1),
-		flex: 1,
-	},
-	iconButton: {
-		padding: 10,
-	},
-	divider: {
-		height: 28,
-		margin: 4,
-	},
-}));
-
 class SignUp extends React.Component {
 	constructor(props) {
 		super(props);
@@ -83,7 +64,9 @@ class SignUp extends React.Component {
 			registered: false,
 			privkey: null,
 			showMore: false,
-			syncPrivKey: true
+			syncPrivKey: true,
+			importPrivKey: false,
+			importedPrivKey: null
 		};
 
 		this.handleInputChange = this.handleInputChange.bind(this);
@@ -97,6 +80,8 @@ class SignUp extends React.Component {
 		this.setState({
 			[name]: value
 		}, () => this.validate());
+		if (name === 'importPrivKey' && !value)
+			this.setState({ importedPrivKey: null })
 	}
 
 	async validate() {
@@ -143,7 +128,7 @@ class SignUp extends React.Component {
 			return;
 		}
 
-		register(this.state.email, this.state.password1, this.state.newsletter ? "true" : "false", this.state.syncPrivKey)
+		register(this.state.email, this.state.password1, this.state.newsletter ? "true" : "false", this.state.syncPrivKey, this.state.importedPrivKey)
 			.then(privkey => {
 				/*
 				*/
@@ -268,13 +253,35 @@ class SignUp extends React.Component {
 												label="Show"
 											/> */}
 											<Collapse in={this.state.showMore}>
+
 												<FormControlLabel
 													control={<Switch checked={this.state.syncPrivKey} color="primary" name="syncPrivKey" onChange={this.handleInputChange} />}
 													label="Sync my encrypted key across devices"
 												/>
-												<p style={{ color: 'darkred' }}>
+												<p style={{ color: 'darkred', marginTop: '0' }}>
 													Warning: If you disable this option you assume all responsability for your keys, as they will not be recoverable once deleted from the website's storage.
 												</p>
+												<FormControlLabel
+													control={<Switch checked={this.state.importPrivKey} color="primary" name="importPrivKey" onChange={this.handleInputChange} />}
+													label="Import my private key"
+												/>
+												<Collapse in={this.state.importPrivKey}>
+													<div style={{ marginTop: '0.5rem' }}>
+														<TextField
+															variant="outlined"
+															fullWidth
+															name="importedPrivKey"
+															label="Private key"
+															type="password"
+															id="importedPrivKey"
+															value={this.state.password}
+															error={this.state.wrongPassword2 ? true : null}
+															helperText={this.state.wrongPassword2}
+															onChange={this.handleInputChange}
+															novalidate
+														/>
+													</div>
+												</Collapse>
 											</Collapse>
 										</div>
 									</Grid>

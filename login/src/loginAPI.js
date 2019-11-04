@@ -210,7 +210,7 @@ function addPhone(phone, cognitoUser) {
 	});
 }
 
-function register(email, password, newsletter, sync) {
+function register(email, password, newsletter, sync, importedPrivKey) {
 	return new Promise(async (resolve, reject) => {
 		var attributeList = [];
 
@@ -219,10 +219,16 @@ function register(email, password, newsletter, sync) {
 			Value: email
 		};
 
-		const privkey = await generatePrivateKey();
-		if (!sync) {
-			return resolve(privkey)
+		let privkey = null
+		if (importedPrivKey) {
+			privkey = importedPrivKey
+		} else {
+			privkey = await generatePrivateKey();
+			if (!sync) {
+				return resolve(privkey)
+			}
 		}
+
 		const encryptedPrivkey = await encrypt(privkey, password);
 
 		var dataPrivkey = {
