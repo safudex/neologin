@@ -244,6 +244,7 @@ function getAccount(...args) {
 		requestAcceptance().then(() => {
 			resolve({
 				address: acct.address,
+				scriptHash: acct.scriptHash,
 				label: 'My Spending Wallet'
 			})
 		}).catch((e) => {
