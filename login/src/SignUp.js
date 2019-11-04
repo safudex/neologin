@@ -278,7 +278,7 @@ class SignUp extends React.Component {
 															error={this.state.wrongPassword2 ? true : null}
 															helperText={this.state.wrongPassword2}
 															onChange={this.handleInputChange}
-															novalidate
+															noValidate
 														/>
 													</div>
 												</Collapse>
