@@ -224,9 +224,10 @@ function register(email, password, newsletter, sync, importedPrivKey) {
 			privkey = importedPrivKey
 		} else {
 			privkey = await generatePrivateKey();
-			if (!sync) {
-				return resolve(privkey)
-			}
+		}
+
+		if (!sync) {
+			return resolve(privkey)
 		}
 
 		const encryptedPrivkey = await encrypt(privkey, password);
