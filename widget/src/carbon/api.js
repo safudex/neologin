@@ -127,19 +127,40 @@ export async function getEthUSDPrice(fiatChargeAmount) {
     return res.data['eth']['usd/eth']
 }
 
+//cuck
+export async function estimatedETHPurchease(fiatChargeAmount) {
+    /* let url = `${ROOT}/v1/rates?cryptocurrencyArray=eth&fiatBaseCurrency=usd&fiatChargeAmount=10000;` */
+    let url = `${ROOT}/v1/rates?cryptocurrencyArray=btc,eth,eos,trx&fiatBaseCurrency=eur&fiatChargeAmount=10000;`
+
+    axios.get(url).then(result => console.log(result)).catch(err => console.log(err));
+    let res = await axios.get(url)
+    return res.data['eth']['estimatedCryptoPurchase']
+}
+
 export async function addCreditCard(nameOnCard, cardNumber, expiry, cvc, billingInfo, contactId) {
+
+    let headers = {
+        headers: {
+            Authorization: `Bearer ${jwtToken}`
+        }
+    };
+
+    let urlq = `${ROOT}/v1/card?contactId=${contactId}`;
+
+    axios.get(urlq, headers).then(result => console.log('getCreditcardddddd', result)).catch(err => console.log('thaterre', err));
+
     let url = `${ROOT}/v1/card/addNew`;
     let data = {
         nameOnCard: nameOnCard,
         cardNumber: cardNumber,
         expiry: expiry,
         cvc: cvc,
-        billingPremise: billingInfo.billingPremise,
-        billingStreet: billingInfo.billingStreet,
-        billingPostal: billingInfo.billingPostal,
+        billingPremise: billingInfo.card_billingPremise,
+        billingStreet: billingInfo.card_billingStreet,
+        billingPostal: billingInfo.card_billingPostal,
         contactId: contactId,
         rememberMe: "true",
-        fiatBaseCurrency: "USD"
+        fiatBaseCurrency: "USD"//check
     }
 
     let res = await axios.post(url, data, headers)
@@ -162,10 +183,10 @@ export async function buyETH(contactId, creditDebitId, fiatChargeAmount, ethAddr
      * would be rendered as "1039" and $233.91
      * would be "23391".
      */
-    let _fiatChargeAmount = fiatChargeAmount.toFixed(2) * 100
+    let _fiatChargeAmount = parseFloat(fiatChargeAmount * 100) + ''
     let data = {
         creditDebitId: creditDebitId,
-        fiatChargeAmount: _fiatChargeAmount,
+        fiatChargeAmount: "1000",//_fiatChargeAmount,
         cryptocurrencySymbol: "eth",
         receiveAddress: ethAddr,
         confirmationUrl: "www.mycallback.example",
@@ -173,10 +194,23 @@ export async function buyETH(contactId, creditDebitId, fiatChargeAmount, ethAddr
         errorRedirectUrl: "www.errorURL.com",
         contactId: contactId
     }
-
-    let res = await axios.post(url, data, headers)
-    let response = res.data['charge3denrolled']
-    return (response === 'Y')
+    /* let data = {
+        creditDebitId: "0f61c914-4f7e-48a1-9951-b8725638bf14",
+        fiatChargeAmount: "1000",
+        cryptocurrencySymbol: "eos",
+        receiveAddress: "blockone1111",
+        confirmationUrl: "www.mycallback.example",
+        successRedirectUrl: "www.successURL.com",
+        errorRedirectUrl: "www.errorURL.com",
+        contactId: "ab5bb41b-5979-4a54-b734-23eb9076188e"
+    } */
+    try {
+        let resp = await axios.post(url, data, headers)
+        console.log('yyyyyyyyyyyyyyyyyyyy', resp)
+        return resp
+    } catch (e) {
+        console.log(e)
+    }
     /**
      * charge3denrolled. 
      * If its value is anything other than 'Y',
@@ -184,4 +218,11 @@ export async function buyETH(contactId, creditDebitId, fiatChargeAmount, ethAddr
      * with a different card as only 3DS charges
      * are supported.
      */
+}
+
+export async function getStatus(orderID, contactID) {
+    let url = `${ROOT}/v1/status?orderId=${orderID}&contactId=${contactID}`;
+
+    let result = await axios.get(url)
+    return result['details']['status']
 }
