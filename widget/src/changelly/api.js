@@ -36,10 +36,31 @@ async function doRequest(body, signedBody) {
 }
 
 export async function getExchangeAmount(amount) {
-    let bodyExchangeAmount = createBody('getExchangeAmount', { "from": "eth", "to": "gas", "amount": amount })
+    let bodyExchangeAmount = createBody('getExchangeAmount', [{ "from": "eth", "to": "gas", 'amount': amount }])
     let signedBodyEA = sign(bodyExchangeAmount)
     let response = await doRequest(bodyExchangeAmount, signedBodyEA)
-    console.log(response)
+    console.log('exchangeAmount', amount, response)
+    return response['result'][0]['rate']
+}
+
+export async function getExchangeAmount2(amount) {
+    let bodyExchangeAmount = createBody('getExchangeAmount', [{ "from": "gas", "to": "eth", 'amount': amount }])
+    let signedBodyEA = sign(bodyExchangeAmount)
+    let response = await doRequest(bodyExchangeAmount, signedBodyEA)
+    console.log('exchangeAmount', amount, response)
+    return response['result']
+}
+
+export async function getFixedExchange(amount) {
+    let bodyExchangeAmount = ''
+    if (amount) {
+        bodyExchangeAmount = createBody('getFixRateForAmount', [{ "from": "eth", "to": "gas", "amountFrom": amount }])
+    } else {
+        bodyExchangeAmount = createBody('getFixRate', [{ "from": "eth", "to": "gas" }])
+    }
+    let signedBodyEA = sign(bodyExchangeAmount)
+    let response = await doRequest(bodyExchangeAmount, signedBodyEA)
+    console.log('exchangeAmount', response)
     return response['result']
 }
 
