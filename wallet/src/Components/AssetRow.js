@@ -89,6 +89,7 @@ class AssetRow extends React.Component {
 
     render() {
         return (
+			ASSETS[this.props.symbol] === undefined ? null :
             <Grid
                 container
                 direction="column"
