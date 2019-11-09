@@ -5,7 +5,7 @@ import './styles.css'
 
 function Brand({ closeWidget, reqNumber }) {
   return (
-    <div>
+    <div id="topBar">
       <Grid
         container
         direction="row"

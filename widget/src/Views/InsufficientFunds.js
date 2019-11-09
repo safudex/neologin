@@ -9,14 +9,29 @@ import Brand from './Brand'
 import Deposit from './Deposit'
 
 import './styles.css'
+import { GEOBLOCKED } from '../carbon/geoblockedCountries'
 
 class InsufficientFunds extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      wantsDeposit: false
+      wantsDeposit: false,
+      geoBlocked: true
     }
+  }
+
+  componentWillMount() {
+    fetch('https://ipapi.co/json/').then((r) => r.json()).then((data) => {
+      let countryCode = data.country
+      let blocked = (GEOBLOCKED.indexOf(countryCode) > -1)
+
+      this.setState({
+        geoBlocked: blocked,
+      });
+    }).catch((error) => {
+      console.log(error);
+    });
   }
 
   unmountComponent = () => {
@@ -76,7 +91,7 @@ class InsufficientFunds extends React.Component {
               </Grid >
             </div >
             :
-            <Deposit privkey={this.props.privkey} addr={this.props.address} />
+            this.state.geoBlocked ? null : <Deposit amount={this.props.amount} asset={this.props.asset} privkey={this.props.privkey} addr={this.props.address} />
         }
       </>
     );

@@ -14,7 +14,6 @@ function createBody(method, params) {
 }
 
 function sign(data) {
-    console.log(KEYS.secret)
     return crypto
         .createHmac('sha512', KEYS.secret)
         .update(JSON.stringify(data))
@@ -39,7 +38,6 @@ export async function getExchangeAmount(amount) {
     let bodyExchangeAmount = createBody('getExchangeAmount', [{ "from": "eth", "to": "gas", 'amount': amount }])
     let signedBodyEA = sign(bodyExchangeAmount)
     let response = await doRequest(bodyExchangeAmount, signedBodyEA)
-    console.log('exchangeAmount', amount, response)
     return response['result'][0]['rate']
 }
 
@@ -47,7 +45,6 @@ export async function getExchangeAmount2(amount) {
     let bodyExchangeAmount = createBody('getExchangeAmount', [{ "from": "gas", "to": "eth", 'amount': amount }])
     let signedBodyEA = sign(bodyExchangeAmount)
     let response = await doRequest(bodyExchangeAmount, signedBodyEA)
-    console.log('exchangeAmount', amount, response)
     return response['result']
 }
 
@@ -60,7 +57,6 @@ export async function getFixedExchange(amount) {
     }
     let signedBodyEA = sign(bodyExchangeAmount)
     let response = await doRequest(bodyExchangeAmount, signedBodyEA)
-    console.log('exchangeAmount', response)
     return response['result']
 }
 
