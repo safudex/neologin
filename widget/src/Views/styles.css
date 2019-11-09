@@ -75,3 +75,104 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00369a', end
     text-align: center;
     background: coral;
 }
+
+
+select {
+    height: 2.75rem;
+}
+
+select {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' preserveAspectRatio='none' viewBox='0 0 40 40'%3E%3Cpath d='M9.4,12.3l10.4,10.4l10.4-10.4c0.2-0.2,0.5-0.4,0.9-0.4c0.3,0,0.6,0.1,0.9,0.4l3.3,3.3c0.2,0.2,0.4,0.5,0.4,0.9 c0,0.4-0.1,0.6-0.4,0.9L20.7,31.9c-0.2,0.2-0.5,0.4-0.9,0.4c-0.3,0-0.6-0.1-0.9-0.4L4.3,17.3c-0.2-0.2-0.4-0.5-0.4-0.9 c0-0.4,0.1-0.6,0.4-0.9l3.3-3.3c0.2-0.2,0.5-0.4,0.9-0.4S9.1,12.1,9.4,12.3z' fill='B8B8B8' /%3E%3C/svg%3E");
+    background-size: 1.25rem;
+    background-repeat: no-repeat;
+    background-position: calc(100% - 1rem) center;
+    height: 2.75rem;
+    padding-right: 2.75rem !important;
+    text-overflow: ellipsis;
+}
+
+select {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    -moz-transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    -webkit-transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    -ms-transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    background-color: transparent;
+    border-radius: 4px;
+    color: inherit;
+    display: block;
+    outline: 0;
+    padding: 0 1rem;
+    text-decoration: none;
+    width: 100%;
+}
+
+select {
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 300;
+    font-size: 1rem;
+    line-height: 1.65;
+}
+
+.buttonBuy{
+    background-color: #00369a !important;
+    color: #1b1f22!important;
+    font-weight: 600;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    -webkit-transition: background-color .2s ease-in-out,color .2s ease-in-out;
+    transition: background-color .2s ease-in-out,color .2s ease-in-out;
+    background-color: transparent;
+    border-radius: 4px;
+    border: 0;
+    box-shadow: inset 0 0 0 1px #fff;
+    color: #fff!important;
+    cursor: pointer;
+    display: inline-block;
+    font-size: .8rem;
+    font-weight: 300;
+    height: 2.75rem;
+    letter-spacing: .2rem;
+    line-height: 2.75rem;
+    outline: 0;
+    padding: 0 1.25rem 0 1.35rem;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    white-space: nowrap;
+    margin-top: 1rem;
+}
+
+.buttonBuy:disabled {
+    background-color: darkgray !important;
+    cursor: default;
+}
+
+.backtext {
+    color: #606060;
+    margin: 1rem;
+    cursor: pointer;
+}
+
+.inputCC{
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    -webkit-transition: border-color .2s ease-in-out,box-shadow .2s ease-in-out,background-color .2s ease-in-out;
+    transition: border-color .2s ease-in-out,box-shadow .2s ease-in-out,background-color .2s ease-in-out;
+    background-color: transparent;
+    border-radius: 4px;
+    border: 1px solid #000;
+    color: inherit;
+    display: block;
+    outline: 0;
+    padding: 0.5rem;
+    text-decoration: none;
+    width: calc( 100% - 1.1rem);
+}

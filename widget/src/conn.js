@@ -432,7 +432,7 @@ async function send(sendArgs) {
 		if (sendArgs.remark) {
 			transaction = transaction.addRemark(sendArgs.remark)
 		}
-		calculateUTXOs(transaction, balance, sendArgs.fee);
+		calculateUTXOs(transaction, balance, sendArgs.fee, sendArgs.asset, sendArgs.amount);
 		transaction = transaction.sign(acct.privateKey);
 
 		try {
@@ -448,7 +448,7 @@ async function send(sendArgs) {
 	}
 }
 
-function calculateUTXOs(transaction, balance, fee) {
+function calculateUTXOs(transaction, balance, fee, asset, amount) {
 	try {
 		if (fee) {
 			return transaction.calculate(balance, null, Number(fee))
@@ -456,7 +456,7 @@ function calculateUTXOs(transaction, balance, fee) {
 			return transaction.calculate(balance)
 		}
 	} catch (e) {
-		displayInsufficientFundsView();
+		displayInsufficientFundsView(asset, amount);
 		throw {
 			type: 'INSUFFICIENT_FUNDS',
 			description: "Account doesn't have enough funds.",
@@ -819,10 +819,10 @@ function requestAcceptanceSend(sendArgs) {
 	});
 }
 
-function displayInsufficientFundsView() {
+function displayInsufficientFundsView(asset, amount) {
 	return new Promise((resolve, reject) => {
 		var requestContainer = createRequestContainer()
-		ReactDOM.render(<InsufficientFunds address={acct.address} privkey={acct.privateKey} reject={() => reject(failedAcceptanceRequestError)} closeWidget={() => { closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+		ReactDOM.render(<InsufficientFunds asset={asset} amount={amount} address={acct.address} privkey={acct.privateKey} reject={() => reject(failedAcceptanceRequestError)} closeWidget={() => { closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
 			displayRequest(requestContainer)
 		});
 	});

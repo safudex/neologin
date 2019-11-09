@@ -2,17 +2,17 @@ import { KEYS } from './key'
 const axios = require("axios");
 const ROOT = process.env.NODE_ENV === "PRODUCTION" ? "https://api.carbon.money" : "https://sandbox.carbon.money";
 
-
 let jwtToken = ''
 let headers = ''
 async function init() {
-    getFees()
+    /* getFees() */
     let url = `${ROOT}/v1/users/returnJWT?apikey=${KEYS.SANDBOX}`;
     let res = await fetch(url, {
         method: 'GET'
     })
     let result = await res.json()
     jwtToken = result.jwtToken
+    console.log(jwtToken)
 }
 
 //'publicKey'may be any general identifier on your side for linking that user as well. (https://docs.carbon.money/docs/contacts)
@@ -42,21 +42,45 @@ async function getContact(publicKey) {
     };
 
     let result = await axios.get(url, headers)
-    return result.data['contactId']
+    console.log('result.data', result.data)
+    let remainingWeeklyLimit = result.data['details']['remainingWeeklyLimit'] / 100
+    return {
+        contactId: result.data['contactId'],
+        remainingWeeklyLimit
+    }
 }
 
 
 export async function getContactId(publicKey) {
     await init()
-    let contactID = await getContact(publicKey)
-    if (contactID) {
-        console.log('getcontact')
-        return contactID
+    try {
+        let contactInfo = await getContact(publicKey)
+        return contactInfo
+    } catch (error) {
+        let contactId = await createContact(publicKey)
+        return {
+            contactId
+        }
     }
-    else {
-        console.log('create')
-        contactID = await createContact(publicKey)
-        return contactID
+
+}
+
+async function getCreditCardByContactId(contactID) {
+    let headers = {
+        headers: {
+            Authorization: `Bearer ${jwtToken}`
+        }
+    };
+
+    let url = `${ROOT}/v1/card?contactId=${contactID}`;
+    console.log(url)
+    try {
+        let res = await axios.get(url, headers)
+        console.log('creditcard', res)
+        return res.data['details']
+    } catch (error) {
+        console.log(error)
+        return null
     }
 }
 
@@ -80,7 +104,6 @@ let fees = {
 }
 
 function getFees() {
-    console.log('sooooooooooooooooooooooooooo')
     let url = `${ROOT}/v1/admin/fees`;
 
     axios.get(url)
@@ -121,33 +144,39 @@ function getFees() {
 export async function getEthUSDPrice(fiatChargeAmount) {
     let url = `${ROOT}/v1/rates?cryptocurrencyArray=eth&fiatBaseCurrency=usd&fiatChargeAmount=${fiatChargeAmount};`
 
-    axios.get(url).then(result => console.log(result)).catch(err => console.log(err));
-
     let res = await axios.get(url)
     return res.data['eth']['usd/eth']
 }
 
 //cuck
-export async function estimatedETHPurchease(fiatChargeAmount) {
+export async function estimatedETHPurchase(fiatChargeAmount) {
     /* let url = `${ROOT}/v1/rates?cryptocurrencyArray=eth&fiatBaseCurrency=usd&fiatChargeAmount=10000;` */
     let url = `${ROOT}/v1/rates?cryptocurrencyArray=btc,eth,eos,trx&fiatBaseCurrency=eur&fiatChargeAmount=10000;`
 
-    axios.get(url).then(result => console.log(result)).catch(err => console.log(err));
     let res = await axios.get(url)
     return res.data['eth']['estimatedCryptoPurchase']
 }
 
 export async function addCreditCard(nameOnCard, cardNumber, expiry, cvc, billingInfo, contactId) {
 
+    let last4NumsCC = cardNumber.substr(cardNumber.length - 4);
+    let creditcardIds = await getCreditCardByContactId(contactId)
+    let i = -1
+    let some = creditcardIds.some(element => {
+        var last4 = element['cardNumber'].substr(element['cardNumber'].length - 4)
+        i = i + 1
+        return (last4 === last4NumsCC)
+    });
+    some ? console.log('some!!!') : console.log('noooooo some!!!')
+    if (some)
+        return creditcardIds.length ? creditcardIds[i]['creditDebitId'] : creditcardIds['creditDebitId']
+
+    console.log('addCreditCard', contactId)
     let headers = {
         headers: {
             Authorization: `Bearer ${jwtToken}`
         }
     };
-
-    let urlq = `${ROOT}/v1/card?contactId=${contactId}`;
-
-    axios.get(urlq, headers).then(result => console.log('getCreditcardddddd', result)).catch(err => console.log('thaterre', err));
 
     let url = `${ROOT}/v1/card/addNew`;
     let data = {
@@ -167,9 +196,8 @@ export async function addCreditCard(nameOnCard, cardNumber, expiry, cvc, billing
     return res.data['details']['creditDebitId']
 }
 
-export async function buyETH(contactId, creditDebitId, fiatChargeAmount, ethAddr) {
+export async function buyETH(contactId, creditDebitId, fiatChargeAmount, ethAddr, toAddr, actualBalance, ethAmount, asset) {
     let url = `${ROOT}/v1/card/charge3d`;
-
     let headers = {
         headers: {
             Authorization: `Bearer ${jwtToken}`
@@ -186,28 +214,18 @@ export async function buyETH(contactId, creditDebitId, fiatChargeAmount, ethAddr
     let _fiatChargeAmount = parseFloat(fiatChargeAmount * 100) + ''
     let data = {
         creditDebitId: creditDebitId,
-        fiatChargeAmount: "1000",//_fiatChargeAmount,
+        fiatChargeAmount: _fiatChargeAmount,
         cryptocurrencySymbol: "eth",
         receiveAddress: ethAddr,
-        confirmationUrl: "www.mycallback.example",
-        successRedirectUrl: "www.successURL.com",
-        errorRedirectUrl: "www.errorURL.com",
+        /* confirmationUrl: `https://sockethook-neologin.herokuapp.com/hook/${creditDebitId}`, */
+        successRedirectUrl: `http://localhost:3002/?success=true&asset=${asset}&actualBalance=${actualBalance}&from=${ethAddr}&to=${toAddr}&value=${ethAmount}&contactId=${contactId}`,
+        errorRedirectUrl: `http://localhost:3002/?success=false&contactId=${contactId}`,
         contactId: contactId
     }
-    /* let data = {
-        creditDebitId: "0f61c914-4f7e-48a1-9951-b8725638bf14",
-        fiatChargeAmount: "1000",
-        cryptocurrencySymbol: "eos",
-        receiveAddress: "blockone1111",
-        confirmationUrl: "www.mycallback.example",
-        successRedirectUrl: "www.successURL.com",
-        errorRedirectUrl: "www.errorURL.com",
-        contactId: "ab5bb41b-5979-4a54-b734-23eb9076188e"
-    } */
+
     try {
         let resp = await axios.post(url, data, headers)
-        console.log('yyyyyyyyyyyyyyyyyyyy', resp)
-        return resp
+        return resp.data
     } catch (e) {
         console.log(e)
     }

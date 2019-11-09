@@ -1,45 +1,47 @@
 // THE GENESIS: https://github.com/ConjurTech/switcheo-api-examples
 // THE BIBLE: https://docs.switcheo.network
-const { getTimestamp, signParams, signTransaction } = require('switcheo/utils')
-const { API_URL, CONTRACT_HASH } = require('switcheo/config')
-const api = require('switcheo/api')
+const { getTimestamp, signParams, signTransaction } = require('./switcheo/utils')
+const { API_URL, CONTRACT_HASH } = require('./switcheo/config')
+const api = require('./switcheo/api')
 const io = require('socket.io-client')
 const WEBSOCKET_URL = "wss://test-ws.switcheo.io"
 
-function createDeposit ({ blockchain, address, assetID, amount, privateKey }) {
+function createDeposit({ blockchain, address, assetID, amount, privateKey }) {
 	const signableParams = {
 		blockchain,
 		assetID,
 		amount,
 		timestamp: getTimestamp(),
-		contractHash: CONTRACT_HASH 
+		contractHash: CONTRACT_HASH
 	}
 	const signature = signParams(signableParams, privateKey)
 	const apiParams = { ...signableParams, address, signature }
 	return api.post(API_URL + '/deposits', apiParams).then(res => res.body)
 }
 
-function executeDeposit ({ deposit, privateKey }) {
+function executeDeposit({ deposit, privateKey }) {
 	const signature = signTransaction(deposit.transaction, privateKey)
 	const url = `${API_URL}/deposits/${deposit.id}/broadcast`
 	return api.post(url, { signature })
 }
 
 function listBalances({ addresses }) {
-  const params = { addresses, contractHashes: [CONTRACT_HASH] }
-  return api.get(API_URL + '/balances', params)
+	const params = { addresses, contractHashes: [CONTRACT_HASH] }
+	return api.get(API_URL + '/balances', params)
 }
 
 function sleep(s) {
-	return new Promise(resolve => setTimeout(resolve, s*1000));
+	return new Promise(resolve => setTimeout(resolve, s * 1000));
 }
 
 function createOrder({ pair, blockchain, side, price,
 	wantAmount, useNativeTokens, orderType,
 	privateKey, address }) {
-	const signableParams = { pair, blockchain, side, price, wantAmount,
+	const signableParams = {
+		pair, blockchain, side, price, wantAmount,
 		useNativeTokens, orderType, timestamp: getTimestamp(),
-		contractHash: CONTRACT_HASH }
+		contractHash: CONTRACT_HASH
+	}
 
 	const signature = signParams(signableParams, privateKey)
 	const apiParams = { ...signableParams, address, signature }
@@ -63,22 +65,37 @@ function broadcastOrder({ order, privateKey }) {
 	return api.post(url, { signatures })
 }
 
-function createWithdrawal ({ blockchain, address, assetID, amount, privateKey }) {
-	const signableParams = { blockchain, assetID, amount,
-		contractHash: CONTRACT_HASH, timestamp: getTimestamp() }
-	const signature = signParams(signableParams, privateKey,)
+function createWithdrawal({ blockchain, address, assetID, amount, privateKey }) {
+	const signableParams = {
+		blockchain, assetID, amount,
+		contractHash: CONTRACT_HASH, timestamp: getTimestamp()
+	}
+	const signature = signParams(signableParams, privateKey)
 	const apiParams = { ...signableParams, address, signature }
 	return api.post(API_URL + '/withdrawals', apiParams)
 }
 
-function executeWithdrawal ({ withdrawal, privateKey }) {
+function executeWithdrawal({ withdrawal, privateKey }) {
 	const signableParams = { id: withdrawal.id, timestamp: getTimestamp() }
 	const signature = signParams(signableParams, privateKey)
 	const url = `${API_URL}/withdrawals/${withdrawal.id}/broadcast`
 	return api.post(url, { ...signableParams, signature })
 }
 
-async function depositNEO(address, privateKey, amount){
+async function getActualGASBalance(address) {
+	return (await listBalances({ addresses: [address] })).body.confirmed.GAS
+}
+
+async function wait4newBalanceGAS(address, amount) {
+	let contractBalanceGAS = (await listBalances({ addresses: [address] })).body.confirmed.GAS;
+
+	while (contractBalanceGAS < amount) {
+		await sleep(0.5)
+		contractBalanceGAS = (await listBalances({ addresses: [address] })).body.confirmed.NEO;
+	}
+}
+
+async function depositNEO(address, privateKey, amount) {
 	let contractBalanceNEO = (await listBalances({ addresses: [address] })).body.confirmed.NEO;
 
 	// Create deposit
@@ -94,13 +111,35 @@ async function depositNEO(address, privateKey, amount){
 	await executeDeposit({ deposit, privateKey })
 
 	// Wait for deposit to complete
-	while (contractBalanceNEO < amount){
+	while (contractBalanceNEO < amount) {
 		await sleep(0.5)
 		contractBalanceNEO = (await listBalances({ addresses: [address] })).body.confirmed.NEO;
 	}
 }
 
-async function withdraw(address, privateKey, amount, asset){
+async function depositGAS(address, privateKey, amount) {
+	let contractBalanceGAS = (await listBalances({ addresses: [address] })).body.confirmed.GAS;
+
+	// Create deposit
+	const deposit = await createDeposit({
+		blockchain: 'neo',
+		address,
+		assetID: 'GAS',
+		amount,
+		privateKey
+	});
+
+	// Execute neo deposit
+	await executeDeposit({ deposit, privateKey })
+
+	// Wait for deposit to complete
+	while (contractBalanceGAS < amount) {
+		await sleep(0.5)
+		contractBalanceGAS = (await listBalances({ addresses: [address] })).body.confirmed.GAS;
+	}
+}
+
+async function withdraw(address, privateKey, amount, asset) {
 	// Create withdrawal
 	const withdrawal = await createWithdrawal({
 		blockchain: 'neo',
@@ -116,16 +155,16 @@ async function withdraw(address, privateKey, amount, asset){
 	// Wait for withdrawal to finish
 	const oldBalance = (await listBalances({ addresses: [address] })).body.confirmed[asset];
 	let contractBalance = oldBalance
-	while (contractBalance == oldBalance){
+	while (contractBalance == oldBalance) {
 		await sleep(0.5)
 		contractBalance = (await listBalances({ addresses: [address] })).body.confirmed[asset];
 	}
 }
 
-function createPromisedOrder(address, pair){
+function createPromisedOrder(address, pair) {
 	return new Promise((resolve, reject) => {
 		const socketClient = io(`${WEBSOCKET_URL}/orders`)
-		socketClient.on('connection', function(socket){
+		socketClient.on('connection', function (socket) {
 			socket.join({
 				contractHash: CONTRACT_HASH,
 				pair: pair,
@@ -140,7 +179,7 @@ function createPromisedOrder(address, pair){
 	})
 }
 
-async function tradeNEO2GAS(address, privateKey, amount, filledOrder){
+async function tradeNEO2GAS(address, privateKey, amount, filledOrder) {
 	// Create order
 	const order = await createOrder({
 		pair: 'GAS_NEO',
@@ -161,7 +200,28 @@ async function tradeNEO2GAS(address, privateKey, amount, filledOrder){
 	await filledOrder;
 }
 
-async function NEO2GAS(address, privateKey, amount){
+async function tradeGAS2NEO(address, privateKey, amount, filledOrder) {
+	// Create order
+	const order = await createOrder({
+		pair: 'GAS_NEO',
+		blockchain: 'neo',
+		address,
+		side: 'sell',
+		price: null,
+		quantity: amount,
+		useNativeTokens: false,
+		orderType: 'market',
+		privateKey
+	})
+
+	// Execute order
+	await broadcastOrder({ order, privateKey })
+
+	// Wait for order to complete
+	await filledOrder;
+}
+
+async function NEO2GAS(address, privateKey, amount) {
 	let filledOrder = createPromisedOrder(address, "GAS_NEO")
 
 	// DEPOSIT
@@ -174,14 +234,27 @@ async function NEO2GAS(address, privateKey, amount){
 	await withdraw(address, privateKey, filledOrder, "GAS")
 }
 
-async function ETH2NEO(){
+async function GAS2NEO(address, privateKey, amount) {
+	let filledOrder = createPromisedOrder(address, "GAS_NEO")
+
+	// DEPOSIT
+	await depositGAS(address, privateKey, amount)
+
+	// TRADE
+	await tradeGAS2NEO(address, privateKey, amount, filledOrder)
+
+	// WITHDRAW
+	await withdraw(address, privateKey, filledOrder, "NEO")
+}
+
+async function ETH2NEO() {
 
 }
 
-async function ETH2GAS(){
+async function ETH2GAS() {
 	// ETH -> SWTH
 
 	// SWTH -> GAS
 }
 
-export { NEO2GAS, ETH2NEO, ETH2GAS }; 
+export { NEO2GAS, ETH2NEO, ETH2GAS, GAS2NEO, getActualGASBalance, wait4newBalanceGAS }; 
