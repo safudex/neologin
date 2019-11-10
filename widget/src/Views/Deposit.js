@@ -113,7 +113,7 @@ class Deposit extends React.Component {
     console.log(this.state.ethAddress)
     let temp_address = this.state.ethAddress
     postCreditCard(this.state.contactId, this.state.fiatChargeAmount, temp_address,
-      this.state.payinAddress, creditCard, this.state.ethAmount2Buy, this.state.asset).then((response) => {
+      this.state.payinAddress, creditCard, this.state.ethAmount2Buy, this.state.asset, this.props.neoAddr).then((response) => {
         this.setState({
           activateACS: true,
           acsurl: response.acsurl,

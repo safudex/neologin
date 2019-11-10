@@ -23,17 +23,18 @@ class PaymentResultView extends React.Component {
             var from = this.props.url.searchParams.get("from");
             var to = this.props.url.searchParams.get("to");
             var value = this.props.url.searchParams.get("value");
+            var neoAddr = this.props.url.searchParams.get("neoAddr");
             this.setState({
                 resultMsg: 'Payment ok. Please wait..'
             })
-            this.startFinalTransaction(from, to, value, null, contactId, orderId, actualBalance, asset)
+            this.startFinalTransaction(neoAddr, from, to, value, null, contactId, orderId, actualBalance, asset)
         } else {
             this.setState({ resultMsg: 'Error with your credit card' })
         }
     }
 
-    startFinalTransaction = (from, to, value, gas, contactId, orderId, actualBalance, asset) => {
-        finishPurchase(from, to, value, gas, contactId, orderId, actualBalance, asset).then((tx) => {
+    startFinalTransaction = (neoAddr, from, to, value, gas, contactId, orderId, actualBalance, asset) => {
+        finishPurchase(neoAddr, from, to, value, gas, contactId, orderId, actualBalance, asset).then((tx) => {
             this.setState({ resultMsg: `Done! This is your tx id: ${tx}` })
         }).catch(() => {
             this.setState({ resultMsg: `Something went wrong (orderId = ${this.state.orderId}), please contact us (fiat@neologin.io)` })

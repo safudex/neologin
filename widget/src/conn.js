@@ -277,7 +277,7 @@ function getApiProvider(network) {
 }
 
 // Does NOT need to be accepted
-async function getBalance(balanceArgs) {
+export async function getBalance(balanceArgs) {
 	try {
 		if (balanceArgs.params.constructor !== Array) {
 			balanceArgs.params = [balanceArgs.params];

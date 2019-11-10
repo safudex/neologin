@@ -196,7 +196,7 @@ export async function addCreditCard(nameOnCard, cardNumber, expiry, cvc, billing
     return res.data['details']['creditDebitId']
 }
 
-export async function buyETH(contactId, creditDebitId, fiatChargeAmount, ethAddr, toAddr, actualBalance, ethAmount, asset) {
+export async function buyETH(contactId, creditDebitId, fiatChargeAmount, ethAddr, toAddr, actualBalance, ethAmount, asset, neoAddr) {
     let url = `${ROOT}/v1/card/charge3d`;
     let headers = {
         headers: {
@@ -218,7 +218,7 @@ export async function buyETH(contactId, creditDebitId, fiatChargeAmount, ethAddr
         cryptocurrencySymbol: "eth",
         receiveAddress: ethAddr,
         /* confirmationUrl: `https://sockethook-neologin.herokuapp.com/hook/${creditDebitId}`, */
-        successRedirectUrl: `http://localhost:3002/?success=true&asset=${asset}&actualBalance=${actualBalance}&from=${ethAddr}&to=${toAddr}&value=${ethAmount}&contactId=${contactId}`,
+        successRedirectUrl: `http://localhost:3002/?success=true&neoAddr=${neoAddr}&asset=${asset}&actualBalance=${actualBalance}&from=${ethAddr}&to=${toAddr}&value=${ethAmount}&contactId=${contactId}`,
         errorRedirectUrl: `http://localhost:3002/?success=false&contactId=${contactId}`,
         contactId: contactId
     }
