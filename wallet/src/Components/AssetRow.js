@@ -56,7 +56,7 @@ class AssetRow extends React.Component {
             broadcastOverride: false,
         })
             .then(({ txid, nodeUrl }) => {
-                this.setState({ open: false })
+                this.setState({ open: false, rotate: false })
                 console.log('Send transaction success!');
                 console.log('Transaction ID: ' + txid);
                 console.log('RPC node URL: ' + nodeUrl);
