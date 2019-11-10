@@ -6,6 +6,13 @@ const api = require('./switcheo/api')
 const io = require('socket.io-client')
 const WEBSOCKET_URL = "wss://test-ws.switcheo.io"
 
+function getSwapPricing(pair) {
+	const apiParams = { pair }
+	return api.get(API_URL + '/exchange/swap_pricing', apiParams).then(res => res.body)
+}
+
+console.log(getSwapPricing('GAS_NEO'))
+
 function createDeposit({ blockchain, address, assetID, amount, privateKey }) {
 	const signableParams = {
 		blockchain,
