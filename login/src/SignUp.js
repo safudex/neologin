@@ -17,13 +17,9 @@ import { register, downloadPrivKey } from './loginAPI';
 import logo from './logoboxtxt.png';
 
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import InputBase from '@material-ui/core/InputBase';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import AccountCircle from '@material-ui/icons/EmailOutlined';
-import SearchIcon from '@material-ui/icons/Search';
-import DirectionsIcon from '@material-ui/icons/Directions';
+
+import Switch from '@material-ui/core/Switch';
+import Collapse from '@material-ui/core/Collapse';
 
 const styles = (theme => ({
 	'@global': {
@@ -51,25 +47,6 @@ const styles = (theme => ({
 	},
 }));
 
-const useStyles = makeStyles(theme => ({
-	root: {
-		padding: '2px 4px',
-		display: 'flex',
-		alignItems: 'center'
-	},
-	input: {
-		marginLeft: theme.spacing(1),
-		flex: 1,
-	},
-	iconButton: {
-		padding: 10,
-	},
-	divider: {
-		height: 28,
-		margin: 4,
-	},
-}));
-
 class SignUp extends React.Component {
 	constructor(props) {
 		super(props);
@@ -86,6 +63,10 @@ class SignUp extends React.Component {
 			handleLogin: props.handleLogin,
 			registered: false,
 			privkey: null,
+			showMore: false,
+			syncPrivKey: true,
+			importPrivKey: false,
+			importedPrivKey: null
 		};
 
 		this.handleInputChange = this.handleInputChange.bind(this);
@@ -96,10 +77,11 @@ class SignUp extends React.Component {
 		const target = event.target;
 		const value = target.type === 'checkbox' ? target.checked : target.value;
 		const name = target.name;
-
 		this.setState({
 			[name]: value
 		}, () => this.validate());
+		if (name === 'importPrivKey' && !value)
+			this.setState({ importedPrivKey: null })
 	}
 
 	async validate() {
@@ -146,12 +128,12 @@ class SignUp extends React.Component {
 			return;
 		}
 
-		register(this.state.email, this.state.password1, this.state.newsletter ? "true" : "false")
+		register(this.state.email, this.state.password1, this.state.newsletter ? "true" : "false", this.state.syncPrivKey, this.state.importedPrivKey)
 			.then(privkey => {
 				/*
 				*/
 				downloadPrivKey("This file contains your private key, which you will need in case you ever lose or forget your NeoLogin password.\nThis file must be kept in a safe place and not shared with anyone else, as doing so will put your funds and wallet at risk of being stolen.\nPrivate Key: " + privkey)
-					.then(() => this.state.handleLogin(privkey, false))
+					.then(() => this.state.handleLogin(privkey, !this.state.syncPrivKey))
 					.catch(() => {
 						this.setState({
 							privkey: privkey,
@@ -183,7 +165,7 @@ class SignUp extends React.Component {
 					{this.state.registered ? (
 						<div style={{ marginTop: '2em' }}>
 							<Typography component="p">
-								Please try to download your private key, you can also display it and then copy-paste it somewhere safe. Clicking on the Continue button will take you back to the dApp. 
+								Please try to download your private key, you can also display it and then copy-paste it somewhere safe. Clicking on the Continue button will take you back to the dApp.
 							</Typography>
 							<a download="private-key.txt" href={'data:text/plain;base64,' + window.btoa(craftDownloadMessage(this.state.privkey))}>
 								<Button
@@ -214,7 +196,7 @@ class SignUp extends React.Component {
 							</Button>
 						</div>
 					) : (
-						<form className={classes.form} onSubmit={this.handleSubmit}>
+							<form className={classes.form} onSubmit={this.handleSubmit}>
 								<Grid container spacing={2}>
 									<Grid item xs={12}>
 										<TextField
@@ -264,6 +246,46 @@ class SignUp extends React.Component {
 										/>
 									</Grid>
 									<Grid item xs={12}>
+										<div className={classes.root}>
+											<p style={{ margin: '0', cursor: 'pointer', color: '#78818c' }} onClick={() => this.setState({ showMore: !this.state.showMore })}>Advanced settings</p>
+											{/* <FormControlLabel
+												control={<Switch checked={checked} onChange={handleChange} />}
+												label="Show"
+											/> */}
+											<Collapse in={this.state.showMore}>
+
+												<FormControlLabel
+													control={<Switch checked={this.state.syncPrivKey} color="primary" name="syncPrivKey" onChange={this.handleInputChange} />}
+													label="Sync my encrypted key across devices"
+												/>
+												<p style={{ color: 'darkred', marginTop: '0' }}>
+													Warning: If you disable this option you assume all responsability for your keys, as they will not be recoverable once deleted from the website's storage.
+												</p>
+												<FormControlLabel
+													control={<Switch checked={this.state.importPrivKey} color="primary" name="importPrivKey" onChange={this.handleInputChange} />}
+													label="Import my private key"
+												/>
+												<Collapse in={this.state.importPrivKey}>
+													<div style={{ marginTop: '0.5rem' }}>
+														<TextField
+															variant="outlined"
+															fullWidth
+															name="importedPrivKey"
+															label="Private key"
+															type="password"
+															id="importedPrivKey"
+															value={this.state.password}
+															error={this.state.wrongPassword2 ? true : null}
+															helperText={this.state.wrongPassword2}
+															onChange={this.handleInputChange}
+															noValidate
+														/>
+													</div>
+												</Collapse>
+											</Collapse>
+										</div>
+									</Grid>
+									<Grid item xs={12}>
 										<FormControlLabel
 											control={<Checkbox value="newsletter" color="primary" name="newsletter" checked={this.state.newsletter} onChange={this.handleInputChange} />}
 											label="I want to receive inspiration, marketing promotions and updates via email."
@@ -299,7 +321,7 @@ class SignUp extends React.Component {
 									</Grid>
 								</Grid>
 							</form>
-					)}
+						)}
 				</div>
 			</Container>
 		);

@@ -58,7 +58,9 @@ function App() {
 
   function handleChange(event) {
     setNetwork(event.target.value);
-    getBalance(address, event.target.value)
+    getBalance(address, event.target.value);
+	neologin.removeEventListener(neologin.Constants.EventName.BLOCK_HEIGHT_CHANGED);
+    neologin.addEventListener(neologin.Constants.EventName.BLOCK_HEIGHT_CHANGED, data => getBalance(address, event.target.value));
   }
 
   useEffect(() => {
