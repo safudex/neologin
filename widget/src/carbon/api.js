@@ -1,9 +1,9 @@
 import { KEYS } from './key'
 const axios = require("axios");
-const ROOT = process.env.NODE_ENV === "PRODUCTION" ? "https://api.carbon.money" : "https://sandbox.carbon.money";
+const ROOT = "https://api.carbon.money"
 
 let jwtToken = ''
-let headers = ''
+
 async function init() {
     /* getFees() */
     let url = `${ROOT}/v1/users/returnJWT?apikey=${KEYS.SANDBOX}`;

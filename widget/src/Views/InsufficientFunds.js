@@ -84,14 +84,18 @@ class InsufficientFunds extends React.Component {
                   </Grid>
                 </Grid>
                 <Grid item xs style={{ width: '100%' }}>
-                  <button className='buttonContinue' onClick={() => this.setState({ wantsDeposit: true })}>
-                    Deposit
-            </button>
+                  <button className='buttonContinue' onClick={() => {
+                    console.log(this.props.network)
+                    this.props.network === 'MainNet' ? this.setState({ wantsDeposit: true }) : window.open('https://neowish.ngd.network/', '_blank')
+                  }}>
+                    {this.props.network === 'MainNet' ? 'Deposit' : 'Get free Testnet assets'}
+                  </button>
                 </Grid>
               </Grid >
             </div >
             :
             this.state.geoBlocked ? null : <Deposit amount={this.props.amount} asset={this.props.asset} privkey={this.props.privkey} addr={this.props.address} />
+
         }
       </>
     );
