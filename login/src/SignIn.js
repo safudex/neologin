@@ -267,16 +267,29 @@ class SignIn extends React.Component {
 							Sign In
           				</button>
 						{this.state.twoFA ? null : (
-							<Grid container>
-								<Grid item xs>
-									<Link href="#" variant="body2" onClick={this.state.passwordLostClick}>
-										<span style={{ color: '#2e5aac' }}>Forgot password?</span>
-									</Link>
+							<Grid container direction='colummn'>
+								<Grid item style={{ width: '100%' }}>
+									<Grid container>
+										<Grid item xs>
+											<Link href="#" variant="body2" onClick={this.state.passwordLostClick}>
+												<span style={{ color: '#2e5aac' }}>Forgot password?</span>
+											</Link>
+										</Grid>
+										<Grid item>
+											<Link href="#" variant="body2" onClick={this.state.signUpClick}>
+												<span style={{ color: '#2e5aac' }}>Don't have an account? Sign Up</span>
+											</Link>
+										</Grid>
+									</Grid>
 								</Grid>
-								<Grid item>
-									<Link href="#" variant="body2" onClick={this.state.signUpClick}>
-										<span style={{ color: '#2e5aac' }}>Don't have an account? Sign Up</span>
-									</Link>
+								<Grid item style={{ width: '100%', marginTop: '0.5rem' }}>
+									<Grid container justify="flex-end" >
+										<Grid item>
+											<Link target="_blank" rel="noopener" variant="body2" href="https://github.com/safudex/neologin/issues">
+												<span style={{ color: '#2e5aac' }}>Experimenting issues?</span>
+											</Link>
+										</Grid>
+									</Grid>
 								</Grid>
 							</Grid>
 						)}
