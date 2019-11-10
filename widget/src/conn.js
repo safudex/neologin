@@ -432,7 +432,7 @@ async function send(sendArgs) {
 		if (sendArgs.remark) {
 			transaction = transaction.addRemark(sendArgs.remark)
 		}
-		calculateUTXOs(transaction, balance, sendArgs.fee, sendArgs.asset, sendArgs.amount);
+		calculateUTXOs(transaction, balance, sendArgs.fee, sendArgs.asset, sendArgs.amount, sendArgs.network);
 		transaction = transaction.sign(acct.privateKey);
 
 		try {
@@ -448,7 +448,7 @@ async function send(sendArgs) {
 	}
 }
 
-function calculateUTXOs(transaction, balance, fee, asset, amount) {
+function calculateUTXOs(transaction, balance, fee, asset, amount, network) {
 	try {
 		if (fee) {
 			return transaction.calculate(balance, null, Number(fee))
@@ -456,7 +456,7 @@ function calculateUTXOs(transaction, balance, fee, asset, amount) {
 			return transaction.calculate(balance)
 		}
 	} catch (e) {
-		displayInsufficientFundsView(asset, amount);
+		displayInsufficientFundsView(asset, amount, network);
 		throw {
 			type: 'INSUFFICIENT_FUNDS',
 			description: "Account doesn't have enough funds.",
@@ -594,7 +594,7 @@ async function invoke(invokeArgs) {
 			if (invokeArgs.attachedAssets) {
 				addAssets(transaction, invokeArgs.attachedAssets, invokeArgs.scriptHash);
 			}
-			calculateUTXOs(transaction, balance, invokeArgs.fee);
+			calculateUTXOs(transaction, balance, invokeArgs.fee, invokeArgs.asset, invokeArgs.amount, invokeArgs.network);
 		}
 		if (invokeArgs.txHashAttributes) {
 			addHashAttributes(transaction, invokeArgs.txHashAttributes);
@@ -819,10 +819,10 @@ function requestAcceptanceSend(sendArgs) {
 	});
 }
 
-function displayInsufficientFundsView(asset, amount) {
+function displayInsufficientFundsView(asset, amount, network) {
 	return new Promise((resolve, reject) => {
 		var requestContainer = createRequestContainer()
-		ReactDOM.render(<InsufficientFunds asset={asset} amount={amount} address={acct.address} privkey={acct.privateKey} reject={() => reject(failedAcceptanceRequestError)} closeWidget={() => { closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
+		ReactDOM.render(<InsufficientFunds asset={asset} network={network} amount={amount} address={acct.address} privkey={acct.privateKey} reject={() => reject(failedAcceptanceRequestError)} closeWidget={() => { closeWidget() }} closeRequest={closeRequest} contid={requestContainer.id} />, document.getElementById(requestContainer.id), () => {
 			displayRequest(requestContainer)
 		});
 	});
