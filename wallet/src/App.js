@@ -12,6 +12,7 @@ import AssetRow from './Components/AssetRow'
 import Menu from '@material-ui/core/Menu';
 import neologin from 'neologin'
 import { withTranslation } from 'react-i18next';
+
 import { server } from './config';
 
 function drawQR(address) {
@@ -85,11 +86,19 @@ function App({ t, i18n }) {
   }, [])
 
   const [anchorEl, setAnchorEl] = React.useState(null);
+<<<<<<< HEAD
 
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
   };
 
+=======
+
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+
+>>>>>>> issues link /wallet
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -165,12 +174,18 @@ function App({ t, i18n }) {
                 >
                   <MenuItem onClick={() => {
                     handleClose()
+<<<<<<< HEAD
                     window.open(server.includes("localhost") ? server + "?settings=true" : server + "?settings=true/", 'NeoLogin - ' + t('login'), 'width=400,height=660')
                   }}>{t("menu_settings")}</MenuItem>
+=======
+                    window.open(server.includes("localhost") ? server + "?settings=true" : server + "?settings=true/", 'NeoLogin - Login', 'width=400,height=660')
+                  }}>Settings</MenuItem>
+>>>>>>> issues link /wallet
                   <MenuItem onClick={() => {
                     handleClose()
                     window.open("https://github.com/safudex/neologin/issues")
                   }}>
+<<<<<<< HEAD
                     {t("menu_issues")}
                   </MenuItem>
                   <MenuItem onClick={() => {
@@ -178,6 +193,9 @@ function App({ t, i18n }) {
                     i18n.changeLanguage(i18n.language === 'zh' ? 'en' : 'zh')
                   }}>
                     {t("inverse:menu_language")}
+=======
+                    Issues
+>>>>>>> issues link /wallet
                   </MenuItem>
                 </Menu>
               </FormControl>
