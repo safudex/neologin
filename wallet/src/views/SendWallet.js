@@ -2,8 +2,6 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 
-import copyIcon from '../imgs/copy.png'
-
 import neologin from 'neologin';
 
 import TextField from '@material-ui/core/TextField';
@@ -72,8 +70,6 @@ class SendWallet extends React.Component {
                     });
 
             }).catch((e) => console.log(e));
-
-
     }
 
     render() {
