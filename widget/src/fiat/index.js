@@ -2,7 +2,9 @@ import { getExchangeAmount, createTransaction, getFixedExchange, getExchangeAmou
 import { getContactId, getEthUSDPrice, addCreditCard, buyETH, getStatus } from '../carbon/api'
 import Web3 from 'web3'
 import TOKENS from './tokens'
-import { GAS2NEO, wait4newBalanceGAS, getActualGASBalance } from '../swapAPI'
+import { GAS2NEO } from '../swapAPI'
+import { getBalance } from '../conn'
+
 const Tx = require('ethereumjs-tx').Transaction
 
 export async function getFinalAmount(amount, calculatingPrice, asset) {
@@ -78,10 +80,10 @@ export async function startTransaction(neoAddr, neoPrivkey, ethAmount2Buy) {
 }
 
 
-export async function postCreditCard(contactId, fiatChargeAmount, address, payinAddress, creditCard, ethAmount, asset) {
+export async function postCreditCard(contactId, fiatChargeAmount, address, payinAddress, creditCard, ethAmount, asset, neoAddr) {
     let creditDebitId = await addCreditCard(creditCard.card_fullName, creditCard.card_number, creditCard.card_expiry, creditCard.card_cvc, creditCard.creditCardBillingInfo, contactId)
     let actualBalance = await getActualBalance(address)
-    let response = await buyETH(contactId, creditDebitId, fiatChargeAmount, address, payinAddress, actualBalance, ethAmount, asset)
+    let response = await buyETH(contactId, creditDebitId, fiatChargeAmount, address, payinAddress, actualBalance, ethAmount, asset, neoAddr)
     if (response.charge3denrolled !== 'Y' && response.errorcode !== 0) {
         //  require a different card
         return Promise.reject(response)
@@ -91,7 +93,7 @@ export async function postCreditCard(contactId, fiatChargeAmount, address, payin
 
 }
 
-export function finishPurchase(address, payinAddress, amountExpectedTo, estimatedGas, contactID, orderID, actualBalance, asset) {
+export function finishPurchase(neoAddr, address, payinAddress, amountExpectedTo, estimatedGas, contactID, orderID, actualBalance, asset) {
     return new Promise((resolve, reject) => {
         let checkStatus = setInterval(async () => {
             let code = ''
@@ -104,7 +106,7 @@ export function finishPurchase(address, payinAddress, amountExpectedTo, estimate
             if (code === "100") {
                 clearInterval(checkStatus)
                 //una vez mis eths se han pagado, ahora checkeo que han llegado
-                checkIfEthsHasArrivedAndSend2Changelly(address, payinAddress, amountExpectedTo, actualBalance, asset, resolve, reject)
+                checkIfEthsHasArrivedAndSend2Changelly(neoAddr, address, payinAddress, amountExpectedTo, actualBalance, asset, resolve, reject)
             } else if (code === '-1' || code === '2' || code === '3' || code === '7000') {
                 return reject(code)
             }
@@ -112,14 +114,14 @@ export function finishPurchase(address, payinAddress, amountExpectedTo, estimate
     })
 }
 
-function checkIfEthsHasArrivedAndSend2Changelly(address, payinAddress, amountExpectedTo, actualBalance, asset, resolve, reject) {
+function checkIfEthsHasArrivedAndSend2Changelly(neoAddr, address, payinAddress, amountExpectedTo, actualBalance, asset, resolve, reject) {
     let checkBalance = setInterval(async () => {
         let newBalance = await getActualBalance(address)
         console.log('balances', address, actualBalance, newBalance)
         if (actualBalance < newBalance) {
             clearInterval(checkBalance)
             try {
-                await sendTransaction(address, payinAddress, amountExpectedTo, asset, resolve, reject)
+                await sendTransaction(neoAddr, address, payinAddress, amountExpectedTo, asset, resolve, reject)
             } catch (e) {
                 return reject()
             }
@@ -141,7 +143,7 @@ export async function getActualBalance(addr) {
     });
 }
 
-async function sendTransaction(addr, toAddress, amountToSend, asset, resolve, reject) {
+async function sendTransaction(neoaddr, addr, toAddress, amountToSend, asset, resolve, reject) {
     let gasPrice = await web3.eth.getGasPrice()
     let gasLimit = await web3.eth.getBlock("latest")
     gasLimit = gasLimit.gasLimit
@@ -163,13 +165,13 @@ async function sendTransaction(addr, toAddress, amountToSend, asset, resolve, re
     tx.sign(privKey);
     var serializedTx = tx.serialize();
 
-    let actualBalanceGAS = await getActualGASBalance()
+    let actualBalance = await getBalanceByAsset(neoaddr, asset)
 
     web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'), async (err, hash) => {
         if (!err) {
             console.log('Txn Sent and hash is ' + hash);
             if (asset === 'NEO') {
-                await wait4newBalanceGAS(addr, actualBalanceGAS)
+                await wait4newBalance(actualBalance, neoaddr, asset)
                 await GAS2NEO(resolve, reject)
                 resolve()
             }
@@ -183,8 +185,20 @@ async function sendTransaction(addr, toAddress, amountToSend, asset, resolve, re
     });
 }
 
-async function wait4newBalance(balance, addr) {
+async function wait4newBalance(balance, addr, asset) {
     let newBalance = 0
     while (balance > newBalance)
-        newBalance = await getActualBalance(addr)
+        newBalance = await getBalanceByAsset(addr, asset)
+}
+
+async function getBalanceByAsset(addr, asset) {
+    return (await getBalance({
+        "params": [
+            {
+                "address": addr,
+                "assets": [asset]
+            }
+        ],
+        "network": "MainNet"
+    }))[addr]['amount']
 }
