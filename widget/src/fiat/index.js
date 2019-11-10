@@ -20,7 +20,7 @@ export async function getFinalAmount(amount, calculatingPrice, asset) {
     let txPriceInEth = web3.utils.fromWei(String(txPriceInWei), 'ether')
     let changellyDepositNetFee = txPriceInEth / carbonETHPrice
 
-    let changellySwapNetFee = changellyDepositNetFee //?
+    let changellySwapNetFee = (0.1 / (changellyETH2GASRate)) * carbonETHPrice //0.1GAS changelly fee
 
     let carbonFee = (0.03 * priceInUSD > 2) ? 0.03 * priceInUSD : 2
 
@@ -33,16 +33,19 @@ export async function getFinalAmount(amount, calculatingPrice, asset) {
     if (asset === 'NEO') {
         let switcheofee = 1
 
-
         totalFee += switcheofee
         fiatChargeAmount = priceInUSD + totalFee
     }
 
+    fiatChargeAmount = (fiatChargeAmount).toFixed(2)
+    totalFee = (totalFee).toFixed(2)
+    priceInUSD = (priceInUSD).toFixed(2)
+
     return {
         fiatChargeAmount,
-        minAmountOK,
         priceInUSD,
         totalFee,
+        minAmountOK,
         calculatingPrice,
         ethAmount2Buy
     }

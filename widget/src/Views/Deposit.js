@@ -51,14 +51,11 @@ class Deposit extends React.Component {
     this.setState({ calculatingPrice: _calculatingPrice }, () => {
       getFinalAmount(value, _calculatingPrice, asset).then((res) => {
         if (res.calculatingPrice == this.state.calculatingPrice) {
-          let fixedDecimalsTotal = parseFloat(res.fiatChargeAmount).toFixed(2)
-          let fixedDecimalsFee = parseFloat(res.totalFee).toFixed(2)
-          let fixedDecimalsAmount = parseFloat(res.priceInUSD).toFixed(2)
           if (this.state.calculatingPrice)
             this.setState({
-              fiatChargeAmount: fixedDecimalsTotal,
-              totalFee: fixedDecimalsFee,
-              priceInUSD: fixedDecimalsAmount,
+              fiatChargeAmount: res.fiatChargeAmount,
+              totalFee: res.totalFee,
+              priceInUSD: res.priceInUSD,
               calculatingPrice: 0,
               minAmountOK: res.minAmountOK,
               ethAmount2Buy: res.ethAmount2Buy
