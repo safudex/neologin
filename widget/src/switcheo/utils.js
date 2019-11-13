@@ -4,6 +4,12 @@ const { mapKeys, snakeCase } = require('lodash')
 const { BigNumber } = require('bignumber.js')
 const { ASSET_DECIMALS } = require('./assets')
 
+const stableStringify = require('json-stable-stringify')
+
+function getScriptHashFromAddress(address) {
+  return wallet.getScriptHashFromAddress(address)
+}
+
 function signMessage(message, privateKey) {
   return wallet.generateSignature(message, privateKey)
 }
@@ -11,7 +17,8 @@ function signMessage(message, privateKey) {
 function encodeMessage(message) {
   const messageHex = u.str2hexstring(message)
   const messageLengthHex = u.num2VarInt(messageHex.length / 2)
-  const encodedMessage = `010001f0${messageLengthHex}${messageHex}0000`
+  const concatenatedString = messageLengthHex + messageHex
+  const encodedMessage = `010001f0${concatenatedString}0000`
   return encodedMessage
 }
 
@@ -44,7 +51,8 @@ function convertHashToUrlParams(params) {
 }
 
 function signParams(params, privateKey) {
-  const payload = stringifyParams(params)
+  const payload = stableStringify(params)
+  //const payload = stringifyParams(params)
   if (payload.length > 252) {
     throw new Error('Cannot sign a message more than 252 characters in length')
   }
@@ -71,5 +79,6 @@ module.exports = {
   getTimestamp,
   toAssetAmount,
   signMessage,
-  convertKeysToSnakeCase
+  convertKeysToSnakeCase,
+  getScriptHashFromAddress
 }
