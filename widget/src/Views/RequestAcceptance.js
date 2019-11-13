@@ -8,8 +8,7 @@ import './styles.css'
 
 const rejectError = {
   type: 'CONNECTION_DENIED',
-  description: 'The user rejected the request to connect with your dApp.',
-  data: ''
+  description: 'The user rejected the request to connect with your dApp.'
 }
 
 class RequestAcceptance extends React.Component {

@@ -69,7 +69,7 @@ const connection = connectToChild({
 	}
 });
 
-const promiseMethods = ["getProvider", "getNetworks", "getAccount", "getPublicKey", "getBalance", "getStorage", "invokeRead", "verifyMessage", "getBlock", "getBlockHeight", "getTransaction", "getApplicationLog", "send", "invoke", "invokeMulti", "signMessage", "deploy", "encrypt", "decrypt"]; //Doesn't include addEventListener nor removeEventListener as these don't return promises
+const promiseMethods = ["getProvider", "getNetworks", "getAccount", "getPublicKey", "getBalance", "getStorage", "invokeRead", "verifyMessage", "getBlock", "getBlockHeight", "getTransaction", "getApplicationLog", "send", "invoke", "invokeMulti", "signMessage", "deploy", "encrypt", "decrypt", "disconnect"]; //Doesn't include addEventListener nor removeEventListener as these don't return promises
 
 let neologin = { removeEventListener, addEventListener };
 

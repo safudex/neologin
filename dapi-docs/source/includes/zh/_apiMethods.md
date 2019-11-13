@@ -1,8 +1,8 @@
-# API Methods
+# API方法
 
-## Read Methods
+## 读取方法
 
-Read methods do not alter the state of the blockchain. It can help you query information about your user, and provide you with relevant information:
+读取方法不会改变区块链的状态。他能帮助你请求用户的信息，随即提供给你重要的信息:
 
 ### getProvider
 
@@ -75,7 +75,7 @@ neologin.getProvider()
 });
 ```
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -110,33 +110,33 @@ neologin.getProvider()
 }
 ```
 
-Returns information about the dAPI provider, including who this provider is, the version of their dAPI, and the NEP that the interface is compatible with.
+返回关于dAPI供应者的信息，包含此供应者是谁，他的dAPI版本以及跟接口兼容的NEP。
 
-##### Input Arguments
+##### 输入参数
 
 None
 
-##### Success Response
+##### 成功返回
 | Parameter     | Type     | Description                                                      |
 |:------------- |:-------- |:---------------------------------------------------------------- |
-| name          | String   | The name of the wallet provider                                  |
-| website       | String   | The website of the wallet provider                               |
-| version       | String   | The version of the dAPI that the the wallet supports             |
-| compatibility | String[] | A list of all applicable NEPs which the wallet provider supports |
-| extra         | Object   | Provider specific attributes                                     |
+| name     | String   | 线上钱包供应者的名字|                                 |
+| website  | String   | 线上钱包供应者的网站|                 |
+| version      | String   | 线上钱包支持的dAPI版本   |
+| compatibility | String[] | 线上钱包供应者支持的能用的NEPs|
+| extra         | Object   | 供应者的特定属性 |
 
 ###### extra
 | Parameter | Type   | Description               |
 | --------- | ------ | ------------------------- |
-| theme     | string | UI theme of the provider  |
-| currency  | string | Base currency set by user |
+| theme     | string | 供应者的UI主题|
+| currency  | string | 用户设置的基础货币|
 
-##### Error Response
+##### 错误返回
 | Parameter   | Type    | Description                                  |
 |:----------- |:------- |:-------------------------------------------- |
-| type        | String  | The type of error which has occured          |
-| description | String? | A description of the error which has occured |
-| data        | String? | Any raw data associated with the error       |
+| type        | String  | 发生的错误的类型 |
+| description | String? | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据 |
 
 ### getNetworks
 
@@ -191,7 +191,7 @@ neologin.getNetworks()
 });
 ```
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -206,26 +206,25 @@ neologin.getNetworks()
 }
 ```
 
-Returns the networks the wallet provider has available to connect to, along with the default network the wallet is currently set to.
+返回线上钱包供应者允许连接的NETWORKS，以及当前钱包的默认NETWORK。
 
-##### Input Arguments
+##### 输入参数
 
 None
 
-##### Success Response
+##### 成功返回
 
 | Parameter      | Type     | Description                                                        |
 |:-------------- |:-------- |:------------------------------------------------------------------ |
-| networks       | String[] | A list of all networks which this wallet provider allows access to |
-| defaultNetwork | String   | Network the wallet is currently set to                             |
+| networks       | String[] | 此线上钱包供应者允许访问的所有Networks列表|
+| defaultNetwork | String   | 目前线上钱包默认的Network |
 
-##### Error Response
+##### 错误返回
 | Parameter   | Type    | Description                                  |
 |:----------- |:------- |:-------------------------------------------- |
-| type        | String  | The type of error which has occured          |
-| description | String? | A description of the error which has occured |
-| data        | String? | Any raw data associated with the error       |
-
+| type        | String  | 发生的错误的类型 |
+| description | String? | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据 |
 
 ### getAccount
 
@@ -260,10 +259,11 @@ neologin.getAccount()
   } = account;
 
   console.log('Account address: ' + address);
-  console.log('Account label: ' + label);
+  console.log(
+  switch(type) {'Account label: ' + label);
 })
 .catch(({type, description, data}) => {
-  switch(type) {
+
     case "NO_PROVIDER":
       console.log('No provider available.');
       break;
@@ -274,8 +274,7 @@ neologin.getAccount()
 });
 ```
 
-
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -292,19 +291,18 @@ neologin.getAccount()
 
 Return the Account that is currently connected to the dApp.
 
-##### Success Response
+##### 成功返回
 | Parameter | Type   | Description                                                        |
 |:--------- |:------ |:------------------------------------------------------------------ |
-| address   | String | The address of the account that is currently connected to the dapp |
-| label     | String | A label the users has set to identify their wallet                 |
+| address   | String | 目前连接到dAPP的账户地址|
+| label     | String | 用户为识别其线上钱包而设置的标签 |
 
-##### Error Response
+##### 错误返回
 | Parameter   | Type    | Description                                  |
 |:----------- |:------- |:-------------------------------------------- |
-| type        | String  | The type of error which has occured          |
-| description | String? | A description of the error which has occured |
-| data        | String? | Any raw data associated with the error       |
-
+| type        | String  | 发生的错误的类型 |
+| description | String? | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据 |
 
 ### getPublicKey
 
@@ -353,7 +351,7 @@ neologin.getPublicKey()
 });
 ```
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -368,21 +366,20 @@ neologin.getPublicKey()
 }
 ```
 
-Return the public key of the Account that is currently connected to the dApp.
+返回目前连接到dAPP上的账户的公开密钥。
 
-##### Success Response
+##### 成功返回
 | Parameter | Type   | Description                                                           |
 |:--------- |:------ |:--------------------------------------------------------------------- |
-| address   | String | The address of the account that is currently connected to the dapp    |
-| publicKey | String | The public key of the account that is currently connected to the dapp |
+| address   | String | 目前连接到dAPP上的账户地址    |
+| publicKey | String | 目前连接到dAPP上的账户公钥|
 
-##### Error Response
+##### 错误返回
 | Parameter   | Type    | Description                                  |
 |:----------- |:------- |:-------------------------------------------- |
-| type        | String  | The type of error which has occured          |
-| description | String? | A description of the error which has occured |
-| data        | String? | Any raw data associated with the error       |
-
+| type        | String  | 发生的错误的类型 |
+| description | String? | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据 |
 
 ### getBalance
 
@@ -668,51 +665,48 @@ neologin.getBalance({
 }
 ```
 
+允许dAPP查询用户的资产余额，包含(NEO/GAS)和NEP-5 Tokens。
 
-Allows the DAPP to query the balance of a user, this includes both native assets (NEO/GAS) and NEP-5 tokens
-
-##### Input Arguments
-| Parameter | Type                               | Description                                                                              |
+##### 输入参数
+|Parameter| Type | Description   |
 |:--------- |:---------------------------------- |:---------------------------------------------------------------------------------------- |
-| params    | BalanceRequest or BalanceRequest[] | A list of Balance Request Objects, specifying which addresses, and which assets to query |
-| network   | String                             | The call will only work for the networks available in the GetNetworks command            |
+| params    | BalanceRequest or BalanceRequest[] | 请求咨询的余额目标列表，指定要查询的地址和哪些资产。 |
+| network   | String                             | 此行动仅适用于在GetNetworks命令里的Networks。  |
 
-###### Balance Request
+###### BalanceRequest
 | Parameter  | Type     | Description                                                                   |
 |:---------- |:-------- |:----------------------------------------------------------------------------- |
-| address    | String   | The address whose balance you want to query                                   |
-| assets     | String[] | A list of contract hash (or symbold on MainNet only) to query the balance for |
-| fetchUTXO? | boolean  | The response will fetch NEO and GAS UTXO's if this attribute is true          |
+| address    | String   | 你想要余额查询的地址   |
+| assets     | String[] | 用于查询余额的HASH合同列表(或单单在主Network的Symbold)|
+| fetchUTXO? | boolean  | 如果此属性为True,答案将会获得NEO和GAS UTXO’S  |
 
-##### Success Response
+##### 成功返回
 | Parameter | Type              | Description                                                                          |
 |:--------- |:----------------- |:------------------------------------------------------------------------------------ |
-| address_1 | BalanceResponse[] | This key is the actual address of the query eg. "AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru" |
-| address_2 | BalanceResponse[] | This key is the actual address of the query eg. "AbKNY45nRDy6B65YPVz1B6YXiTnzRqU2uQ" |
-| address_n | BalanceResponse[] | This key is the actual address of the query eg. "AUdawyrLMskxXMUE8osX9mSLKz8R7777kE" |
+| address_1 | BalanceResponse[] | 这是目前查询的地址密钥 (例如 "AeysVbKWiLSuSDhg7DTzUdDyYYKfgjojru")|
+| address_2 | BalanceResponse[] | 这是目前查询的地址密钥 (例如 "AbKNY45nRDy6B65YPVz1B6YXiTnzRqU2uQ")|
+| address_n | BalanceResponse[] | 这是目前查询的地址密钥 (例如 "AUdawyrLMskxXMUE8osX9mSLKz8R7777kE")|
 
 <aside class="notice">
-The amount of addresses is n where n is the number of addresses specified in your query
+地址的数量为N，N是你在查询命令中的指定地址数量。
 </aside>
-
 
 ###### BalanceResponse
 | Parameter | Type    | Description                                                                                          |
 |:--------- |:------- |:---------------------------------------------------------------------------------------------------- |
-| assetID   | String  | ID of the given asset                                                                                |
-| symbol    | String  | Symbol of the given asset                                                                            |
-| amount    | String  | Double Value of the balance represented as a String                                                  |
-| unspent   | UTXO[]? | If fetch utxo's was turned on then the utxo array will be returned for the native assets NEO and GAS |
+| assetID   | String  | 给与的资产ID                                                                               |
+| symbol    | String  | 给与的资产Symbol                                                                          |
+| amount    | String  | 代表着资产的String 。                                                  |
+| unspent   | UTXO[]? | 如果获得的UTXO-S打开后，UTXO数组将会返回给NEO和GAS|
 
 ###### UTXO
 | Parameter      | Type   | Description                                                           |
 |:-------------- |:------ |:--------------------------------------------------------------------- |
-| asset          | String | Script hash of the native asset                                       |
-| createdAtBlock | String | Block number where this utxo was created                              |
-| index          | Int    | Output index of the UTXO relative to the txid in which it was created |
-| txid           | String | The transaction id of this UTXO                                       |
-| value          | String | The double value of this UTXO represented as a String                 |
-
+| asset          | String | NEO/GAS的HASH脚本 |
+| createdAtBlock | String | 在此区块号创建了UTXO|
+| index          | Int    | 在TXID创造了UTXO的输出索引|
+| txid           | String | 此UTXO的交易ID                                      |
+| value          | String | 代表着此UTXO的String|
 
 ### getStorage
 
@@ -765,7 +759,7 @@ neologin.getStorage({
 });
 ```
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -778,29 +772,28 @@ neologin.getStorage({
 }
 ```
 
+返回在合同储存中的原始数值。
 
-Returns the raw value located in contract storage
-
-##### Input Arguments
+##### 输入参数
 | Parameter  | Type   | Description                                                  |
 |:---------- |:------ |:------------------------------------------------------------ |
-| scriptHash | String | Scripthash of the contract whose storage you are querying on |
-| key        | String | Key of the storage value to retrieve from the contract       |
-| network    | String | Network alias to submit this request to.                     |
+| scriptHash | String | 你正在咨询的合同存储的HASH脚本。|
+| key        | String | 为了能从合同中找回储值的密钥。 |
+| network    | String | 想提交此请求的Network名字。
 
-##### Success Response
+##### 成功返回
 | Parameter | Type   | Description                               |
 |:--------- |:------ |:----------------------------------------- |
-| result    | String | The raw value located in contract storage |
+| result    | String | 在合同储存中的原始数值。|
 
-##### Error Response
+##### 错误返回
 | Parameter   | Type    | Description                                  |
 |:----------- |:------- |:-------------------------------------------- |
-| type        | String  | The type of error which has occured          |
-| description | String? | A description of the error which has occured |
-| data        | String? | Any raw data associated with the error       |
+| type        | String  | 发生的错误的类型 |
+| description | String? | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据 |
 
-### invokeRead
+### invokeRead 
 
 ```typescript
 neologin.invokeRead({
@@ -869,7 +862,7 @@ neologin.invokeRead({
 });
 ```
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -898,43 +891,42 @@ neologin.invokeRead({
 }
 ```
 
-Execute a contract invocation in read-only mode.
+在只读模式下执行调用合同。
 
-##### Input Arguments
+##### 输入参数
 | Parameter  | Type       | Description                                                                                              |
 |:---------- |:---------- |:-------------------------------------------------------------------------------------------------------- |
-| scriptHash | String     | The script hash of the contract you want to invoke a read on                                             |
-| operation  | String     | The operation on the smart contract that you want to invoke a read on                                    |
-| args       | Argument[] | The input arguments necessary to perform this operation                                                  |
-| network    | String     | Network alias to submit this request to. If omitted, will default the network which the wallet is set to |
+| scriptHash | String     | 你想要调用来读的合同HASH脚本。                                             |
+| operation  | String     | 你想要调用来读取的智能合约里的执行方法。 |
+| args       | Argument[] | 执行此操作所需的参数输入|
+| network    | String     | 你想要提交此请求的Network名，如果省略，将为线上钱包设置的默认Network。|
 
 ###### Argument
 | Parameter | Type   | Description                                               |
 |:--------- |:------ |:--------------------------------------------------------- |
-| type      | String | The type of the argument with you are using               |
-| value     | String | String representation of the argument which you are using |
+| type      | String | 你正在使用的参数类型  |
+| value     | String | 你正在使用的参数的String代表。|
 
 <aside class =notice>
-Available types are "String"|"Boolean"|"Hash160"|"Hash256"|"Integer"|"ByteArray"|"Array"|"Address"
+可用的类型是 "String"|"Boolean"|"Hash160"|"Hash256"|"Integer"|"ByteArray"|"Array"|"Address"
 </aside>
 
-##### Success Response
-The wallet will return the direct response from the RPC node.
+##### 成功返回
+线上钱包将直接返回从RPC接口收到的答案。
 
 | Parameter    | Type       | Description                                                                                   |
 |:------------ |:---------- |:--------------------------------------------------------------------------------------------- |
-| script       | String     | The script which was run                                                                      |
-| state        | String     | Status of the executeion                                                                      |
-| gas_consumed | String     | Estimated amount of GAS to be used to execute the invocation. (Up to 10 free per transaction) |
-| stack        | Argument[] | An array of response arguments                                                                |
+| script       | String     | 运行的脚本                                                                     |
+| state        | String     | 运行状态|
+| gas_consumed | String     | 预估用以执行调用的GAS费用。(每个交易最多免费10次) |
+| stack        | Argument[] | 具体返回参数的数据组|
 
-##### Error Response
-| Parameter   | Type    | Description                                  |
+##### 错误返回
+| Parameter   | Type    | Description                                   |
 |:----------- |:------- |:-------------------------------------------- |
-| type        | String  | The type of error which has occured          |
-| description | String? | A description of the error which has occured |
-| data        | String? | Any raw data associated with the error       |
-
+| type        | String  | 发生的错误的类型 |
+| description | String? | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据 |
 
 ### verifyMessage
 
@@ -979,7 +971,7 @@ neologin.verifyMessage({
 });
 ```
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -992,28 +984,28 @@ neologin.verifyMessage({
 }
 ```
 
-Returns whether the provided signature data matches the provided message and was signed by the account of the provided public key.
+返回提供的签名数据是否与提供的消息匹配并且是否由提供的公钥帐户签名。
 
-##### Input Arguments
+##### 输入参数
 
 | Parameter | Type   | Description                                            |
 |:--------- |:------ |:------------------------------------------------------ |
-| message   | String | The original signed message                            |
-| data      | String | The signature data                                     |
-| publicKey | String | The public key of the account used to sign the message |
+| message   | String | 签了名的消息原件 |
+| data      | String | 签名数据  |
+| publicKey | String | 用以签名消息的账户公钥。|
 
-##### Success Response
+##### 成功返回
 
 | Parameter | Type    | Description                                                                |
 |:--------- |:------- |:-------------------------------------------------------------------------- |
-| result    | Boolean | Whether the provided signature matches the provided message and public key |
+| result    | Boolean | 提供的签名是否与提供的消息以及公钥匹配。 |
 
-##### Error Response
+##### 错误返回
 | Parameter   | Type    | Description                                   |
 |:----------- |:------- |:--------------------------------------------- |
-| type        | String  | The type of error which has occurred          |
-| description | String  | A description of the error which has occurred |
-| data        | String? | Any raw data associated with the error        |
+| type        | String  | 发生的错误的类型 |
+| description | String  | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据 |
 
 ### getBlock
 
@@ -1056,9 +1048,9 @@ neologin.getBlock({
 });
 ```
 
-Get information about a specific block.
+获取特定的区块信息。
 
-> Example Response
+> 返回例子。
 
 ```typescript
 {
@@ -1129,24 +1121,23 @@ Get information about a specific block.
 }
 ```
 
-Execute a contract invocation in read-only mode.
+在只读模式下执行合同调用。
 
-##### Input Arguments
+##### 输入参数
 | Parameter   | Type    | Description                                                                                              |
 |:----------- |:------- |:-------------------------------------------------------------------------------------------------------- |
-| blockHeight | integer | The height of the block you would like to get information about.                                         |
-| network     | String  | Network alias to submit this request to. If omitted, will default the network which the wallet is set to |
+| blockHeight | integer | 你想要获取信息的区块的高度。|
+| network     | String  | 你想要提交此请求的Network名，如果省略，将为线上钱包设置的默认Network。|
 
-##### Success Response
-The wallet will return the direct response from the RPC node.
+##### 成功返回
+线上钱包将直接返回从RPC接口收到的答案。
 
-##### Error Response
+##### 错误返回
 | Parameter   | Type    | Description                                  |
 |:----------- |:------- |:-------------------------------------------- |
-| type        | String  | The type of error which has occured          |
-| description | String? | A description of the error which has occured |
-| data        | String? | Any raw data associated with the error       |
-
+| type        | String  | 发生的错误的类型 |
+| description | String? | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据 |
 
 ### getBlockHeight
 
@@ -1187,9 +1178,9 @@ neologin.getBlockHeight({
 });
 ```
 
-Get the height of the current block.
+获取当前区块的高度。
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -1197,25 +1188,24 @@ Get the height of the current block.
 }
 ```
 
-Execute a contract invocation in read-only mode.
+在只读模式下执行合同调用。
 
-##### Input Arguments
+##### 输入参数
 | Parameter | Type   | Description                                                                                              |
 |:--------- |:------ |:-------------------------------------------------------------------------------------------------------- |
-| network   | String | Network alias to submit this request to. If omitted, will default the network which the wallet is set to |
+| network   | String | 你想要提交此请求的Network名，如果省略，将为线上钱包设置的默认Network。|| |
 
-##### Success Response
+##### 成功返回
 | Parameter | Type   | Description                 |
 |:--------- |:------ |:--------------------------- |
-| result    | Number | Height of the current block |
+| result    | Number | 目前区块的高度 |
 
-##### Error Response
+##### 错误返回
 | Parameter   | Type    | Description                                  |
 |:----------- |:------- |:-------------------------------------------- |
-| type        | String  | The type of error which has occured          |
-| description | String? | A description of the error which has occured |
-| data        | String? | Any raw data associated with the error       |
-
+| type        | String  | 发生的错误的类型 |
+| description | String? | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据|
 
 ### getTransaction
 
@@ -1258,9 +1248,9 @@ neologin.getTransaction({
 });
 ```
 
-Get information about a specific transaction.
+获取特定的交易信息。
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -1329,23 +1319,23 @@ Get information about a specific transaction.
 }
 ```
 
-Execute a contract invocation in read-only mode.
+在只读模式下执行合同调用。
 
-##### Input Arguments
+##### 输入参数
 | Parameter | Type   | Description                                                                                               |
 |:--------- |:------ |:--------------------------------------------------------------------------------------------------------- |
-| txid      | String | The id of the transaction you would like to get information about.                                        |
-| network   | String | Network alias to submit this request to. If omitted, will default the network which the wallet is set to. |
+| txid      | String | 你想要获取信息的交易ID。|
+| network   | String | 你想要提交此请求的Network名，如果省略，将为线上钱包设置的默认Network。 |
 
-##### Success Response
-The wallet will return the direct response from the RPC node.
+##### 成功返回
+线上钱包将直接返回从RPC接口收到的答案。
 
-##### Error Response
+##### 错误返回
 | Parameter   | Type    | Description                                  |
 |:----------- |:------- |:-------------------------------------------- |
-| type        | String  | The type of error which has occured          |
-| description | String? | A description of the error which has occured |
-| data        | String? | Any raw data associated with the error       |
+| type        | String  | 发生的错误的类型 |
+| description | String? | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据 |
 
 ### getApplicationLog
 
@@ -1388,9 +1378,9 @@ neologin.getApplicationLog({
 });
 ```
 
-Get the application log for a given transaction.
+获得给与的交易的应用程序日志。
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -1521,26 +1511,25 @@ Get the application log for a given transaction.
 }
 ```
 
-Execute a contract invocation in read-only mode.
+在只读模式下执行合同调用。
 
-##### Input Arguments
+##### 输入参数
 | Parameter | Type   | Description                                                                                              |
 |:--------- |:------ |:-------------------------------------------------------------------------------------------------------- |
-| txid      | String | The id of the transaction you would like to get the application logs for.                                |
-| network   | String | Network alias to submit this request to. If omitted, will default the network which the wallet is set to |
+| txid      | String | 你想要获取应用程序日志的交易ID。|
+| network   | String | 你想要提交此请求的Network名，如果省略，将为线上钱包设置的默认Network。|
 
-##### Success Response
-The wallet will return the direct response from the RPC node.
+##### 成功返回
+线上钱包将直接返回从RPC接口收到的答案。
 
-##### Error Response
+##### 错误返回
 | Parameter   | Type    | Description                                  |
 |:----------- |:------- |:-------------------------------------------- |
-| type        | String  | The type of error which has occured          |
-| description | String? | A description of the error which has occured |
-| data        | String? | Any raw data associated with the error       |
+| type        | String  | 发生的错误的类型 |
+| description | String? | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据|
 
-
-### Encrypt
+### encrypt
 
 ```typescript
 neologin.encrypt({
@@ -1581,7 +1570,7 @@ neologin.send({
 });
 ```
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -1598,30 +1587,29 @@ neologin.send({
 }
 ```
 
-Encrypts data using a public key. Aes 256 cbc encryption.
+使用公钥来加密数据，Aes 256 cbc 加密。
 
-##### Input Arguments
+##### 输入参数
 | Parameter          | Type             | Description                                              |
 |:------------------ |:---------------- |:-------------------------------------------------------- |
-| recipientPublicKey | String           | Recipient's public key                                   |
-| data               | String or Buffer | Data you want to encrypt                                 |
-| ivProvider         | function?        | Function that generates an initialization vector (nonce) |
+| recipientPublicKey | String           | 接收人的公钥 |
+| data               | String or Buffer | 你想要加密的数据  |
 
-##### Success Response
+##### 成功返回
 | Parameter | Type   | Description                                         |
 |:--------- |:------ |:--------------------------------------------------- |
-| iv        | String | Initialization vector (nonce). Necessary to decrypt |
-| mac       | String | Message authentication code. Necessary to decrypt   |
-| data      | String | Encrypted data. Necessary to decrypt                |
+| iv        | String | 需要加密的初始化向量（一次）。|
+| mac       | String | 需要加密的信息验证码。 |
+| data      | String | 需要加密的数据              |
 
-##### Error Response
+##### 错误返回
 | Parameter   | Type    | Description                                  |
 |:----------- |:------- |:-------------------------------------------- |
-| type        | String  | The type of error which has occured          |
-| description | String? | A description of the error which has occured |
-| data        | String? | Any raw data associated with the error       |
+| type        | String  | 发生的错误的类型 |
+| description | String? | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据 |
 
-### Decrypt
+### decrypt
 
 ```typescript
 neologin.decrypt({
@@ -1666,7 +1654,7 @@ neologin.send({
 });
 ```
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -1681,33 +1669,32 @@ neologin.send({
 }
 ```
 
-Decrypts data using user's private key. Data must have been encrypted with his public key. Aes 256 cbc decryption.
+使用用户密钥来解密数据。在此之前数据必须以其的公钥加密。Aes 256 cbc解密。
 
-##### Input Arguments
+##### 输入参数
 | Parameter       | Type   | Description                 |
 |:--------------- |:------ |:-------------------------   |
-| senderPublicKey | String | Sender's public key         |
-| iv              | String | Initialization vector       |
-| mac             | String | Message authentication code |
-| data            | String | Data encypted               |
+| senderPublicKey | String | 发送人的公钥|
+| iv              | String | 初始化向量|
+| mac             | String | 信息验证码 |
+| data            | String | 加密的数据|
 
-##### Success Response
+##### 成功返回
 | Parameter  | Type       | Description    |
 |:---------- |:---------- |:-------------- |
-| bufferData | Uint8Array | Decrypted data |
-| data       | String     | Decrypted data |
+| bufferData | Uint8Array | 解密的数据|
+| data       | String     | 解密的数据|
 
-##### Error Response
+##### 错误返回
 | Parameter   | Type    | Description                                  |
 |:----------- |:------- |:-------------------------------------------- |
-| type        | String  | The type of error which has occured          |
-| description | String? | A description of the error which has occured |
-| data        | String? | Any raw data associated with the error       |
+| type        | String  | 发生的错误的类型|
+| description | String? | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据|
 
+## 写入方法
 
-## Write Methods
-
-Write methods will alter the state on the blockchain, and require a user signature.
+加入方法会改变区块链状态，并需要用户签名。
 
 ### send
 
@@ -1784,7 +1771,7 @@ neologin.send({
 });
 ```
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -1799,47 +1786,46 @@ neologin.send({
 }
 ```
 
-The send API can be used for accepting payments from the user in a cryptocurrency that is located on the NEO blockchain. It requires user authentication in order for the transaction to be relayed. The transaction will be relayed by the wallet.
+发送的API可以用于让用户接受使用在NEO区块链的虚拟币来付款。需要用户验证为了能够中继交易。交易将由线上钱包中继。
 
-##### Input Arguments
+##### 输入参数。
 | Parameter         | Type     | Description                                                                                                                                        |
 |:----------------- |:-------- |:-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| fromAddress       | String   | The address from where the transaction is being sent. This will be the same value as the one received from the getAccount API                      |
-| toAddress         | String   | The address to where the user should send their funds                                                                                              |
-| asset             | String   | The asset which is being requested for payment...e.g NEP5 scripHash, GAS or CGAS                                                                   |
-| amount            | String   | The amount which is being requested for payment                                                                                                    |
-| remark            | String?  | A transaction attribute remark which may be placed in the transaction, this data will appear in the transaction record on the blockchain           |
-| fee               | String?  | If a fee is specified then the wallet SHOULD NOT override it, if a fee is not specified the wallet SHOULD allow the user to attach an optional fee |
-| network           | String   | Network alias to submit this request to.                                                                                                           |
-| broadcastOverride | Boolean? | If this flag is set to True, the wallet provider will return the signed transaction rather than broadcasting to a node.                            |
+| fromAddress       | String   | 发送交易的地址。此数值将和从getAccount API接收到的一致。  |
+| toAddress         | String   | 用户应将资金汇至的地址。|
+| asset             | String   | 被请求付款的资产。比如NEP5 ScripHash, GAS or CGAS。 |
+| amount            | String   | 被请求付款的金额。|
+| remark            | String?  | 可以被放置在交易中的属性备注，此数据将会出现在区块链的交易记录里。|
+| fee               | String?  | 如果已经指定具体费用那么线上钱包不应该覆盖他，如果未指定费用则线上钱包应该允许用户附加可选费用。|
+| network           | String   | 将此请求提交到的Network。|
+| broadcastOverride | Boolean? | 如果此标志设置为True,那么线上钱包供应者将返回已经签了名的交易而不是广播到节点。|
 
-##### Success Response
+##### 成功返回
 
-In the case where the "broadcastOverride" input argument is not set, or set to false.
+在没有设置或者设置为False‘BroadcastOverride’输入参数的情况下。
 
 | Parameter | Type   | Description                                                                   |
 |:--------- |:------ |:----------------------------------------------------------------------------- |
-| txid      | String | The transaction id of the send request which can be queried on the blockchain |
-| nodeURL   | String | The node to which the transaction was submitted to                            |
+| txid      | String | 可以的区块链上查询的发送请求的交易ID。|
+| nodeURL   | String | 提交了交易的节点。|
 
 <aside class="warning">
-It is recommended that the DAPP take appropriate levels of risk prevention when accepting transactions. The dapp can query the mempool of a known node to ensure that the transaction will indeed be broadcast on the network.
+建议DAPP在接受交易时采取适当级别的风险预防措施。让DAPP可以查询已知的节点内存池以确保交易确实会在Network上广播。
 </aside>
 
-In the case where the "broadcastOverride" input argument is set to True.
+当‘BroadcastOverride’输入参数为True时。
 
 | Parameter | Type   | Description                                                                   |
 |:--------- |:------ |:----------------------------------------------------------------------------- |
-| txid      | String | The transaction id of the send request which can be queried on the blockchain |
-| signedTx  | String | The serialized signed transaction                                             |
+| txid      | String | 可以的区块链上查询的发送请求的交易ID。 |
+| signedTx  | String | 序列化已签名的交易。|
 
-
-##### Error Response
+##### 错误返回
 | Parameter   | Type    | Description                                  |
 |:----------- |:------- |:-------------------------------------------- |
-| type        | String  | The type of error which has occured          |
-| description | String? | A description of the error which has occured |
-| data        | String? | Any raw data associated with the error       |
+| type        | String  | 发生的错误的类型 |
+| description | String? | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据 |
 
 ### invoke
 ```typescript
@@ -1931,7 +1917,7 @@ neologin.invoke({
 });
 ```
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -1946,101 +1932,100 @@ neologin.invoke({
 }
 ```
 
-Invoke allows for the generic execution of smart contracts on behalf of the user. It is recommended to have a general understanding of the NEO blockchain, and to be able successfully use all other commands listed previously in this document before attempting a generic contract execution.
+调用允许代表用户执行通用智能合约。建议你对NEO区块链有一个基本的了解，并能够在尝试执行通用合同之前成功的使用所有其他在文档中列出的命令。
 
-##### Input arguments
+##### 输入参数
 | Parameter                   | Type                 | Description                                                                                                                                        |
 |:--------------------------- |:-------------------- |:-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| scriptHash                  | String               | The script hash of the contract that you wish to invoke                                                                                            |
-| operation                   | String               | The operation on the smart contract that you wish to call. This can be fetched from the contract ABI                                               |
-| args                        | Argument[]           | A list of arguments necessary to perform on the operation you wish to call                                                                         |
-| fee                         | String?              | If a fee is specified then the wallet SHOULD NOT override it, if a fee is not specified the wallet SHOULD allow the user to attach an optional fee |
-| network                     | String               | Network alias to submit this request to.                                                                                                           |
-| attachedAssets              | AttachedAssets?      | Describes the assets to attach with the smart contract, e.g. attaching assets to mint tokens during a token sale                                   |
-| assetIntentOverrides        | AssetIntentOverrides | Used to specify the exact UTXO's to use for attached assets. If this is provided fee and attachedAssets will be ignored                            |
-| triggerContractVerification | Boolean?             | Adds the instruction to invoke the contract verifican trigger                                                                                      |
-| broadcastOverride           | Boolean?             | If this flag is set to True, the wallet provider will return the signed transaction rather than broadcasting to a node.                            |
-| txHashAttributes            | TxHashAttribute[]?   | Optional list of tx attribute hash values to be added                                                                                              |
+| scriptHash                  | String               | 你想要调用的合同HASH脚本。                                                                                          |
+| operation                   | String               | 你想要调用的智能合约里上的操作。这个可以从ABI合同中获取。|
+| args                        | Argument[]           | 要执行的操作所需的参数列表。|
+| fee                         | String?              | 如果已经指定具体费用那么线上钱包不应该覆盖他，如果未指定费用则线上钱包应该允许用户附加可选费用。|
+| network                     | String               | 想提交此请求的Network名字。                                                                                                           |
+| attachedAssets              | AttachedAssets?      | 描述智能合约附带的资产，比如在代币销售时将资产附加到Mint代币。|
+| assetIntentOverrides        | AssetIntentOverrides | 用于指定要为附加资产使用的确切UTXO’s。如果提供此参数，Fee和attachedassets则会被无视。|
+| triggerContractVerification | Boolean?             | 添加指令用以调用合同验证触发器。                                                                                      |
+| broadcastOverride           | Boolean?             | 如果此标志设置为True,那么线上钱包供应者将返回已经签了名的交易而不是广播到节点。                            |
+| txHashAttributes            | TxHashAttribute[]?   | 要添加的tx属性hash值可选列表。                                                                                            |
 
 ###### Argument
 | Parameter | Type   | Description                                               |
 |:--------- |:------ |:--------------------------------------------------------- |
-| type      | String | The type of the argument with you are using               |
-| value     | String | String representation of the argument which you are using |
+| type      | String | 你正在使用的参数类型。 |
+| value     | String | 你正在使用的参数的String代表。|
 
 <aside class =notice>
-Available types are "String"|"Boolean"|"Hash160"|"Hash256"|"Integer"|"ByteArray"|"Array"|"Address"
+可用的类型是 "String"|"Boolean"|"Hash160"|"Hash256"|"Integer"|"ByteArray"|"Array"|"Address"
 </aside>
 
 ###### TxHashAttribute
 | Parameter   | Type   | Description                                               |
 |:----------- |:------ |:--------------------------------------------------------- |
-| type        | String | The type of the argument with you are using               |
-| value       | String | String representation of the argument which you are using |
-| txAttrUsage | String | Attribute usage value                                     |
+| type        | String | 你正在使用的参数类型。 |
+| value       | String | 你正在使用的参数的String代表。|
+| txAttrUsage | String | 属性的使用值。|
 
 <aside class =notice>
-Available txAttrUsages are Hash1'|'Hash2'|'Hash3'|'Hash4'|'Hash5'|'Hash6'|'Hash7'|'Hash8'|'Hash9'|'Hash10'|'Hash11'|'Hash12'|'Hash13'|'Hash14'|'Hash15'
+可用TxAttrUsage是 'Hash1'|'Hash2'|'Hash3'|'Hash4'|'Hash5'|'Hash6'|'Hash7'|'Hash8'|'Hash9'|'Hash10'|'Hash11'|'Hash12'|'Hash13'|'Hash14'|'Hash15'
 </aside>
 
 ###### AttachedAssets
 | Parameter | Type    | Description                                            |
 |:--------- |:------- |:------------------------------------------------------ |
-| NEO       | String? | The amount of NEO to attach to the contract invocation |
-| GAS       | String? | The amount of GAS to attach to the contract invocation |
+| NEO       | String? | 调用合同附带的NEO数量。|
+| GAS       | String? | 调用合同附带的GAS数量。|
 
 ###### AssetIntentOverrides
 | Parameter | Type          | Description                                        |
 |:--------- |:------------- |:-------------------------------------------------- |
-| inputs    | AssetInput[]  | A list of UTXO inputs to use for this transaction  |
-| outputs   | AssetOutput[] | A list of UTXO outputs to use for this transaction |
+| inputs    | AssetInput[]  | 为此交易使用的UTXO输入列表。 |
+| outputs   | AssetOutput[] | 为此交易使用的UTXO输出列表。|
 
 ###### AssetInput
 | Parameter | Type   | Description                                              |
 |:--------- |:------ |:-------------------------------------------------------- |
-| txid      | String | Transaction id to be used as input                       |
-| index     | String | Index of the UTXO, can be found from transaction details |
+| txid      | String | 用作输入的交易ID。 |
+| index     | String | UTXO的索引，可在交易明细中找到。|
 
 ###### AssetOutput
 | Parameter | Type   | Description                                                           |
 |:--------- |:------ |:--------------------------------------------------------------------- |
-| asset     | String | Asset of the UTXO                                                     |
-| address   | String | Address to receive the UTXO                                           |
-| value     | String | String representation of double or integer value to be used as output |
+| asset     | String | UTXO的资产。 |
+| address   | String | 接收UTXO的地址。 |
+| value     | String | 用作与输出的Double或Ineteger值|
 
+##### 成功返回
 
-##### Success Response
-
-In the case where the "broadcastOverride" input argument is not set, or set to false.
+在没有设置或者设置为False‘BroadcastOverride’输入参数的情况下。
 
 | Parameter | Type   | Description                                                                   |
 |:--------- |:------ |:----------------------------------------------------------------------------- |
-| txid      | String | The transaction id of the send request which can be queried on the blockchain |
-| nodeURL   | String | The node to which the transaction was submitted to                            |
+| txid      | String | 可以的区块链上查询的发送请求的交易ID。|
+| nodeURL   | String | 提交了交易的节点。|
 
 <aside class="warning">
-It is recommended that the DAPP take appropriate levels of risk prevention when accepting transactions. The dapp can query the mempool of a known node to ensure that the transaction will indeed be broadcast on the network.
+建议DAPP在接受交易时采取适当级别的风险预防措施。让DAPP可以查询已知的节点内存池以确保交易确实会在Network上广播。
 </aside>
 
-In the case where the "broadcastOverride" input argument is set to True.
+当‘BroadcastOverride’输入参数为True时。
 
 | Parameter | Type   | Description                                                                   |
 |:--------- |:------ |:----------------------------------------------------------------------------- |
-| txid      | String | The transaction id of the send request which can be queried on the blockchain |
-| signedTx  | String | The serialized signed transaction                                             |
+| txid      | String | 可以的区块链上查询的发送请求的交易ID。|
+| signedTx  | String | 序列化已签名的交易。                                            |
 
-###### Set script transaction attribute 0x20 according to the following conditions:
-- If triggerContractVerification is set to true, set 0x20 to scriptHash of the contract being invoked
-- If there is no fee, attachedAssets, or 'assetIntentOverrides', set 0x20 to the users address
-- If there are assetIntentOverrides but none of the inputs belong to the user address, set 0x20 to user address
+###### 根据以下条件设置交易属性脚本0x20：
 
-##### Error Response
+- 如果合同验证触发器设为True,将调用合同的脚本hask设置为0x20。
+- 如果没有Fee，AttachedAssets或者‘AssetInterntOverrrides’，将用户地址设为0x20。
+- 如果这里有‘AssetIntentOverrides’，可这些输入没有一个属于用户地址的，那么将用户地址设为0x20。
+
+##### 错误返回
 | Parameter   | Type    | Description                                  |
 |:----------- |:------- |:-------------------------------------------- |
-| type        | String  | The type of error which has occured          |
-| description | String? | A description of the error which has occured |
-| data        | String? | Any raw data associated with the error       |
-
+| type        | String  | 发生的错误的类型|
+| description | String? | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据|
 
 ### invokeMulti
 ```typescript
@@ -2162,7 +2147,7 @@ neologin.invokeMulti({
 });
 ```
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -2177,112 +2162,112 @@ neologin.invokeMulti({
 }
 ```
 
-Invoke Multi functions the same as Invoke, but accepts inputs to execute multiple invokes in the same transaction.
+调用多功能跟调用一样，当其接受用以在同一交易中执行多个调用的输入。
 
-##### Input arguments
+##### 输入参数
 | Parameter            | Type                 | Description                                                                                                                                        |
 |:-------------------- |:-------------------- |:-------------------------------------------------------------------------------------------------------------------------------------------------- |
-| fee                  | String?              | If a fee is specified then the wallet SHOULD NOT override it, if a fee is not specified the wallet SHOULD allow the user to attach an optional fee |
-| network              | String               | Network alias to submit this request to.                                                                                                           |
-| assetIntentOverrides | AssetIntentOverrides | Used to specify the exact UTXO's to use for attached assets. If this is provided fee and attachedAssets will be ignored                            |
-| invokeArgs           | InvokeArguments[]    | Array of contract invoke inputs                                                                                                                    |
-| broadcastOverride    | Boolean?             | If this flag is set to True, the wallet provider will return the signed transaction rather than broadcasting to a node.                            |
-| txHashAttributes     | TxHashAttribute[]?   | Optional list of tx attribute hash values to be added                                                                                              |
+| fee                  | String?              | 如果已经指定具体费用那么线上钱包不应该覆盖他，如果未指定费用则线上钱包应该允许用户附加可选费用。|
+| network              | String               | 想提交此请求的Network名字。                                                                                                          |
+| assetIntentOverrides | AssetIntentOverrides | 用于指定要为附加资产使用的确切UTXO’s。如果提供此参数，Fee和attachedassets则会被无视。                           |
+| invokeArgs           | InvokeArguments[]    | 合约调用输入数组。|
+| broadcastOverride    | Boolean?             | 如果此标志设置为True,那么线上钱包供应者将返回已经签了名的交易而不是广播到节点。                            |
+| txHashAttributes     | TxHashAttribute[]?   | 要添加的tx属性hash值可选列表。|
 
 ###### InvokeArguments
 | Parameter                   | Type            | Description                                                                                                      |
 |:--------------------------- |:--------------- |:---------------------------------------------------------------------------------------------------------------- |
-| scriptHash                  | String          | The script hash of the contract that you wish to invoke                                                          |
-| operation                   | String          | The operation on the smart contract that you wish to call. This can be fetched from the contract ABI             |
-| args                        | Argument[]      | A list of arguments necessary to perform on the operation you wish to call                                       |
-| attachedAssets              | AttachedAssets? | Describes the assets to attach with the smart contract, e.g. attaching assets to mint tokens during a token sale |
-| triggerContractVerification | Boolean?        | Adds the instruction to invoke the contract verifican trigger                                                    |
+| scriptHash                  | String          | 你想要调用的合同HASH脚本。                       |
+| operation                   | String          | 你想要调用的智能合约里上的操作。这个可以从ABI合同中获取。|
+| args                        | Argument[]      | 要执行的操作所需的参数列表。 |
+| attachedAssets              | AttachedAssets? | 描述智能合约附带的资产，比如在代币销售时将资产附加到Mint代币。|
+| triggerContractVerification | Boolean?        | 添加指令用以调用合同验证触发器。|
 
 <aside class="warning">
-The specific encoding of transactions using multiple `triggerContractVerification` is not guaranteed to be equal to the encoding used by O3.
+使用多重‘合同验证触发器’的特定编码交易不能保证跟03使用的编码一致。
 </aside>
 
 ###### Argument
 | Parameter | Type   | Description                                               |
 |:--------- |:------ |:--------------------------------------------------------- |
-| type      | String | The type of the argument with you are using               |
-| value     | String | String representation of the argument which you are using |
+| type      | String | 你正在使用的参数类型。  |
+| value     | String | 你正在使用的参数的String代表。|
 
 <aside class =notice>
-Available types are "String"|"Boolean"|"Hash160"|"Hash256"|"Integer"|"ByteArray"|"Array"|"Address"
+可用的类型是 "String"|"Boolean"|"Hash160"|"Hash256"|"Integer"|"ByteArray"|"Array"|"Address"
 </aside>
 
 ###### TxHashAttribute
+
 | Parameter   | Type   | Description                                               |
 |:----------- |:------ |:--------------------------------------------------------- |
-| type        | String | The type of the argument with you are using               |
-| value       | String | String representation of the argument which you are using |
-| txAttrUsage | String | Attribute usage value                                     |
+| type        | String | 你正在使用的参数类型。  |
+| value       | String | 你正在使用的参数的String代表。|
+| txAttrUsage | String | 属性的使用值。 |
 
 <aside class =notice>
-Available txAttrUsages are Hash1'|'Hash2'|'Hash3'|'Hash4'|'Hash5'|'Hash6'|'Hash7'|'Hash8'|'Hash9'|'Hash10'|'Hash11'|'Hash12'|'Hash13'|'Hash14'|'Hash15'
+可用TxAttrUsage是 'Hash1'|'Hash2'|'Hash3'|'Hash4'|'Hash5'|'Hash6'|'Hash7'|'Hash8'|'Hash9'|'Hash10'|'Hash11'|'Hash12'|'Hash13'|'Hash14'|'Hash15'
 </aside>
 
 ###### AttachedAssets
 | Parameter | Type    | Description                                            |
 |:--------- |:------- |:------------------------------------------------------ |
-| NEO       | String? | The amount of NEO to attach to the contract invocation |
-| GAS       | String? | The amount of GAS to attach to the contract invocation |
+| NEO       | String? | 调用合同附带的NEO数量。|
+| GAS       | String? | 调用合同附带的GAS数量。|
 
 ###### AssetIntentOverrides
 | Parameter | Type          | Description                                        |
 |:--------- |:------------- |:-------------------------------------------------- |
-| inputs    | AssetInput[]  | A list of UTXO inputs to use for this transaction  |
-| outputs   | AssetOutput[] | A list of UTXO outputs to use for this transaction |
+| inputs    | AssetInput[]  | 为此交易使用的UTXO输入列表。|
+| outputs   | AssetOutput[] | 为此交易使用的UTXO输出列表。|
 
-###### AssetInput
+###### AssetInput 
 | Parameter | Type   | Description                                              |
 |:--------- |:------ |:-------------------------------------------------------- |
-| txid      | String | Transaction id to be used as input                       |
-| index     | String | Index of the UTXO, can be found from transaction details |
+| txid      | String | 用作输入的交易ID。  |
+| index     | String | UTXO的索引，可在交易明细中找到。|
 
 ###### AssetOutput
 | Parameter | Type   | Description                                                           |
 |:--------- |:------ |:--------------------------------------------------------------------- |
-| asset     | String | A list of UTXO inputs to use for this transaction                     |
-| address   | String | A list of UTXO outputs to use for this transaction                    |
-| value     | String | String representation of double or integer value to be used as output |
+| asset     | String | 为此交易使用的UTXO输入列表。 |
+| address   | String | 为此交易使用的UTXO输出列表。 |
+| value     | String | 用作与输出的Double或Ineteger值|
 
+##### 成功返回
 
-##### Success Response
-
-In the case where the "broadcastOverride" input argument is not set, or set to false.
+在没有设置或者设置为False‘BroadcastOverride’输入参数的情况下。
 
 | Parameter | Type   | Description                                                                   |
 |:--------- |:------ |:----------------------------------------------------------------------------- |
-| txid      | String | The transaction id of the send request which can be queried on the blockchain |
-| nodeURL   | String | The node to which the transaction was submitted to                            |
+| txid      | String | 可以的区块链上查询的发送请求的交易ID。|
+| nodeURL   | String | 提交了交易的节点。|
 
 <aside class="warning">
-It is recommended that the DAPP take appropriate levels of risk prevention when accepting transactions. The dapp can query the mempool of a known node to ensure that the transaction will indeed be broadcast on the network.
+建议DAPP在接受交易时采取适当级别的风险预防措施。让DAPP可以查询已知的节点内存池以确保交易确实会在Network上广播。
 
-dApp will be responsible for setting a network fee appropriate for the size of the transaction.
+DApp将负责设置适合交易规模的Network Fee(‘网费’)
 </aside>
 
-In the case where the "broadcastOverride" input argument is set to True.
+当‘BroadcastOverride’输入参数为True时。
 
 | Parameter | Type   | Description                                                                   |
 |:--------- |:------ |:----------------------------------------------------------------------------- |
-| txid      | String | The transaction id of the send request which can be queried on the blockchain |
-| signedTx  | String | The serialized signed transaction                                             |
+| txid      | String | 可以的区块链上查询的发送请求的交易ID。|
+| signedTx  | String | 序列化已签名的交易。                                            |
 
-###### Set script transaction attribute 0x20 according to the following conditions:
-- If triggerContractVerification is set to true, set 0x20 to scriptHash of the contract being invoked
-- If there is no fee, attachedAssets, or 'assetIntentOverrides', set 0x20 to the users address
-- If there are assetIntentOverrides but none of the inputs belong to the user address, set 0x20 to user address
+###### 根据以下条件设置交易属性脚本0x20：
 
-##### Error Response
+- 如果合同验证触发器设为True,将调用合同的脚本hask设置为0x20。
+- 如果没有Fee，AttachedAssets或者‘AssetInterntOverrrides’，将用户地址设为0x20。
+- 如果这里有‘AssetIntentOverrides’，可这些输入没有一个属于用户地址的，那么将用户地址设为0x20。
+
+##### 错误返回
 | Parameter   | Type    | Description                                  |
 |:----------- |:------- |:-------------------------------------------- |
-| type        | String  | The type of error which has occured          |
-| description | String? | A description of the error which has occured |
-| data        | String? | Any raw data associated with the error       |
-
+| type        | String  | 发生的错误的类型|
+| description | String? | 发生的错误的描述 |
+| data        | String? | 与错误相关的原始数据|
 
 ### signMessage
 
@@ -2337,7 +2322,7 @@ neologin.signMessage({
 });
 ```
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -2356,32 +2341,30 @@ neologin.signMessage({
 }
 ```
 
-Signs a provided messaged with an account selected by user. A salt prefix is added to the input string, and provided as a part of the data while signing. In the example, the signed value would be `058b9e03e7154e4db1e489c99256b7faHello World!`.
+用用户选择的账号对提供的消息进行签名。将Salt(随机数字)前缀添加到输入String，并在签名时作为数据的一部分提供。举个例子，签名的数值将为`058b9e03e7154e4db1e489c99256b7faHello World!`.
 
-##### Input Arguments
+##### 输入参数
 
 | Parameter | Type   | Description         |
 |:--------- |:------ |:------------------- |
-| message   | String | The message to sign |
+| message   | String | 要签名的消息。 |
 
-##### Success Response
+##### 成功返回
 
 | Parameter | Type   | Description                                                  |
 |:--------- |:------ |:------------------------------------------------------------ |
-| publicKey | String | The public key used to sign message                          |
-| data      | String | The signed data                                              |
-| salt      | String | The salt prefix added to the original message before signing |
-| message   | String | The original message                                         |
+| publicKey | String | 用于信息签名的公钥。|
+| data      | String | 签了名的数据 |
+| salt      | String | Salt前缀将在签名之前添加到原始消息中。| 
+| message   | String | 原始信息 |
 
-
-##### Error Response
+##### 错误返回
 
 | Parameter   | Type    | Description                                   |
 |:----------- |:------- |:--------------------------------------------- |
-| type        | String  | The type of error which has occurred          |
-| description | String  | A description of the error which has occurred |
-| data        | String? | Any raw data associated with the error        |
-
+| type        | String  | 发生的错误的类型 |
+| description | String  | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据|
 
 ### deploy
 
@@ -2444,7 +2427,7 @@ neologin.deploy({
 });
 ```
 
-> Example Response
+> 返回例子
 
 ```typescript
 {
@@ -2459,55 +2442,55 @@ neologin.deploy({
 }
 ```
 
-Will deploy a compiled smart contract to the blockchain with the provided input parameters. The GAS cost for deploying the contract will be calculated by the provider, and displayed to the user upon tx acceptance or rejection.
+将使用提供的输入参数来将已编译的智能合约部署到区块链里。部署合同的GAS费用将由供应者计算，并在TX接受或拒绝后显示给用户。
 
-##### Input Arguments
+##### 输入参数
 
 | Parameter         | Type     | Description                                                                                                             |
 |:----------------- |:-------- |:----------------------------------------------------------------------------------------------------------------------- |
-| network           | String   | Network alias to submit this request to.                                                                                |
-| name              | String   | The name of the contract to be deployed                                                                                 |
-| version           | String   | The version of the contract to be deployed                                                                              |
-| author            | String   | The author of the contract to be deployed                                                                               |
-| email             | String   | The email of the contract to be deployed                                                                                |
-| description       | String   | The description of the contract to be deployed                                                                          |
-| needsStorage      | Boolean  | Whether or not the contract will use storage                                                                            |
-| dynamicInvoke     | Boolean  | Whether or not the contract will be performing dynamic invocations of other smart contracts                             |
-| isPayable         | Boolean  | Whether or not the contract will be able to accept native assets                                                        |
-| parameterList     | String   | The list of input argument types for the Main function on the contract. https://docs.neo.org/en-us/sc/Parameter.html    |
-| returnType        | String   | The list of output returnType argument types. https://docs.neo.org/en-us/sc/Parameter.html                              |
-| code              | String   | The hex of the compiled smart contract avm                                                                              |
-| networkFee        | String   | The network fee to execute the transaction, in addition to the deploy fee which will be added automatically             |
-| broadcastOverride | Boolean? | If this flag is set to True, the wallet provider will return the signed transaction rather than broadcasting to a node. |
+| network           | String   | 想提交此请求的Network名字。|
+| name              | String   | 将被部署的合同的名字|
+| version           | String   | 将被部署的合同的版本|
+| author            | String   | 将被部署的合同的作者|
+| email             | String   | 将被部署的合同的邮件|
+| description       | String   | 将被部署的合同的描述|
+| needsStorage      | Boolean  | 合同是否将使用储存。|
+| dynamicInvoke     | Boolean  | 合同是否将会履行其他智能合同动态调用。|
+| isPayable         | Boolean  | 合同是否将能够接受NEO/GAS。|
+| parameterList     | String   | 合同中Main函数的输入参数类型列表。(https://docs.neo.org/en-us/sc/Parameter.html) |
+| returnType        | String   | 合同中的输出Return Type参数类型列表。(https://docs.neo.org/en-us/sc/Parameter.html) |
+| code              | String   | 已编译的智能合约avm的hex。|
+| networkFee        | String   | 用于执行交易的Network费用，还有自动添加的部署费用。| 
+| broadcastOverride | Boolean? | 如果此标志设置为True,那么线上钱包供应者将返回已经签了名的交易而不是广播到节点。|
 
-##### Success Response
+##### 成功返回
 
-In the case where the "broadcastOverride" input argument is not set, or set to false.
+在没有设置或者设置为False‘BroadcastOverride’输入参数的情况下。
 
 | Parameter | Type   | Description                                                                   |
 |:--------- |:------ |:----------------------------------------------------------------------------- |
-| txid      | String | The transaction id of the send request which can be queried on the blockchain |
-| nodeURL   | String | The node to which the transaction was submitted to                            |
+| txid      | String | 可以的区块链上查询的发送请求的交易ID。|
+| nodeURL   | String | 提交了交易的节点。|
 
 <aside class="warning">
-It is recommended that the DAPP take appropriate levels of risk prevention when accepting transactions. The dapp can query the mempool of a known node to ensure that the transaction will indeed be broadcast on the network.
+建议DAPP在接受交易时采取适当级别的风险预防措施。让DAPP可以查询已知的节点内存池以确保交易确实会在Network上广播。
 </aside>
 
-In the case where the "broadcastOverride" input argument is set to True.
+当‘BroadcastOverride’输入参数为True时。
 
 | Parameter | Type   | Description                                                                   |
 |:--------- |:------ |:----------------------------------------------------------------------------- |
-| txid      | String | The transaction id of the send request which can be queried on the blockchain |
-| signedTx  | String | The serialized signed transaction                                             |
+| txid      | String | 可以的区块链上查询的发送请求的交易ID。|
+| signedTx  | String | 序列化已签名的交易。                                           |
 
-##### Error Response
+##### 错误返回
 | Parameter   | Type    | Description                                   |
 |:----------- |:------- |:--------------------------------------------- |
-| type        | String  | The type of error which has occurred          |
-| description | String  | A description of the error which has occurred |
-| data        | String? | Any raw data associated with the error        |
+| type        | String  | 发生的错误的类型|
+| description | String  | 发生的错误的描述|
+| data        | String? | 与错误相关的原始数据 |
 
-## Event Methods
+## 事件方法
 
 ### addEventListener
 
@@ -2522,7 +2505,7 @@ neologin.addEventListener(neologin.Constants.EventName.ACCOUNT_CHANGED, data => 
 });
 ```
 
-Method is used to add a callback method to be triggered on a specified event.
+方法用于要在指定事件上添加回调的触发。
 
 ### removeEventListener
 
@@ -2533,98 +2516,95 @@ neologin.removeEventListener(neologin.Constants.EventName.ACCOUNT_CHANGED);
 neologin.removeEventListener(neologin.Constants.EventName.ACCOUNT_CHANGED);
 ```
 
-Method is to remove existing callback event listeners.
+删除现有回调事件的监听方法。
 
-## Events
-Events are a way for the wallet to asynchronously communicate to the DAPP the ocurrence of certain changes on the state of the blockchain that might be relevant for the DAPP.
-
+## 事件
+事件用于线上钱包同DAPP的异步沟通，关于可能与DAPP相关的区块链状态的某些变化。
 
 ### READY
-On a READY event, the callback will fire with a single argument with information about the wallet provider. At any time a READY event listener is added, it will immediately be called if the provider is already in a ready state. This provides a single flow for dapp developers since this listener should start any and all interactions with the dapi protocol.
+在‘就绪’事件，回调将使用包含着线上钱包供应者信息的单个参数。在任意时间将添加‘就绪’事件的监听器，当线上钱包供应者已经处于就绪状态时，将立刻调用监听器。
 
 | Parameter     | Type     | Description                                                      |
 |:------------- |:-------- |:---------------------------------------------------------------- |
-| name          | String   | The name of the wallet provider                                  |
-| website       | String   | The website of the wallet provider                               |
-| version       | String   | The version of the dAPI that the the wallet supports             |
-| compatibility | String[] | A list of all applicable NEPs which the wallet provider supports |
-| extra         | Object   | Provider specific attributes                                     |
+| name          | String   | 线上钱包供应者的名字 |
+| website       | String   | 线上钱包供应者的网站|
+| version       | String   | 线上钱包支持的dAPI版本。|
+| compatibility | String[] | 线上钱包供应者支持的能用的NEPs |
+| extra         | Object   | 供应者的特定属性。 |
 
 ###### extra
 | Parameter | Type   | Description              |
 | --------- | ------ | ------------------------ |
-| theme     | string | UI theme of the provider |
+| theme     | string | 供应者的UI主题|
 
 ### ACCOUNT_CHANGED
-On a ACCOUNT_CHANGED event, the callback will fire with a single argument of the new account. This occurs when an account is already connected to the dapp, and the user has changed the connected account from the dapi provider side.
+
+在‘账户已更改’事件，回调将使用新账户的单个参数。这种情况发生在当一个账户已经连接到dAPP，然后用户从DAPI供应者那方改变了连接的账户。
 
 | Parameter | Type   | Description                                        |
 |:--------- |:------ |:-------------------------------------------------- |
-| address   | String | Address of the new account                         |
-| label     | String | A label the users has set to identify their wallet |
-
+| address   | String | 新账户的地址|
+| label     | String | 用户为识别其线上钱包而设置的标签。 |
 
 ### CONNECTED
 
-On a CONNECTED event, the user has approved the connection of the dapp with one of their accounts. This will fire the first time any of one of the following methods are called from the dapp: `getAccount`, `invoke`, `send`.
+在‘连接的’事件，用户允许了dAPP连接到其的一个账号。这将在DApp首次调用以下任意一种方法时触发：`getAccount`, `invoke`, `send`.
 
 | Parameter | Type   | Description                                        |
 |:--------- |:------ |:-------------------------------------------------- |
-| address   | String | Address of the new account                         |
-| label     | String | A label the users has set to identify their wallet |
-
+| address   | String | 新账户的地址|
+| label     | String | 户为识别其线上钱包而设置的标签。|
 
 ### DISCONNECTED
 
-On a DISCONNECTED event, the account connected to the dapp via the dapi provider has been disconnected (logged out).
-
+在‘断开的‘事件，从DApi供应者连接到DApp的账户断开了连接（登出了）。
 
 ### NETWORK_CHANGED
 
-On a NETWORK_CHANGED event, the user has changed the network their provider wallet is connected to. The event will return the updated network details.
+在‘Network已更改‘事件，用户更改了他们线上钱包供应者连接的Network。此事件将返还更新的Network细节。
 
 | Parameter      | Type     | Description                                                        |
 |:-------------- |:-------- |:------------------------------------------------------------------ |
-| networks       | String[] | A list of all networks which this wallet provider allows access to |
-| defaultNetwork | String   | Network the wallet is currently set to                             |
+| networks       | String[] | 此线上钱包供应者允许访问的所有Networks列表|
+| defaultNetwork | String   | 目前线上钱包默认的Network |
 
 ### BLOCK_HEIGHT_CHANGED
 
-On a BLOCK_HEIGHT_CHANGED event, the block has advanced to the next.
+在‘区块高度已更改‘事件，该区块已前进到下一个。
 
 | Parameter   | Type     | Description                                       |
 |:----------- |:-------- |:------------------------------------------------- |
-| network     | String   | Network of the block which changed                |
-| blockHeight | Number   | Height of the new block                           |
-| blockTime   | Number   | Timestamp of the new block                        |
-| blockHash   | String   | Hash of the new block                             |
-| tx          | String[] | List of transaction ids executed in the new block |
+| network     | String   | 改变的区块的Network |
+| blockHeight | Number   | 新区块的高度 |
+| blockTime   | Number   | 新区块的时间戳记|
+| blockHash   | String   | 新区块的Hash |
+| tx          | String[] | 在新区块里执行了的交易id列表|
 
 ### TRANSACTION_CONFIRMED
 
-On a TRANSACTION_CONFIRMED event, a previously broadcast transaction via the dapi has been confirmed by the blockchain.
+在‘确认交易‘事件里，之前通过DAPI广播的交易已被区块链确认。
 
 | Parameter   | Type   | Description                                 |
 |:----------- |:------ |:------------------------------------------- |
-| txid        | String | Transaction id which was confirmed on chain |
-| blockHeight | Number | Height of the new block                     |
-| blockTime   | Number | Timestamp of the new block                  |
+| txid        | String | 在区块链确认的交易ID|
+| blockHeight | Number | 新区块的高度|
+| blockTime   | Number | 新区块的时间戳|
 
-## Errors
-The NEO dAPI will provide these basic errors. It is up to the wallet provider to provide additional information if they choose:
+## 错误
+NEO dAPI会提供这些基础错误。将取决于线上钱包供应商是否提供额外信息。
 
 | Error Type         | Meaning                                                                     |
 | ------------------ | --------------------------------------------------------------------------- |
-| NO_PROVIDER        | Could not find an instance of the dAPI in the webpage                       |
-| CONNECTION_DENIED  | The dAPI provider refused to process this request                           |
-| RPC_ERROR          | An RPC error occured when submitting the request                            |
-| MALFORMED_INPUT    | An input such as the address is not a valid NEO address                     |
-| CANCELED           | The user cancels, or refuses the dapps request                              |
-| INSUFFICIENT_FUNDS | The user does not have a sufficient balance to perform the requested action |
+| NO_PROVIDER        | 在网页中找不到DAPI的实例。                      |
+| CONNECTION_DENIED  | DAPI供应者拒绝处理这个请求。|
+| RPC_ERROR          | 在提交请求时发生了RPC错误。|
+| MALFORMED_INPUT    | 输入参数比如地址为无效的NEO地址。|
+| CANCELED           | 用户取消了或者拒绝了DAPPS的请求。 |
+| INSUFFICIENT_FUNDS | 用户没有足够的余额来执行操作的请求。|
 
-## Utils
+## 实用程序
 
-These are a collection of commonly used utilities for parsing responses from smart contracts.
+这些是常用以及实用的解析智能合约响应的工具合集。
 
 ### hex2str
 
@@ -2645,7 +2625,7 @@ const hex2strResult = neologin.utils.hex2str(hex2strInput);
 console.log('hex2str', hex2strExpected === hex2strResult);
 ```
 
-Converts a hex string to a string.
+将十六进制字符串转换为字符串。
 
 ### str2hex
 
@@ -2666,8 +2646,7 @@ const str2hexResult = neologin.utils.str2hex(str2hexInput);
 console.log('str2hex', str2hexExpected === str2hexResult);
 ```
 
-Converts a string to a hex string.
-
+将字符串转换为十六进制字符串。
 
 ### hex2int
 
@@ -2688,8 +2667,7 @@ const hex2intResult = neologin.utils.hex2int(hex2intInput);
 console.log('hex2int', hex2intExpected === hex2intResult);
 ```
 
-Converts a hex string to an integer.
-
+将十六进制字符串转换为整数。
 
 ### int2hex
 
@@ -2710,8 +2688,7 @@ const int2hexResult = neologin.utils.int2hex(int2hexInput);
 console.log('int2hex', int2hexExpected === int2hexResult);
 ```
 
-Converts an integer to a hex string.
-
+将整数转换为十六进制字符串。
 
 ### reverseHex
 
@@ -2730,8 +2707,7 @@ const reverseHexResult = neologin.utils.reverseHex(reverseHexInput);
 console.log('reverseHex', reverseHexExpected === reverseHexResult);
 ```
 
-Converts the endian of a hex string, big to little, or little to big.
-
+将十六进制字符串的字节序转换为大到小或小到大。
 
 ### address2scriptHash
 
@@ -2752,8 +2728,7 @@ const address2scriptHashResult = neologin.utils.address2scriptHash(address2scrip
 console.log('address2scriptHash', address2scriptHashExpected === address2scriptHashResult);
 ```
 
-Converts an address to a script hash.
-
+将地址转换为HASH脚本。
 
 ### scriptHash2address
 
@@ -2774,4 +2749,4 @@ const scriptHash2addressResult = neologin.utils.scriptHash2address(scriptHash2ad
 console.log('scriptHash2address', scriptHash2addressExpected === scriptHash2addressResult);
 ```
 
-Converts a script hash to an address.
+将HASH脚本转换为地址。

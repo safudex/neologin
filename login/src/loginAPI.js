@@ -210,7 +210,7 @@ function addPhone(phone, cognitoUser) {
 	});
 }
 
-function register(email, password, newsletter) {
+function register(email, password, newsletter, sync, importedPrivKey) {
 	return new Promise(async (resolve, reject) => {
 		var attributeList = [];
 
@@ -219,7 +219,17 @@ function register(email, password, newsletter) {
 			Value: email
 		};
 
-		const privkey = await generatePrivateKey();
+		let privkey = null
+		if (importedPrivKey) {
+			privkey = importedPrivKey
+		} else {
+			privkey = await generatePrivateKey();
+		}
+
+		if (!sync) {
+			return resolve(privkey)
+		}
+
 		const encryptedPrivkey = await encrypt(privkey, password);
 
 		var dataPrivkey = {
@@ -279,7 +289,7 @@ function forgotPassword(email) {
 		let cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
 
 		cognitoUser.forgotPassword({
-			onSuccess: function (result) {},
+			onSuccess: function (result) { },
 			onFailure: function (err) {
 				alert(err.message);
 				console.log(err);
