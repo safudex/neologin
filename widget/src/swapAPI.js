@@ -1,26 +1,25 @@
 // THE GENESIS: https://github.com/ConjurTech/switcheo-api-examples
 // THE BIBLE: https://docs.switcheo.network
-const { getTimestamp, signParams, signTransaction } = require('./switcheo/utils')
+const { getTimestamp, signParams, signTransaction, toAssetAmount, getScriptHashFromAddress } = require('./switcheo/utils')
 const { API_URL, CONTRACT_HASH } = require('./switcheo/config')
 const api = require('./switcheo/api')
 const io = require('socket.io-client')
-const WEBSOCKET_URL = "wss://test-ws.switcheo.io"
+const WEBSOCKET_URL = "wss://ws.switcheo.io"
 
-function getSwapPricing(pair) {
+function getOrderBook(pair) {
 	const apiParams = { pair }
-	return api.get(API_URL + '/exchange/swap_pricing', apiParams).then(res => res.body)
+	return api.get('https://api.switcheo.network/v2' + '/offers/book', apiParams).then(res => res.body)
 }
 
-console.log(getSwapPricing('GAS_NEO'))
-
-function createDeposit({ blockchain, address, assetID, amount, privateKey }) {
+function createDeposit({ blockchain, address, asset_id, amount, privateKey }) {
 	const signableParams = {
-		blockchain,
-		assetID,
 		amount,
-		timestamp: getTimestamp(),
-		contractHash: CONTRACT_HASH
+		asset_id,
+		blockchain,
+		contract_hash: CONTRACT_HASH,
+		timestamp: getTimestamp()
 	}
+	address = getScriptHashFromAddress(address)
 	const signature = signParams(signableParams, privateKey)
 	const apiParams = { ...signableParams, address, signature }
 	return api.post(API_URL + '/deposits', apiParams).then(res => res.body)
@@ -33,7 +32,7 @@ function executeDeposit({ deposit, privateKey }) {
 }
 
 function listBalances({ addresses }) {
-	const params = { addresses, contractHashes: [CONTRACT_HASH] }
+	const params = { addresses, contract_hashes: [CONTRACT_HASH] }
 	return api.get(API_URL + '/balances', params)
 }
 
@@ -47,7 +46,7 @@ function createOrder({ pair, blockchain, side, price,
 	const signableParams = {
 		pair, blockchain, side, price, wantAmount,
 		useNativeTokens, orderType, timestamp: getTimestamp(),
-		contractHash: CONTRACT_HASH
+		contract_hash: CONTRACT_HASH
 	}
 
 	const signature = signParams(signableParams, privateKey)
@@ -72,10 +71,10 @@ function broadcastOrder({ order, privateKey }) {
 	return api.post(url, { signatures })
 }
 
-function createWithdrawal({ blockchain, address, assetID, amount, privateKey }) {
+function createWithdrawal({ blockchain, address, asset_id, amount, privateKey }) {
 	const signableParams = {
-		blockchain, assetID, amount,
-		contractHash: CONTRACT_HASH, timestamp: getTimestamp()
+		blockchain, asset_id, amount,
+		contract_hash: CONTRACT_HASH, timestamp: getTimestamp()
 	}
 	const signature = signParams(signableParams, privateKey)
 	const apiParams = { ...signableParams, address, signature }
@@ -109,7 +108,7 @@ async function depositNEO(address, privateKey, amount) {
 	const deposit = await createDeposit({
 		blockchain: 'neo',
 		address,
-		assetID: 'NEO',
+		asset_id: 'NEO',
 		amount,
 		privateKey
 	});
@@ -126,17 +125,17 @@ async function depositNEO(address, privateKey, amount) {
 
 async function depositGAS(address, privateKey, amount) {
 	let contractBalanceGAS = (await listBalances({ addresses: [address] })).body.confirmed.GAS;
-
+	contractBalanceGAS = contractBalanceGAS ? contractBalanceGAS : 0
 	// Create deposit
 	const deposit = await createDeposit({
 		blockchain: 'neo',
 		address,
-		assetID: 'GAS',
-		amount,
+		asset_id: 'GAS',
+		amount: toAssetAmount(amount, 'GAS'),
 		privateKey
 	});
 
-	// Execute neo deposit
+	// Execute gas deposit
 	await executeDeposit({ deposit, privateKey })
 
 	// Wait for deposit to complete
@@ -151,7 +150,7 @@ async function withdraw(address, privateKey, amount, asset) {
 	const withdrawal = await createWithdrawal({
 		blockchain: 'neo',
 		address,
-		assetID: asset,
+		asset_id: asset,
 		amount,
 		privateKey
 	})
@@ -173,7 +172,7 @@ function createPromisedOrder(address, pair) {
 		const socketClient = io(`${WEBSOCKET_URL}/orders`)
 		socketClient.on('connection', function (socket) {
 			socket.join({
-				contractHash: CONTRACT_HASH,
+				contract_hash: CONTRACT_HASH,
 				pair: pair,
 				address
 			})
@@ -242,15 +241,18 @@ async function NEO2GAS(address, privateKey, amount) {
 }
 
 async function GAS2NEO(address, privateKey, amount) {
+	console.log('creating oredr...')
 	let filledOrder = createPromisedOrder(address, "GAS_NEO")
-
 	// DEPOSIT
+	console.log('depositing gas...')
 	await depositGAS(address, privateKey, amount)
 
 	// TRADE
+	console.log('trading...')
 	await tradeGAS2NEO(address, privateKey, amount, filledOrder)
 
 	// WITHDRAW
+	console.log('withdrawing...')
 	await withdraw(address, privateKey, filledOrder, "NEO")
 }
 
@@ -264,4 +266,4 @@ async function ETH2GAS() {
 	// SWTH -> GAS
 }
 
-export { NEO2GAS, ETH2NEO, ETH2GAS, GAS2NEO, getActualGASBalance, wait4newBalanceGAS }; 
+export { NEO2GAS, ETH2NEO, ETH2GAS, GAS2NEO, getOrderBook }; 

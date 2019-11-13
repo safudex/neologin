@@ -37,7 +37,6 @@ class Deposit extends React.Component {
 
   handleChange = (e) => {
     let { name, value } = e.target;
-    console.log(name, value)
     this.setState({ [name]: value })
     if (name === 'amount') {
       this.calculatePrice(value, this.state.asset)
@@ -73,14 +72,13 @@ class Deposit extends React.Component {
         ethAddress: res.address,
         payinAddress: res.payinAddress,
         ccViewIsLoading: false,
-        remainingWeeklyLimit: res.remainingWeeklyLimit
+        remainingWeeklyLimit: res.remainingWeeklyLimit,
+        amountExpectedFrom: res.amountExpectedFrom
       })
-      console.log('remainingWeeklyLimit', res.remainingWeeklyLimit)
       if (res.remainingWeeklyLimit < this.state.fiatChargeAmount) {
         this.setState({ cardError: true, errorMsg: `The amount you are trying to buy exceeds you remaining dialy limit: ${res.remainingWeeklyLimit}$` })
       }
       if (this.state.disableConfirmButton) {
-        console.log('called postCreditCard disable confirm button')
         this.postCreditCard()
       }
     })
@@ -89,7 +87,6 @@ class Deposit extends React.Component {
   confirmCreditCard = () => {
     this.setState({ disableConfirmButton: true })
     if (this.state.contactId) {
-      console.log('called postCreditCard contactid')
       this.postCreditCard()
     }
   }
@@ -110,7 +107,7 @@ class Deposit extends React.Component {
     console.log(this.state.ethAddress)
     let temp_address = this.state.ethAddress
     postCreditCard(this.state.contactId, this.state.fiatChargeAmount, temp_address,
-      this.state.payinAddress, creditCard, this.state.ethAmount2Buy, this.state.asset, this.props.neoAddr).then((response) => {
+      this.state.payinAddress, creditCard, this.state.amountExpectedFrom, this.state.asset, this.props.neoAddr).then((response) => {
         this.setState({
           activateACS: true,
           acsurl: response.acsurl,

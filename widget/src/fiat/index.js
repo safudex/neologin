@@ -1,13 +1,22 @@
-import { getExchangeAmount, createTransaction, getFixedExchange, getExchangeAmount2 } from '../changelly/api'
+import { getExchangeAmount, createTransaction } from '../changelly/api'
 import { getContactId, getEthUSDPrice, addCreditCard, buyETH, getStatus } from '../carbon/api'
 import Web3 from 'web3'
 import TOKENS from './tokens'
-import { GAS2NEO } from '../swapAPI'
+import { GAS2NEO, getOrderBook } from '../swapAPI'
 import { getBalance } from '../conn'
+
+import '../carbon/test.js'
 
 const Tx = require('ethereumjs-tx').Transaction
 
 export async function getFinalAmount(amount, calculatingPrice, asset) {
+
+    let switcheofee = 0
+    if (asset === 'NEO') {
+        let result = await getGASNeededForNEO(amount)
+        amount = result['totalGAS']
+        switcheofee = getSwitcheoFeeInUSD(amount, result['averageNEOPrice'])
+    }
 
     let changellyETH2GASRate = await getExchangeAmount(0.1)//changelly
     let carbonETHPrice = await getEthUSDPrice()//carbon
@@ -25,17 +34,10 @@ export async function getFinalAmount(amount, calculatingPrice, asset) {
     let carbonFee = (0.03 * priceInUSD > 2) ? 0.03 * priceInUSD : 2
 
 
-    let totalFee = carbonFee + changellyDepositNetFee + changellySwapNetFee //+ changellyFeeUSD <- included in getethusdprice
+    let totalFee = carbonFee + changellyDepositNetFee + changellySwapNetFee + switcheofee//+ changellyFeeUSD <- included in getethusdprice
     let fiatChargeAmount = priceInUSD + totalFee
 
     let minAmountOK = (priceInUSD >= 5)
-
-    if (asset === 'NEO') {
-        let switcheofee = 1
-
-        totalFee += switcheofee
-        fiatChargeAmount = priceInUSD + totalFee
-    }
 
     fiatChargeAmount = (fiatChargeAmount).toFixed(2)
     totalFee = (totalFee).toFixed(2)
@@ -51,10 +53,52 @@ export async function getFinalAmount(amount, calculatingPrice, asset) {
     }
 }
 
-const testnet = 'https://ropsten.infura.io/';
-const web3 = new Web3(new Web3.providers.HttpProvider(testnet));
+async function getGASNeededForNEO(amount) {
+    const bids_orderBook = (await getOrderBook('GAS_NEO'))['bids']
+    let neoPrice = 0
+    let gasAmount = 0
+    let neoRequested = amount
+    let totalGAS = 0
 
-/* var web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/" + TOKENS.ifura));//check infura */
+    let price = 0
+
+    let it = 0
+    while (neoRequested > 0 && it < bids_orderBook.length) {
+        gasAmount = bids_orderBook[it]['quantity']
+        neoPrice = bids_orderBook[it]['price']
+        let actualNEO = neoPrice * gasAmount
+        if (neoRequested <= actualNEO) {
+            totalGAS += (neoRequested / neoPrice)
+            price += neoPrice * neoRequested
+        }
+        else {
+            totalGAS += actualNEO / neoPrice
+            price += neoPrice * actualNEO
+        }
+        neoRequested -= actualNEO
+        it++
+    }
+
+    totalGAS = (Math.trunc(totalGAS * 1000) / 1000) + 0.001
+    let averageNEOPrice = parseFloat(amount) ? Math.round((price / amount) * 1000) / 1000 : 0
+    return {
+        totalGAS,
+        averageNEOPrice
+    }
+}
+
+function getSwitcheoFeeInUSD(neoAmount, averageNEOPrice) {
+    let netFee = 0
+    let switcheoFee = 0.2//percent
+
+    let neoFee = neoAmount * (switcheoFee / 100)
+    return (neoFee * averageNEOPrice)
+}
+
+//const testnet = 'https://ropsten.infura.io/';
+//const web3 = new Web3(new Web3.providers.HttpProvider(testnet));
+
+var web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/" + TOKENS.ifura));//check infura
 function createETHWallet(neoPrivKey) {
     let ethwallet = web3.eth.accounts.privateKeyToAccount(neoPrivKey);
     return ethwallet['address']
@@ -64,9 +108,9 @@ function createETHWallet(neoPrivKey) {
 export async function startTransaction(neoAddr, neoPrivkey, ethAmount2Buy) {
     let contactInfo = await getContactId(neoAddr)//carbon
     let contactId = contactInfo['contactId']
-    let address = createETHWallet(neoPrivkey)
+    let ethAddress = createETHWallet(neoPrivkey)
 
-    let transaction = await createTransaction(neoAddr, ethAmount2Buy)//changelly
+    let transaction = await createTransaction(ethAddress, ethAmount2Buy)//changelly
 
     let payinAddress = transaction['result']['payinAddress']
     let amountExpectedFrom = transaction['result']['amountExpectedFrom']
@@ -76,7 +120,7 @@ export async function startTransaction(neoAddr, neoPrivkey, ethAmount2Buy) {
         amountExpectedTo,
         payinAddress,
         contactId,
-        address,
+        ethAddress,
         amountExpectedFrom,
         remainingWeeklyLimit: contactInfo['remainingWeeklyLimit']
     }
@@ -96,7 +140,7 @@ export async function postCreditCard(contactId, fiatChargeAmount, address, payin
 
 }
 
-export function finishPurchase(neoAddr, address, payinAddress, amountExpectedTo, estimatedGas, contactID, orderID, actualBalance, asset) {
+export function finishPurchase(neoAddr, address, payinAddress, amountExpectedTo, amountExpectedFrom, contactID, orderID, actualBalance, asset) {
     return new Promise((resolve, reject) => {
         let checkStatus = setInterval(async () => {
             let code = ''
@@ -109,7 +153,7 @@ export function finishPurchase(neoAddr, address, payinAddress, amountExpectedTo,
             if (code === "100") {
                 clearInterval(checkStatus)
                 //una vez mis eths se han pagado, ahora checkeo que han llegado
-                checkIfEthsHasArrivedAndSend2Changelly(neoAddr, address, payinAddress, amountExpectedTo, actualBalance, asset, resolve, reject)
+                checkIfEthsHasArrivedAndSend2Changelly(neoAddr, address, payinAddress, amountExpectedTo, amountExpectedFrom, actualBalance, asset, resolve, reject)
             } else if (code === '-1' || code === '2' || code === '3' || code === '7000') {
                 return reject(code)
             }
@@ -117,14 +161,13 @@ export function finishPurchase(neoAddr, address, payinAddress, amountExpectedTo,
     })
 }
 
-function checkIfEthsHasArrivedAndSend2Changelly(neoAddr, address, payinAddress, amountExpectedTo, actualBalance, asset, resolve, reject) {
+function checkIfEthsHasArrivedAndSend2Changelly(neoAddr, address, payinAddress, amountExpectedTo, amountExpectedFrom, actualBalance, asset, resolve, reject) {
     let checkBalance = setInterval(async () => {
         let newBalance = await getActualBalance(address)
-        console.log('balances', address, actualBalance, newBalance)
         if (actualBalance < newBalance) {
             clearInterval(checkBalance)
             try {
-                await sendTransaction(neoAddr, address, payinAddress, amountExpectedTo, asset, resolve, reject)
+                await sendTransaction(neoAddr, address, payinAddress, amountExpectedTo, amountExpectedFrom, asset, resolve, reject)
             } catch (e) {
                 return reject()
             }
@@ -137,7 +180,6 @@ export async function getActualBalance(addr) {
         web3.eth.getBalance(addr, async (error, wei) => {
             if (!error) {
                 var balance = web3.utils.fromWei(wei, 'ether');
-                console.log(balance + " ETH");
                 resolve(balance)
             }
             else
@@ -146,20 +188,23 @@ export async function getActualBalance(addr) {
     });
 }
 
-async function sendTransaction(neoaddr, addr, toAddress, amountToSend, asset, resolve, reject) {
+export async function sendTransaction(neoaddr, addr, toAddress, amountToSendETH, amountToSendGas, asset, resolve, reject) {
     let gasPrice = await web3.eth.getGasPrice()
     let gasLimit = await web3.eth.getBlock("latest")
     gasLimit = gasLimit.gasLimit
     let nonce = await web3.eth.getTransactionCount(addr)
-    let privateKey = localStorage.getItem('privkey')
+    let privateKey = "x"
+    let privateKeyneo = localStorage.getItem('privkey')
+    gasPrice = gasPrice * 3 * 0
+
     var rawTransaction = {
         "from": addr,
         "nonce": web3.utils.toHex(nonce),
-        "gasPrice": gasPrice,
+        "gasPrice": web3.utils.toHex(gasPrice),
         "gasLimit": web3.utils.toHex(gasLimit),
         "to": toAddress,
-        "value": amountToSend,
-        "chainId": 3 //remember to change this
+        "value": web3.utils.toHex(web3.utils.toWei(amountToSendETH, 'ether')),
+        "chainId": 1
     };
 
     var privKey = new Buffer(privateKey, 'hex');
@@ -168,14 +213,14 @@ async function sendTransaction(neoaddr, addr, toAddress, amountToSend, asset, re
     tx.sign(privKey);
     var serializedTx = tx.serialize();
 
-    let actualBalance = await getBalanceByAsset(neoaddr, asset)
+    let actualBalance = await getBalanceByAsset(neoaddr, 'GAS')
 
     web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'), async (err, hash) => {
-        if (!err) {
+        if (err) {
             console.log('Txn Sent and hash is ' + hash);
             if (asset === 'NEO') {
-                await wait4newBalance(actualBalance, neoaddr, asset)
-                await GAS2NEO(resolve, reject)
+                //await wait4newBalance(actualBalance, neoaddr, 'GAS')
+                await GAS2NEO(neoaddr, privateKeyneo, amountToSendGas)
                 resolve()
             }
             else
@@ -190,8 +235,15 @@ async function sendTransaction(neoaddr, addr, toAddress, amountToSend, asset, re
 
 async function wait4newBalance(balance, addr, asset) {
     let newBalance = 0
-    while (balance > newBalance)
+    while (balance > newBalance) {
+        await sleep(2)
         newBalance = await getBalanceByAsset(addr, asset)
+        console.log(balance, newBalance)
+    }
+}
+
+function sleep(s) {
+    return new Promise(resolve => setTimeout(resolve, s * 1000));
 }
 
 async function getBalanceByAsset(addr, asset) {

@@ -15,7 +15,6 @@ class PaymentResultView extends React.Component {
         var temp = this.props.url.searchParams.get("contactId");
         if (this.props.success === 'true') {
             var asset = this.props.url.searchParams.get("asset");
-            console.log('asset', asset)
             var actualBalance = this.props.url.searchParams.get("actualBalance");
             temp = temp ? temp : "a?A";
             var contactId = temp.split('?')[0]

@@ -41,13 +41,6 @@ export async function getExchangeAmount(amount) {
     return response['result'][0]['rate']
 }
 
-export async function getExchangeAmount2(amount) {
-    let bodyExchangeAmount = createBody('getExchangeAmount', [{ "from": "gas", "to": "eth", 'amount': amount }])
-    let signedBodyEA = sign(bodyExchangeAmount)
-    let response = await doRequest(bodyExchangeAmount, signedBodyEA)
-    return response['result']
-}
-
 export async function getFixedExchange(amount) {
     let bodyExchangeAmount = ''
     if (amount) {
