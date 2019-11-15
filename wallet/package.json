@@ -8,6 +8,7 @@
     "@material-ui/icons": "^4.4.3",
     "i18next": "^19.0.0",
     "neologin": "^1.2.4",
+    "i18next": "^19.0.0",
     "qrcode": "^1.4.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
