@@ -1,10 +1,9 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-
 import neologin from 'neologin';
 import Send from '@material-ui/icons/Send';
-
 import Collapse from '@material-ui/core/Collapse';
+import { withTranslation } from 'react-i18next';
 import './assetrow.css'
 
 const ASSETS = {
@@ -88,6 +87,7 @@ class AssetRow extends React.Component {
     }
 
     render() {
+        const t = this.props.t
         return (
             <Grid
                 container
@@ -153,7 +153,7 @@ class AssetRow extends React.Component {
                             alignItems: 'center'
                         }}>
                             <Grid item>
-                                <p className="label" style={{ margin: 0 }}>SEND ASSET TO</p>
+                                <p className="label" style={{ margin: 0 }}>{t("subtittle_sendAsset")}</p>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -163,13 +163,13 @@ class AssetRow extends React.Component {
                             padding: '8px 15px'
                         }}>
                             <Grid item xs>
-                                <label className="label" htmlFor="toAddress">address</label>
+                                <label className="label" htmlFor="toAddress">{t("label_address")}</label>
                                 <input type="text" name="toAddress" id="toAddress" onChange={this.handleInputChange} />
                             </Grid>
                             <Grid item style={{ width: '1rem', height: this.props.isMobile ? '1rem' : '1px' }}>
                             </Grid>
                             <Grid item>
-                                <label className="label" htmlFor="amount">Amount</label>
+                                <label className="label" htmlFor="amount">{t("label_amount")}</label>
                                 <input type="text" name="amount" id="amount" onChange={this.handleInputChange} />
                             </Grid>
                         </Grid>
@@ -184,7 +184,7 @@ class AssetRow extends React.Component {
                                 borderRadius: '0px 0px 5px 5px'
                             }}>
                             <Grid item style={{ marginBottom: '0.5rem', width: this.props.isMobile ? '100%' : 'unset' }}>
-                                <input style={{ width: this.props.isMobile ? '100%' : 'unset' }} type="submit" value="Send" className="primary" onClick={this.send} />
+                                <input style={{ width: this.props.isMobile ? '100%' : 'unset' }} type="submit" value={t("button_send")} className="primary" onClick={this.send} />
                             </Grid>
                         </Grid>
                     </Grid>
@@ -194,4 +194,4 @@ class AssetRow extends React.Component {
     }
 }
 
-export default AssetRow
+export default withTranslation()(AssetRow)

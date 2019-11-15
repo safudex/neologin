@@ -6,14 +6,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import QRCode from 'qrcode'
 import SvgIcon from '@material-ui/core/SvgIcon';
-
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-
-import neologin from 'neologin'
-
 import AssetRow from './Components/AssetRow'
-
+import Menu from '@material-ui/core/Menu';
+import neologin from 'neologin'
+import { withTranslation } from 'react-i18next';
 import { server } from './config';
 
 function drawQR(address) {
@@ -35,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function App() {
+function App({ t, i18n }) {
 
   const classes = useStyles();
   const [network, setNetwork] = React.useState('TestNet');
@@ -59,7 +57,7 @@ function App() {
   function handleChange(event) {
     setNetwork(event.target.value);
     getBalance(address, event.target.value);
-	neologin.removeEventListener(neologin.Constants.EventName.BLOCK_HEIGHT_CHANGED);
+    neologin.removeEventListener(neologin.Constants.EventName.BLOCK_HEIGHT_CHANGED);
     neologin.addEventListener(neologin.Constants.EventName.BLOCK_HEIGHT_CHANGED, data => getBalance(address, event.target.value));
   }
 
@@ -85,6 +83,16 @@ function App() {
         }
       })
   }, [])
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   function getBalance(address, network) {
     neologin.getBalance({
@@ -135,18 +143,44 @@ function App() {
                     borderRadius: '4px'
                   }}
                 >
-                  <MenuItem value='MainNet'>MainNet</MenuItem>
-                  <MenuItem value='TestNet'>TestNet</MenuItem>
+                  <MenuItem value='MainNet'>{t("mainNet")}</MenuItem>
+                  <MenuItem value='TestNet'>{t("testNet")}</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
             <Grid item xs style={{ textAlign: 'center' }}>
-              {isMobile ? '' : 'WALLET'}
+              <span>{isMobile ? '' : t("tittle")}</span>
             </Grid>
             <Grid item xs style={{ textAlign: 'end' }}>
-              <SvgIcon style={{ cursor: 'pointer' }} onClick={() => window.open(server.includes("localhost") ? server + "?settings=true" : server + "?settings=true/", 'NeoLogin - Login', 'width=400,height=660')}>
-                <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
-              </SvgIcon>
+              <FormControl variant="outlined" className={classes.formControl} style={{ alignItems: 'flex-end' }}>
+                <SvgIcon aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} style={{ cursor: 'pointer' }}>
+                  <path d="M9 5.5c.83 0 1.5-.67 1.5-1.5S9.83 2.5 9 2.5 7.5 3.17 7.5 4 8.17 5.5 9 5.5zm0 2c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5S9.83 7.5 9 7.5zm0 5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z" />
+                </SvgIcon>
+                <Menu
+                  id="simple-menu"
+                  anchorEl={anchorEl}
+                  keepMounted
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  <MenuItem onClick={() => {
+                    handleClose()
+                    window.open(server.includes("localhost") ? server + "?settings=true" : server + "?settings=true/", 'NeoLogin - ' + t('login'), 'width=400,height=660')
+                  }}>{t("menu_settings")}</MenuItem>
+                  <MenuItem onClick={() => {
+                    handleClose()
+                    window.open("https://github.com/safudex/neologin/issues")
+                  }}>
+                    {t("menu_issues")}
+                  </MenuItem>
+                  <MenuItem onClick={() => {
+                    handleClose()
+                    i18n.changeLanguage(i18n.language === 'zh' ? 'en' : 'zh')
+                  }}>
+                    {t("inverse:menu_language")}
+                  </MenuItem>
+                </Menu>
+              </FormControl>
             </Grid>
           </Grid>
         </Grid>
@@ -155,7 +189,7 @@ function App() {
             {
               isMobile ?
                 <Grid item>
-                  <h3>WALLET</h3>
+                  <h3>{t("tittle")}</h3>
                 </Grid>
                 : null
             }
@@ -175,7 +209,7 @@ function App() {
                 :
                 address === '' ? null :
                   <Grid item style={{ margin: '0.3rem 0rem' }}>
-                    <p>You have nothing:)</p>
+                    <p>{t("info_0founds")}</p>
                   </Grid>
             }
           </Grid>
@@ -185,4 +219,4 @@ function App() {
   );
 }
 
-export default App;
+export default withTranslation()(App)
