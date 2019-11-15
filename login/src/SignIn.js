@@ -235,7 +235,6 @@ class SignIn extends React.Component {
 							{t("button_signin")}
 						</button>
 						{this.state.twoFA ? null : (
-<<<<<<< HEAD
 							<Grid container direction="column">
 								<Grid container
 									justify="center"
