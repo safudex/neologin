@@ -1,9 +1,9 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-
+import Link from '@material-ui/core/Link';
 import Brand from './Brand'
 import ReactDOM from 'react-dom'
-
+import { withTranslation } from 'react-i18next';
 import './styles.css'
 
 const rejectError = {
@@ -24,6 +24,7 @@ class RequestAcceptance extends React.Component {
   }
 
   render() {
+    const { t, i18n } = this.props
     return (
       <div>
         <Brand closeWidget={() => {
@@ -37,7 +38,7 @@ class RequestAcceptance extends React.Component {
           style={{ height: '100%', padding: '1em' }}
         >
           <Grid item xs>
-            <p style={{ fontSize: '0.85em' }}>{this.props.message}</p>
+            <p style={{ fontSize: '0.85em' }}>{t("info_requestAcceptance")}</p>
           </Grid>
           <Grid item xs style={{ width: '100%' }}>
             <Grid
@@ -52,7 +53,7 @@ class RequestAcceptance extends React.Component {
                   this.props.resolve('resolveincomponent')
                   this.unmountComponent()
                 }}>
-                  Accept
+                  {t("button_accept")}
                 </button>
               </Grid>
               <Grid item xs>
@@ -60,10 +61,15 @@ class RequestAcceptance extends React.Component {
                   this.props.reject(rejectError)
                   this.unmountComponent()
                 }}>
-                  Reject
-            </button>
+                  {t("button_reject")}
+                </button>
               </Grid>
             </Grid>
+          </Grid>
+          <Grid item xs>
+            <Link href="#" variant="body2" onClick={() => i18n.changeLanguage(i18n.language === 'zh' ? 'en' : 'zh')}>
+              <p style={{ color: '#2e5aac', marginBottom: '0' }}>{t("inverse:link_language")}</p>
+            </Link>
           </Grid>
         </Grid >
       </div >
@@ -71,4 +77,4 @@ class RequestAcceptance extends React.Component {
   }
 }
 
-export default RequestAcceptance;
+export default withTranslation()(RequestAcceptance)

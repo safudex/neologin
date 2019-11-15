@@ -1,9 +1,8 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-
+import { withTranslation } from 'react-i18next';
 import Brand from './Brand'
 import ReactDOM from 'react-dom'
-
 import './styles.css'
 
 class RequestAcceptanceInvoke extends React.Component {
@@ -19,6 +18,7 @@ class RequestAcceptanceInvoke extends React.Component {
   }
 
   render() {
+    const { t } = this.props
     return (
       <div>
         <Brand closeWidget={() => { this.props.reject(); this.unmountComponent(); }} reqNumber={parseInt(this.props.contid.split('-')[1]) + 1} />
@@ -30,7 +30,7 @@ class RequestAcceptanceInvoke extends React.Component {
           style={{ height: '100%', padding: '1em' }}
         >
           <Grid item xs>
-            <p style={{ fontSize: '0.85em' }}>This dApp has requested permission to invoke the smart contract:</p>
+            <p style={{ fontSize: '0.85em' }}>{t("info_invoke")}</p>
           </Grid>
           <Grid item xs>
             <span style={{ fontSize: '0.75em' }}>{this.props.invokeArgs.scriptHash}</span>
@@ -46,27 +46,27 @@ class RequestAcceptanceInvoke extends React.Component {
               <div>
                 <span style={{ fontSize: '0.85em', display: 'block' }}>Network: {this.props.network}</span>
                 {
-					(this.props.invokeArgs.attachedAssets !== undefined)?
-						["NEO", "GAS"].map((asset, i) =>
-							(this.props.invokeArgs.attachedAssets[asset]) ?
-								<span key={i} style={{ fontSize: '0.85em', display: 'block' }}>Amount: {this.props.invokeArgs.attachedAssets[asset]} {asset}</span>
-							: null
-						)
-						: null
+                  (this.props.invokeArgs.attachedAssets !== undefined) ?
+                    ["NEO", "GAS"].map((asset, i) =>
+                      (this.props.invokeArgs.attachedAssets[asset]) ?
+                        <span key={i} style={{ fontSize: '0.85em', display: 'block' }}>Amount: {this.props.invokeArgs.attachedAssets[asset]} {asset}</span>
+                        : null
+                    )
+                    : null
 
-				}
-				<span style={{ fontSize: '0.85em', display: 'block' }}>Fee: {this.props.invokeArgs.fee || 0} GAS</span>
-				{
-					this.props.goodEstimation ?
-						<span style={{ fontSize: '0.85em', display: 'block', color: '#B33A3A' }}>The amount of GAS or NEO that will be spent on this transaction could not be estimated, please make sure that this is a legitimate transaction</span>
-						: null
-				}
-			</div>
-		</Grid>
-	</Grid>
-	<Grid item xs style={{ width: '100%' }}>
-		<Grid
-			container
+                }
+                <span style={{ fontSize: '0.85em', display: 'block' }}>Fee: {this.props.invokeArgs.fee || 0} GAS</span>
+                {
+                  this.props.goodEstimation ?
+                    <span style={{ fontSize: '0.85em', display: 'block', color: '#B33A3A' }}>{t("warning_invoke")}</span>
+                    : null
+                }
+              </div>
+            </Grid>
+          </Grid>
+          <Grid item xs style={{ width: '100%' }}>
+            <Grid
+              container
               direction="row"
               justify="center"
               alignItems="center"
@@ -77,7 +77,7 @@ class RequestAcceptanceInvoke extends React.Component {
                   this.props.resolve('resolveincomponent')
                   this.unmountComponent()
                 }}>
-                  Accept
+                  {t("button_accept")}
                 </button>
               </Grid>
               <Grid item xs>
@@ -85,8 +85,8 @@ class RequestAcceptanceInvoke extends React.Component {
                   this.props.reject()
                   this.unmountComponent()
                 }}>
-                  Reject
-            </button>
+                  {t("button_reject")}
+                </button>
               </Grid>
             </Grid>
           </Grid>
@@ -96,4 +96,4 @@ class RequestAcceptanceInvoke extends React.Component {
   }
 }
 
-export default RequestAcceptanceInvoke;
+export default withTranslation()(RequestAcceptanceInvoke);

@@ -1,0 +1,19 @@
+{
+    "common": {
+        "info_requestAcceptance": "zh_This dApp is requesting access to your wallet",
+        "info_login": "zh_To continue, log in to NeoLogin.",
+        "info_noFounds": "zh_You have not enough funds. Scan the above QR code to get your address.",
+        "info_send": "zh_This dApp has requested permission to send",
+        "info_invoke": "zh_This dApp has requested permission to invoke the smart contract:",
+        "warning_invoke": "zh_The amount of GAS or NEO that will be spent on this transaction could not be estimated, please make sure that this is a legitimate transaction",
+        "info_signMsg": "zh_This dApp wants to sign the message",
+        "info_deploy": "zh_This dApp has requested permission to deploy a smart contract.",
+        "info_invokeMulti": "zh_This dApp has requested permission to invoke the following smart contracts:",
+        "button_accept": "zh_Accept",
+        "button_reject": "zh_Reject",
+        "button_continue": "zh_Continue"
+    },
+    "inverse": {
+        "link_language": "Switch to EN"
+    }
+}

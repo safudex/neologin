@@ -800,7 +800,6 @@ function requestAcceptance() {
 			else {
 				var requestContainer = createRequestContainer()
 				ReactDOM.render(<RequestAcceptance
-					message={"This dApp is requesting access to your wallet"}
 					resolve={() => {
 						userGivesPermission = true;
 						connection.promise.then(parent =>

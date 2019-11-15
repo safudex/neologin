@@ -1,0 +1,18 @@
+{
+    "common": {
+        "tittle": "zh_WALLET",
+        "txt_login": "zh_Login",
+        "menu_settings": "zh_Settings",
+        "menu_issues": "zh_Issues",
+        "info_0founds": "zh_You have nothing:)",
+        "mainNet": "zh_MainNet",
+        "testNet": "zh_TestNet",
+        "subtittle_sendAsset": "zh_SEND ASSET TO",
+        "label_address": "zh_ADDRESS",
+        "label_amount": "zh_AMOUNT",
+        "button_send": "zh_SEND"
+    },
+    "inverse": {
+        "menu_language": "Switch to EN"
+    }
+}

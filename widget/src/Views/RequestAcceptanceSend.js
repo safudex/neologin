@@ -1,6 +1,6 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-
+import { withTranslation } from 'react-i18next';
 import Brand from './Brand'
 import ReactDOM from 'react-dom'
 
@@ -19,6 +19,7 @@ class RequestAcceptanceSend extends React.Component {
   }
 
   render() {
+    const { t } = this.props
     return (
       <div>
         <Brand closeWidget={() => { this.props.reject(); this.unmountComponent(); }} reqNumber={parseInt(this.props.contid.split('-')[1]) + 1} />
@@ -30,7 +31,7 @@ class RequestAcceptanceSend extends React.Component {
           style={{ height: '100%', padding: '1em' }}
         >
           <Grid item xs>
-            <p style={{ fontSize: '0.85em' }}>This dApp has requested permission to send</p>
+            <p style={{ fontSize: '0.85em' }}>{t("info_send")}</p>
           </Grid>
           <Grid item xs>
             <span style={{ fontWeight: 'bold' }}>{this.props.sendArgs.amount} {this.props.sendArgs.asset}</span>
@@ -63,7 +64,7 @@ class RequestAcceptanceSend extends React.Component {
                   this.props.resolve('resolveincomponent')
                   this.unmountComponent()
                 }}>
-                  Accept
+                  {t("button_accept")}
                 </button>
               </Grid>
               <Grid item xs>
@@ -71,8 +72,8 @@ class RequestAcceptanceSend extends React.Component {
                   this.props.reject()
                   this.unmountComponent()
                 }}>
-                  Reject
-            </button>
+                  {t("button_reject")}
+                </button>
               </Grid>
             </Grid>
           </Grid>
@@ -82,4 +83,4 @@ class RequestAcceptanceSend extends React.Component {
   }
 }
 
-export default RequestAcceptanceSend;
+export default withTranslation()(RequestAcceptanceSend);
