@@ -1,30 +1,17 @@
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
 import { login } from './loginAPI';
 import logo from './logoboxtxt.png';
-import logo2 from './logo2.png';
-import VpnKeyIcon from '@material-ui/icons/VpnKey';
-
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import InputBase from '@material-ui/core/InputBase';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import AccountCircle from '@material-ui/icons/EmailOutlined';
-import SearchIcon from '@material-ui/icons/Search';
-import DirectionsIcon from '@material-ui/icons/Directions';
+import { withTranslation } from 'react-i18next';
 
 const styles = (theme => ({
 	'@global': {
@@ -49,25 +36,6 @@ const styles = (theme => ({
 	},
 	submit: {
 		margin: theme.spacing(3, 0, 2),
-	},
-}));
-
-const useStyles = makeStyles(theme => ({
-	root: {
-		padding: '2px 4px',
-		display: 'flex',
-		alignItems: 'center'
-	},
-	input: {
-		marginLeft: theme.spacing(1),
-		flex: 1,
-	},
-	iconButton: {
-		padding: 10,
-	},
-	divider: {
-		height: 28,
-		margin: 4,
 	},
 }));
 
@@ -128,7 +96,7 @@ class SignIn extends React.Component {
 			if (err.code === "CodeMismatchException") {
 				this.setState({ wrongMFACode: true });
 			} else {
-				window.alert("Session expired, refresh the window to start again");
+				window.alert(this.props.t("common:alert_session_expired"));
 			}
 			console.log(err);
 		}
@@ -194,7 +162,7 @@ class SignIn extends React.Component {
 	}
 
 	render() {
-		const { classes } = this.props;
+		const { classes, t, i18n } = this.props;
 
 		return (
 			<Container component="main" maxWidth="xs">
@@ -205,7 +173,7 @@ class SignIn extends React.Component {
 						NEO<span style={{ color: '' }}>LOGIN</span>
 					</span> */}
 					<Typography component="h1" variant="h5" style={{ color: '#6A737D' }}>
-						Sign in
+						{t("tittle_signin")}
 					</Typography>
 					<form className={classes.form} onSubmit={this.state.twoFA ? this.handleMFASubmit : this.handleSubmit}>
 						{this.state.twoFA ?
@@ -217,12 +185,12 @@ class SignIn extends React.Component {
 									fullWidth
 									key="MFACode"
 									id="MFACode"
-									label={this.state.twoFA === "SMS_MFA" ? "SMS Code" : "TOTP Code"}
+									label={this.state.twoFA === "SMS_MFA" ? t("label_mfaSMS") : t("label_mfaTOTP")}
 									name="MFACode"
 									autoFocus
 									value={this.state.MFACode}
 									error={this.state.wrongMFACode ? true : null}
-									helperText={this.state.wrongMFACode ? "Wrong code" : "Input the " + (this.state.twoFA === "SMS_MFA" ? "SMS code that we sent you" : "the time-based code from your authenticator App")}
+									helperText={this.state.wrongMFACode ? t("helper_wrongMFA") : this.state.twoFA === "SMS_MFA" ? t("helper_smsMFA") : t("helper_totpMFA")}
 									onChange={this.handleInputChange}
 								/>
 							]) : ([
@@ -233,13 +201,13 @@ class SignIn extends React.Component {
 									fullWidth
 									key="email"
 									id="email"
-									label="Email Address"
+									label={t("signUp_form:label_email")}
 									name="email"
 									autoComplete="email"
 									autoFocus
 									value={this.state.email}
 									error={this.state.wrongEmail ? true : null}
-									helperText={this.state.wrongEmail ? "No user with this email" : null}
+									helperText={this.state.wrongEmail ? t("wrongEmail") : null}
 									onChange={this.handleInputChange}
 								/>,
 								<TextField
@@ -249,33 +217,42 @@ class SignIn extends React.Component {
 									fullWidth
 									name="password"
 									key="password"
-									label="Password"
+									label={t("label_password")}
 									type="password"
 									id="password"
 									autoComplete="current-password"
 									value={this.state.password}
 									error={this.state.wrongPassword ? true : null}
-									helperText={this.state.wrongPassword ? "Wrong password" : null}
+									helperText={this.state.wrongPassword ? t("wrongPassword") : null}
 									onChange={this.handleInputChange}
 								/>,
 								<FormControlLabel
 									control={<Checkbox value="remember" color="primary" name="rememberMe" checked={this.state.rememberMe} onChange={this.handleInputChange} />}
-									label="Remember me"
+									label={t("checkbox_rememberme")}
 								/>
 							])}
 						<button className='buttonContinue' type="submit" style={{ margin: '1rem 0' }}>
-							Sign In
-          				</button>
+							{t("button_signin")}
+						</button>
 						{this.state.twoFA ? null : (
-							<Grid container>
-								<Grid item xs>
-									<Link href="#" variant="body2" onClick={this.state.passwordLostClick}>
-										<span style={{ color: '#2e5aac' }}>Forgot password?</span>
-									</Link>
+							<Grid container direction="column">
+								<Grid container
+									justify="center"
+									alignItems="center">
+									<Grid item xs>
+										<Link href="#" variant="body2" onClick={this.state.passwordLostClick}>
+											<span style={{ color: '#2e5aac' }}>{t("link_forgotpw")}</span>
+										</Link>
+									</Grid>
+									<Grid item>
+										<Link href="#" variant="body2" onClick={this.state.signUpClick}>
+											<span style={{ color: '#2e5aac' }}>{t("link_signUp")}</span>
+										</Link>
+									</Grid>
 								</Grid>
-								<Grid item>
-									<Link href="#" variant="body2" onClick={this.state.signUpClick}>
-										<span style={{ color: '#2e5aac' }}>Don't have an account? Sign Up</span>
+								<Grid item style={{ textAlign: 'center', marginTop: '1rem' }}>
+									<Link href="#" variant="body2" onClick={() => i18n.changeLanguage(i18n.language === 'zh' ? 'en' : 'zh')}>
+										<span style={{ color: '#2e5aac' }}>{t("inverse:link_language")}</span>
 									</Link>
 								</Grid>
 							</Grid>
@@ -291,4 +268,4 @@ SignIn.propTypes = {
 	classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SignIn);
+export default withTranslation("signIn_form")(withStyles(styles)(SignIn))
