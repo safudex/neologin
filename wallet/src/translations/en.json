@@ -4,7 +4,7 @@
         "txt_login": "Login",
         "menu_settings": "Settings",
         "menu_issues": "Issues",
-        "info_noFounds": "You currently have no assets.",
+        "info_noFunds": "You currently have no assets.",
         "mainNet": "MainNet",
         "testNet": "TestNet",
         "subtittle_sendAsset": "SEND ASSET TO",
