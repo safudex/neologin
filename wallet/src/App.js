@@ -209,7 +209,7 @@ function App({ t, i18n }) {
                 :
                 address === '' ? null :
                   <Grid item style={{ margin: '0.3rem 0rem' }}>
-                    <p>{t("info_0founds")}</p>
+                    <p>{t("info_noFunds")}</p>
                   </Grid>
             }
           </Grid>
