@@ -9,7 +9,7 @@ import '../carbon/test.js'
 
 const Tx = require('ethereumjs-tx').Transaction
 
-export async function getFinalAmount(amount, calculatingPrice, asset) {
+export async function getFinalAmount(amount, asset, id) {
 
     let switcheofee = 0
     if (asset === 'NEO') {
@@ -25,7 +25,7 @@ export async function getFinalAmount(amount, calculatingPrice, asset) {
 
     //calculating fees
     let gasPrice = await web3.eth.getGasPrice()
-    let txPriceInWei = gasPrice * 21000
+    let txPriceInWei = gasPrice * 21000 * 3 //fast fast fast fast
     let txPriceInEth = web3.utils.fromWei(String(txPriceInWei), 'ether')
     let changellyDepositNetFee = txPriceInEth / carbonETHPrice
 
@@ -48,7 +48,7 @@ export async function getFinalAmount(amount, calculatingPrice, asset) {
         priceInUSD,
         totalFee,
         minAmountOK,
-        calculatingPrice,
+        id,
         ethAmount2Buy
     }
 }
@@ -189,7 +189,7 @@ export async function getActualBalance(addr) {
 }
 
 export async function sendTransaction(neoaddr, addr, toAddress, amountToSendETH, amountToSendGas, asset, resolve, reject) {
-    let gasPrice = await web3.eth.getGasPrice()
+    /* let gasPrice = await web3.eth.getGasPrice()
     let gasLimit = await web3.eth.getBlock("latest")
     gasLimit = gasLimit.gasLimit
     let nonce = await web3.eth.getTransactionCount(addr)
@@ -213,9 +213,11 @@ export async function sendTransaction(neoaddr, addr, toAddress, amountToSendETH,
     tx.sign(privKey);
     var serializedTx = tx.serialize();
 
-    let actualBalance = await getBalanceByAsset(neoaddr, 'GAS')
-
-    web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'), async (err, hash) => {
+    let actualBalance = await getBalanceByAsset(neoaddr, 'GAS') */
+    let privateKeyneo = localStorage.getItem('privkey')
+    console.log(neoaddr, privateKeyneo, amountToSendGas)
+    await GAS2NEO(neoaddr, privateKeyneo, amountToSendGas)
+    /* web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'), async (err, hash) => {
         if (err) {
             console.log('Txn Sent and hash is ' + hash);
             if (asset === 'NEO') {
@@ -230,7 +232,7 @@ export async function sendTransaction(neoaddr, addr, toAddress, amountToSendETH,
             console.error(err);
             reject()
         }
-    });
+    }); */
 }
 
 async function wait4newBalance(balance, addr, asset) {

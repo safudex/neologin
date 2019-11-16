@@ -145,7 +145,6 @@ select {
     text-decoration: none;
     text-transform: uppercase;
     white-space: nowrap;
-    margin-top: 1rem;
 }
 
 .buttonBuy:disabled {

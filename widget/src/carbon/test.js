@@ -7,11 +7,11 @@ const ethPublicKey = '0x56c77d84caf29adc6f0bCd02e51a8a33a13Ed749'
 
 async function startTest() {
     return new Promise(async (resolve, reject) => {
-        let res = await createTransaction(publicKey, amount)
-        console.log(res)
+        //let res = await createTransaction(publicKey, amount)
+        //console.log(res)
         sendTransaction(publicKey,
             ethPublicKey,
-            res['result']['payinAddress'],
+            null,//res['result']['payinAddress'],
             "0.07",
             "8.5",
             'NEO', resolve, reject

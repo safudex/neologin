@@ -23,7 +23,8 @@ function encodeMessage(message) {
 }
 
 function signTransaction(transaction, privateKey) {
-  const serializedTxn = tx.serializeTransaction(transaction, false)
+  var txn = new tx.InvocationTransaction(transaction)
+  const serializedTxn = txn.serialize(false)
   return signMessage(serializedTxn, privateKey)
 }
 

@@ -1,6 +1,6 @@
 const config = {
   API_URL: 'https://api.switcheo.network/v2',
-  CONTRACT_HASH: '91b83e96f2a7c4fdf0c1688441ec61986c7cae26'
+  CONTRACT_HASH: 'a32bcf5d7082f740a4007b16e812cf66a457c3d4'
 }
 
 module.exports = config
