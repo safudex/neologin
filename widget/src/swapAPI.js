@@ -44,11 +44,17 @@ function createOrder({ pair, blockchain, side, price,
 	wantAmount, useNativeTokens, orderType,
 	privateKey, address }) {
 	const signableParams = {
-		pair, blockchain, side, price, wantAmount,
-		useNativeTokens, orderType, timestamp: getTimestamp(),
-		contract_hash: CONTRACT_HASH
+		blockchain,
+		contract_hash: CONTRACT_HASH,
+		orderType,
+		pair,
+		price,
+		side,
+		timestamp: getTimestamp(),
+		useNativeTokens,
+		wantAmount,
 	}
-
+	address = getScriptHashFromAddress(address)
 	const signature = signParams(signableParams, privateKey)
 	const apiParams = { ...signableParams, address, signature }
 	return api.post(API_URL + '/orders', apiParams).then(res => res.body)
@@ -126,6 +132,7 @@ async function depositNEO(address, privateKey, amount) {
 async function depositGAS(address, privateKey, amount) {
 	let contractBalanceGAS = (await listBalances({ addresses: [address] })).body.confirmed.GAS;
 	contractBalanceGAS = contractBalanceGAS ? contractBalanceGAS : 0
+	console.log('contractBalanceGAS', contractBalanceGAS, CONTRACT_HASH)
 	// Create deposit
 	const deposit = await createDeposit({
 		blockchain: 'neo',
@@ -142,6 +149,7 @@ async function depositGAS(address, privateKey, amount) {
 	while (contractBalanceGAS < amount) {
 		await sleep(0.5)
 		contractBalanceGAS = (await listBalances({ addresses: [address] })).body.confirmed.GAS;
+		console.log('contractBalanceGAS', contractBalanceGAS)
 	}
 }
 
@@ -245,7 +253,7 @@ async function GAS2NEO(address, privateKey, amount) {
 	let filledOrder = createPromisedOrder(address, "GAS_NEO")
 	// DEPOSIT
 	console.log('depositing gas...')
-	await depositGAS(address, privateKey, amount)
+	//await depositGAS(address, privateKey, amount)
 
 	// TRADE
 	console.log('trading...')

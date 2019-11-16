@@ -19,7 +19,7 @@ class Deposit extends React.Component {
       totalFee: 0,
       amount: this.props.amount,
       fiatChargeAmount: 0,
-      calculatingPrice: 0,
+      reqCalculatePriceCount: 0,
       priceInUSD: 0,
       minAmountOK: true,
       ccViewIsLoading: false,
@@ -46,21 +46,26 @@ class Deposit extends React.Component {
   }
 
   calculatePrice = (value, asset) => {
-    let _calculatingPrice = this.state.calculatingPrice + 1
-    this.setState({ calculatingPrice: _calculatingPrice }, () => {
-      getFinalAmount(value, _calculatingPrice, asset).then((res) => {
-        if (res.calculatingPrice == this.state.calculatingPrice) {
-          if (this.state.calculatingPrice)
+    let _requestsCount = this.state.reqCalculatePriceCount + 1
+    this.setState({ reqCalculatePriceCount: _requestsCount }, async () => {
+      try {
+        let res = await getFinalAmount(value, asset, _requestsCount)
+        if (res.id == this.state.reqCalculatePriceCount) {
+          if (this.state.reqCalculatePriceCount)
             this.setState({
               fiatChargeAmount: res.fiatChargeAmount,
               totalFee: res.totalFee,
               priceInUSD: res.priceInUSD,
-              calculatingPrice: 0,
+              reqCalculatePriceCount: 0,
               minAmountOK: res.minAmountOK,
               ethAmount2Buy: res.ethAmount2Buy
             })
         }
-      })
+        console.log('llega')
+      } catch (error) {
+        console.log('llega')
+        this.setState({ cardError: true, errorMsg: 'Error calculating prices.', reqCalculatePriceCount: 0 })
+      }
     })
   }
 
@@ -104,7 +109,6 @@ class Deposit extends React.Component {
       card_cvc: this.state.card_cvc,
       card_fullName: this.state.card_fullName
     }
-    console.log(this.state.ethAddress)
     let temp_address = this.state.ethAddress
     postCreditCard(this.state.contactId, this.state.fiatChargeAmount, temp_address,
       this.state.payinAddress, creditCard, this.state.amountExpectedFrom, this.state.asset, this.props.neoAddr).then((response) => {
@@ -278,7 +282,7 @@ class Deposit extends React.Component {
               </Grid>
               <Grid item>
                 {
-                  this.state.calculatingPrice ?
+                  this.state.reqCalculatePriceCount ?
                     <p>Loading price...</p>
                     :
                     <>
@@ -288,7 +292,7 @@ class Deposit extends React.Component {
                 }
               </Grid>
               {
-                !this.state.calculatingPrice && this.state.minAmountOK ?
+                !this.state.reqCalculatePriceCount && this.state.minAmountOK ?
                   <Grid item>
                     <button className="buttonBuy" disabled={!this.state.amount} onClick={this.buy}>Buy</button>
                   </Grid> : null
