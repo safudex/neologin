@@ -41,18 +41,18 @@ function sleep(s) {
 }
 
 function createOrder({ pair, blockchain, side, price,
-	wantAmount, useNativeTokens, orderType,
+	quantity, useNativeTokens, orderType,
 	privateKey, address }) {
 	const signableParams = {
-		blockchain,
-		contract_hash: CONTRACT_HASH,
-		orderType,
 		pair,
-		price,
+		blockchain,
 		side,
+		price,
+		quantity: toAssetAmount(quantity, 'GAS'),
+		use_native_tokens: useNativeTokens,
+		order_type: orderType,
 		timestamp: getTimestamp(),
-		useNativeTokens,
-		wantAmount,
+		contract_hash: CONTRACT_HASH,
 	}
 	address = getScriptHashFromAddress(address)
 	const signature = signParams(signableParams, privateKey)
