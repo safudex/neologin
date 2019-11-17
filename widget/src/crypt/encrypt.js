@@ -10,11 +10,11 @@ function aes256CbcEncrypt(iv, key, data) {
   return Buffer.concat([firstChunk, secondChunk]);
 }
 
-export function ivProvider() {
+function getIV() {
   return randomBytes(IV_LENGTH);
 }
 
-export default function encrypt({ recipientPublicKey, wif, data, ivProvider }) {
+export default function encrypt({ recipientPublicKey, wif, data }) {
   const ecdh = createECDH('prime256v1');
   const senderAccount = new wallet.Account(wif);
   const senderPrivateKey = senderAccount.privateKey;
@@ -25,7 +25,7 @@ export default function encrypt({ recipientPublicKey, wif, data, ivProvider }) {
   const hash = createHash('sha512')
     .update(sharedKey)
     .digest();
-  const iv = ivProvider()
+  const iv = getIV()
   const encryptionKey = hash.slice(0, 32);
   const macKey = hash.slice(32);
   const encrypted = aes256CbcEncrypt(iv, encryptionKey, data);

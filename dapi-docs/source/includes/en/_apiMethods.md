@@ -1605,7 +1605,6 @@ Encrypts data using a public key. Aes 256 cbc encryption.
 |:------------------ |:---------------- |:-------------------------------------------------------- |
 | recipientPublicKey | String           | Recipient's public key                                   |
 | data               | String or Buffer | Data you want to encrypt                                 |
-| ivProvider         | function?        | Function that generates an initialization vector (nonce) |
 
 ##### Success Response
 | Parameter | Type   | Description                                         |

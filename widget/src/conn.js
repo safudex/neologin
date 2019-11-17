@@ -12,7 +12,7 @@ import RequestAcceptanceInvoke from './Views/RequestAcceptanceInvoke';
 import RequestAcceptanceDeploy from './Views/RequestAcceptanceDeploy';
 import InsufficientFunds from './Views/InsufficientFunds';
 import RequestAcceptanceInvokeMulti from './Views/RequestAcceptanceInvokeMulti';
-import { default as encryptRaw, ivProvider } from './crypt/encrypt';
+import { default as encryptRaw } from './crypt/encrypt';
 import { default as decryptRaw } from './crypt/decrypt';
 
 let acct = null;
@@ -50,7 +50,6 @@ let rawMethods = {
 	encrypt,
 	decrypt,
 	disconnect,
-	ivProvider
 	//Methods implemented in the client SDK
 	//addEventListener,
 	//removeEventListener
@@ -58,7 +57,7 @@ let rawMethods = {
 
 let methods = {};
 
-const unathenticatedMethods = ['getProvider', 'getNetworks', 'getBalance', 'getStorage', 'invokeRead', 'verifyMessage', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog', 'ivProvider', 'disconnect'];
+const unathenticatedMethods = ['getProvider', 'getNetworks', 'getBalance', 'getStorage', 'invokeRead', 'verifyMessage', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog', 'disconnect'];
 const requireNetworkCheckMethods = ['getBalance', 'getStorage', 'invokeRead', 'getBlock', 'getBlockHeight', 'getTransaction', 'getApplicationLog', 'send', 'invoke', 'invokeMulti', 'deploy'];
 
 Object.keys(rawMethods).map((key) => {
@@ -244,7 +243,6 @@ function getAccount(...args) {
 		requestAcceptance().then(() => {
 			resolve({
 				address: acct.address,
-				scriptHash: acct.scriptHash,
 				label: 'My Spending Wallet'
 			})
 		}).catch((e) => {
@@ -735,10 +733,10 @@ async function deploy(deployArgs) {
 	}
 }
 
-async function encrypt({ recipientPublicKey, data, ivProvider }) {
+async function encrypt({ recipientPublicKey, data }) {
 	await requestAcceptance();
 	try {
-		return encryptRaw({ recipientPublicKey, 'wif': wallet.getWIFFromPrivateKey(acct.privateKey), data, 'ivProvider': ivProvider ? ivProvider : this.ivProvider })
+		return encryptRaw({ recipientPublicKey, 'wif': wallet.getWIFFromPrivateKey(acct.privateKey), data })
 	} catch (error) {
 		processGeneralError(error)
 	}

@@ -1594,7 +1594,6 @@ neologin.send({
 |:------------------ |:---------------- |:-------------------------------------------------------- |
 | recipientPublicKey | String           | 接收人的公钥 |
 | data               | String or Buffer | 你想要加密的数据  |
-| ivProvider         | function?        | 生成初始化向量的函数（一次）|
 
 ##### 成功返回
 | Parameter | Type   | Description                                         |
