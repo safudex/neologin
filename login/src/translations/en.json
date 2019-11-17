@@ -10,7 +10,7 @@
         "helper_wrongMFA": "Wrong code",
         "helper_MFAcode": "Input the the time-based code from your authenticator App",
         "button_verify": "Verify",
-        "button_goBack": "Back to settings"
+        "button_goBack": "Go back to settings"
     },
     "verifyEmail": {
         "tittle": "Verify email address",
@@ -44,7 +44,7 @@
         "button_verifyEmail": "Verify email",
         "button_enableTOTP": "Enable TOTP",
         "button_disableTOTP": "Disable TOTP",
-        "button_logout": "Logout"
+        "button_logout": "Log out"
     },
     "signUp_form": {
         "tittle_welcome": "Welcome!",
