@@ -19,7 +19,6 @@ function createDeposit({ blockchain, address, asset_id, amount, privateKey }) {
 		contract_hash: CONTRACT_HASH,
 		timestamp: getTimestamp()
 	}
-	address = getScriptHashFromAddress(address)
 	const signature = signParams(signableParams, privateKey)
 	const apiParams = { ...signableParams, address, signature }
 	return api.post(API_URL + '/deposits', apiParams).then(res => res.body)
@@ -54,7 +53,6 @@ function createOrder({ pair, blockchain, side, price,
 		timestamp: getTimestamp(),
 		contract_hash: CONTRACT_HASH,
 	}
-	address = getScriptHashFromAddress(address)
 	const signature = signParams(signableParams, privateKey)
 	const apiParams = { ...signableParams, address, signature }
 	return api.post(API_URL + '/orders', apiParams).then(res => res.body)
@@ -214,7 +212,7 @@ async function tradeNEO2GAS(address, privateKey, amount, filledOrder) {
 	await filledOrder;
 }
 
-async function tradeGAS2NEO(address, privateKey, amount, filledOrder) {
+async function tradeGAS2NEO(address, privateKey, amount) {
 	// Create order
 	const order = await createOrder({
 		pair: 'GAS_NEO',
@@ -229,10 +227,18 @@ async function tradeGAS2NEO(address, privateKey, amount, filledOrder) {
 	})
 
 	// Execute order
-	await broadcastOrder({ order, privateKey })
+	let tradedNEO = (await broadcastOrder({ order, privateKey })).data.want_amount
+	// Wait for order to complete
+	let contractBalanceNEO = (await listBalances({ addresses: [address] })).body.confirmed.NEO;
+	contractBalanceNEO = contractBalanceNEO ? contractBalanceNEO : 0
 
 	// Wait for order to complete
-	await filledOrder;
+	while (contractBalanceNEO < amount) {
+		await sleep(0.5)
+		contractBalanceNEO = (await listBalances({ addresses: [address] })).body.confirmed.NEO;
+	}
+
+	return Number(tradedNEO)/2
 }
 
 async function NEO2GAS(address, privateKey, amount) {
@@ -249,19 +255,18 @@ async function NEO2GAS(address, privateKey, amount) {
 }
 
 async function GAS2NEO(address, privateKey, amount) {
-	console.log('creating oredr...')
-	let filledOrder = createPromisedOrder(address, "GAS_NEO")
+	address = getScriptHashFromAddress(address)
 	// DEPOSIT
 	console.log('depositing gas...')
 	//await depositGAS(address, privateKey, amount)
 
 	// TRADE
 	console.log('trading...')
-	await tradeGAS2NEO(address, privateKey, amount, filledOrder)
+	const tradedNEO = await tradeGAS2NEO(address, privateKey, amount) % 10**8
 
 	// WITHDRAW
 	console.log('withdrawing...')
-	await withdraw(address, privateKey, filledOrder, "NEO")
+	await withdraw(address, privateKey, tradedNEO, "NEO")
 }
 
 async function ETH2NEO() {
