@@ -17,7 +17,7 @@ import { default as decryptRaw } from './crypt/decrypt';
 
 let acct = null;
 let defaultNetwork = "MainNet";
-const supportedNetworks = ["MainNet", "TestNet"];
+const supportedNetworks = Object.keys(neoscanEndpoints);
 settings.httpsOnly = true; // Ensure neon-js only talks to RPC endpoint (Neo node) using HTTPS
 
 let totalRequests = 0
@@ -187,12 +187,14 @@ const providerInfo = {
 const rpcUrls = {
 	"MainNet": "https://seed4.cityofzion.io",
 	"TestNet": "https://test4.cityofzion.io",
+	"NeoCompiler-Eco": "https://node1.neocompiler.io",
+	"NeoLocal": "http://localhost:30333"
 };
 
 //Update networks so if the hard-coded ones are taken down or have downtime the rest continue working fine -> Commented because it leads to mixed content problems
 supportedNetworks.map(network => {
-	const provider = new api.neoscan.instance(network);
-	provider.getRPCEndpoint()
+	const { apiProvider } = getApiProvider(network);
+	apiProvider.getRPCEndpoint()
 		.then(nodeUrl => {
 			rpcUrls[network] = nodeUrl;
 		})
@@ -267,7 +269,9 @@ function getPublicKey() {
 
 const neoscanEndpoints = {
 	"MainNet": "https://api.neoscan.io/api/main_net",
-	"TestNet": "https://neoscan-testnet.io/api/test_net"
+	"TestNet": "https://neoscan-testnet.io/api/test_net",
+	"NeoCompiler-Eco": "https://neoscan.neocompiler.io/api/main_net",
+	"NeoLocal": "http://localhost:4000/api/main_net"
 };
 
 function getApiProvider(network) {
