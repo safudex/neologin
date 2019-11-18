@@ -61,7 +61,7 @@ class InsufficientFunds extends React.Component {
                 alignItems="center"
                 style={{ height: '100%', padding: '1em' }}
               >
-                <Grid item><p style={{ fontWeight: 'bold', marginTop: '0' }}>Insufficient funds</p></Grid>
+                <Grid item><p style={{ fontWeight: 'bold', marginTop: '0' }}>{t("info_titleNoFunds")}</p></Grid>
                 <Grid item xs>
                   <img alt="address" style={{ height: '150px' }} src={"https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=" + this.props.address + "&chld=L|0"} />
                 </Grid>
@@ -77,7 +77,7 @@ class InsufficientFunds extends React.Component {
                       <Divider />
                     </Grid>
                     <Grid item >
-                      <span style={{ margin: '0px 10px' }}>or</span>
+                      <span style={{ margin: '0px 10px' }}>{t("info_or")}</span>
                     </Grid>
                     <Grid item xs >
                       <Divider />
@@ -89,7 +89,7 @@ class InsufficientFunds extends React.Component {
                     console.log(this.props.network)
                     this.props.network === 'MainNet' ? this.setState({ wantsDeposit: false }) : window.open('https://neowish.ngd.network/', '_blank')
                   }}>
-                    {this.props.network === 'MainNet' ? 'Deposit [SOON]' : 'Get free Testnet assets'}
+                    {this.props.network === 'MainNet' ? t("info_topup") : t("info_topupTestnet")}
                   </button>
                 </Grid>
               </Grid >
