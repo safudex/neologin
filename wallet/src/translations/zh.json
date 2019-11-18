@@ -1,0 +1,18 @@
+{
+    "common": {
+        "tittle": "线上钱包",
+        "txt_login": "登陆",
+        "menu_settings": "设置",
+        "menu_issues": "报告错误",
+        "info_0founds": "目前你没有资产",
+        "mainNet": "MainNet",
+        "testNet": "TestNet",
+        "subtittle_sendAsset": "发送资产到",
+        "label_address": "地址",
+        "label_amount": "数额",
+        "button_send": "发送"
+    },
+    "inverse": {
+        "menu_language": "Switch to EN"
+    }
+}

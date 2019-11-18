@@ -1,0 +1,94 @@
+{
+    "common": {
+        "downloadedPKFileTxt": "此文件包含你的私人密钥，在你丢失或者遗忘NeoLogin密码时将需要他。\n此文件必须保存在安全的地方以及不跟任何人分享，否则你会将你的资金和线上钱包置于被盗窃的风险之下。\n私人密钥 : {{privkey}} ",
+        "button_download": "下载",
+        "alert_session_expired": "会话已过期，请刷新页面重新登陆"
+    },
+    "TOTPQR": {
+        "tittle": "启用 TOTP",
+        "label_totp": "TOTP 验证码",
+        "helper_wrongMFA": "错误验证码",
+        "helper_MFAcode": "输入身份验证应用里基于时间的验证码",
+        "button_verify": "验证",
+        "button_goBack": "返回到设置"
+    },
+    "verifyEmail": {
+        "tittle": "验证邮箱地址",
+        "label_verificationCode": "验证码",
+        "helperWrongEmailCode": "错误验证吗",
+        "helperCode": "输入发送到你邮箱的验证码",
+        "button_verify": "验证",
+        "button_goBack": "返回到设置"
+    },
+    "lostPassword": {
+        "wrongEmail": "邮箱地址未注册",
+        "alert_weakPass": "密码安全等级太低",
+        "alert_wrongPk": "错误私人密钥",
+        "label_email": "邮箱",
+        "label_code": "验证码",
+        "helper_code": "输入从邮箱收到的验证码.",
+        "label_privKey": "私人密钥",
+        "helper_privKey": "你可以从你注册NeoLogin时下载的文件中找到这个填栏要求的验证码。拜托请千万注意你输入的验证码跟你从下载来的文件中的是一致的，因为此验证码将成为你账户的私人密钥",
+        "label_newPassword": "新密码",
+        "button_goBack": "返回登陆",
+        "link_resetPassword": "重置密码",
+        "info_resetOk": "密码恢复成功",
+        "button_resetPassword": "重置密码"
+    },
+    "settings": {
+        "tittle": "账户管理",
+        "section_susbcribe": "订阅/退订",
+        "label_newsletter": "通讯周刊",
+        "section_privket": "私人密钥",
+        "section_security": "安全",
+        "button_verifyEmail": "邮箱验证",
+        "button_enableTOTP": "启用TOTP",
+        "button_disableTOTP": "禁用 TOTP",
+        "button_logout": "登出"
+    },
+    "signUp_form": {
+        "tittle_welcome": "欢迎!",
+        "tittle_signup": "登陆",
+        "wrongEmail": "邮箱地址好像错了",
+        "wrongPassword1": "你的密码安等级太低.\n{{suggestion}}",
+        "wrongPassword2": "密码不匹配",
+        "label_email": "邮箱地址",
+        "label_password": "密码",
+        "label_confirmEmail": "确认密码",
+        "registerWrongEmail": "邮箱已注册",
+        "switch_sync": "跨设备同步我的密钥",
+        "warning_sync": "警告: 如果你禁用此选项你将承担所有关于你密钥的责任，因为一旦从储存网站中删除将无法找回。",
+        "switch_import": "导入我的私人密钥",
+        "label_privkey": "私人密钥",
+        "checkbox_newsletter": "我同意接收有关趋势，市场促销和更新的邮件。",
+        "checkbox_privacy_0_5": "我同意",
+        "checkbox_privacy_1_5": "NeoLogin的隐私政策",
+        "checkbox_privacy_2_5": "和",
+        "checkbox_privacy_3_5": "协议许可",
+        "helper_privacy": "您必须同意隐私政策和协议许可",
+        "button_singUp": "注册",
+        "instructionsPrivKey": "请试着下载你的私人密钥，也可以显示密钥再复制黏贴到一个安全的地方。点击继续按钮你将返回到dAPP",
+        "button_displaykey": "显示密钥",
+        "button_continue": "继续",
+        "info_registration": "注册后，你将可以下载包含私人密钥的文件。在你丢失或者遗忘NeoLogin密码时将需要他。所以请保管好他!",
+        "link_signIn": "已有账号? 登陆。"
+    },
+    "signIn_form": {
+        "tittle_signin": "登陆",
+        "label_password": "密码",
+        "label_mfaSMS": "SMS验证码",
+        "label_mfaTOTP": "TOTP验证码",
+        "button_signin": "登陆",
+        "helper_wrongMFA": "错误验证码",
+        "helper_smsMFA": "输入收到的SMS验证码",
+        "helper_totpMFA": "输入身份验证应用里基于时间的验证码",
+        "wrongEmail": "此邮箱未注册",
+        "wrongPassword": "错误密码",
+        "checkbox_rememberme": "记住我的信息",
+        "link_forgotpw": "忘记密码?",
+        "link_signUp": "没有账号? 注册"
+    },
+    "inverse": {
+        "link_language": "Switch to EN"
+    }
+}

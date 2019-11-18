@@ -1,5 +1,4 @@
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -7,7 +6,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import { withStyles } from '@material-ui/core/styles';
@@ -15,11 +13,9 @@ import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
 import { register, downloadPrivKey } from './loginAPI';
 import logo from './logoboxtxt.png';
-
-import { makeStyles } from '@material-ui/core/styles';
-
 import Switch from '@material-ui/core/Switch';
 import Collapse from '@material-ui/core/Collapse';
+import { withTranslation } from 'react-i18next';
 
 const styles = (theme => ({
 	'@global': {
@@ -91,13 +87,13 @@ class SignUp extends React.Component {
 			});
 		} else {
 			this.setState({
-				wrongEmail: "Your email address seems to be wrong"
+				wrongEmail: this.props.t("wrongEmail")
 			});
 		}
 
 		if (this.state.password1 !== this.state.password2 && this.state.password2) {
 			this.setState({
-				wrongPassword2: "Passwords do not match"
+				wrongPassword2: this.props.t("wrongPassword2")
 			});
 		} else {
 			this.setState({
@@ -110,7 +106,7 @@ class SignUp extends React.Component {
 			let pwdSecurity = zxcvbn(this.state.password1);
 			if (pwdSecurity.score < 3 && this.state.password1) {
 				this.setState({
-					wrongPassword1: "Your password is too weak.\n" + pwdSecurity.feedback.suggestions.join('\n')
+					wrongPassword1: this.props.t("wrongPassword1", { suggestion: pwdSecurity.feedback.suggestions.join('\n') })
 				});
 			} else {
 				this.setState({
@@ -132,7 +128,7 @@ class SignUp extends React.Component {
 			.then(privkey => {
 				/*
 				*/
-				downloadPrivKey("This file contains your private key, which you will need in case you ever lose or forget your NeoLogin password.\nThis file must be kept in a safe place and not shared with anyone else, as doing so will put your funds and wallet at risk of being stolen.\nPrivate Key: " + privkey)
+				downloadPrivKey(this.props.t("common:downloadedPKFileTxt", { privkey: privkey }))
 					.then(() => this.state.handleLogin(privkey, !this.state.syncPrivKey))
 					.catch(() => {
 						this.setState({
@@ -143,38 +139,35 @@ class SignUp extends React.Component {
 			})
 			.catch(err => {
 				this.setState({
-					wrongEmail: "Email already exists"
+					wrongEmail: this.props.t("registerWrongEmail")
 				});
 				console.log(err);
 			});
 	}
 
 	render() {
-		const { classes } = this.props;
+		const { classes, t } = this.props;
 		return (
 			<Container component="main" maxWidth="xs">
 				<CssBaseline />
 				<div className={classes.paper}>
-					{/* <Avatar className={classes.avatar}>
-						<LockOutlinedIcon />
-					</Avatar> */}
 					<img src={logo} style={{ height: '5em', marginBottom: '2em' }} />
 					<Typography component="h1" variant="h5" style={{ color: '#6A737D' }}>
-						{this.state.registered ? "Welcome!" : "Sign up"}
+						{this.state.registered ? t("tittle_welcome") : t("tittle_signup")}
 					</Typography>
 					{this.state.registered ? (
 						<div style={{ marginTop: '2em' }}>
 							<Typography component="p">
-								Please try to download your private key, you can also display it and then copy-paste it somewhere safe. Clicking on the Continue button will take you back to the dApp.
+								{t('instructionsPrivKey')}
 							</Typography>
-							<a download="private-key.txt" href={'data:text/plain;base64,' + window.btoa(craftDownloadMessage(this.state.privkey))}>
+							<a download="private-key.txt" href={'data:text/plain;base64,' + window.btoa(t("common:downloadedPKFileTxt", { privKey: this.state.privkey }))}>
 								<Button
 									fullWidth
 									variant="contained"
 									color="primary"
 									className={classes.submit}
 								>
-									Download
+									{t("common:button_download")}
 								</Button>
 							</a>
 							<Button
@@ -183,7 +176,7 @@ class SignUp extends React.Component {
 								color="primary"
 								onClick={() => window.alert(this.state.privkey)}
 							>
-								Display Key
+								{t("button_displaykey")}
 							</Button>
 							<Button
 								fullWidth
@@ -192,7 +185,7 @@ class SignUp extends React.Component {
 								className={classes.submit}
 								onClick={() => this.state.handleLogin(this.state.privkey, false)}
 							>
-								Continue
+								{t("button_continue")}
 							</Button>
 						</div>
 					) : (
@@ -204,7 +197,7 @@ class SignUp extends React.Component {
 											required
 											fullWidth
 											id="email"
-											label="Email Address"
+											label={t("label_email")}
 											name="email"
 											autoComplete="email"
 											value={this.state.email}
@@ -219,7 +212,7 @@ class SignUp extends React.Component {
 											required
 											fullWidth
 											name="password1"
-											label="Password"
+											label={t("label_password")}
 											type="password"
 											id="password1"
 											autoComplete="current-password"
@@ -235,7 +228,7 @@ class SignUp extends React.Component {
 											required
 											fullWidth
 											name="password2"
-											label="Confirm Password"
+											label={t("label_confirmEmail")}
 											type="password"
 											id="password2"
 											autoComplete="current-password"
@@ -256,14 +249,14 @@ class SignUp extends React.Component {
 
 												<FormControlLabel
 													control={<Switch checked={this.state.syncPrivKey} color="primary" name="syncPrivKey" onChange={this.handleInputChange} />}
-													label="Sync my encrypted key across devices"
+													label={t("switch_sync")}
 												/>
 												<p style={{ color: 'darkred', marginTop: '0' }}>
-													Warning: If you disable this option you assume all responsability for your keys, as they will not be recoverable once deleted from the website's storage.
+													{t("warning_sync")}
 												</p>
 												<FormControlLabel
 													control={<Switch checked={this.state.importPrivKey} color="primary" name="importPrivKey" onChange={this.handleInputChange} />}
-													label="Import my private key"
+													label={t("switch_import")}
 												/>
 												<Collapse in={this.state.importPrivKey}>
 													<div style={{ marginTop: '0.5rem' }}>
@@ -271,7 +264,7 @@ class SignUp extends React.Component {
 															variant="outlined"
 															fullWidth
 															name="importedPrivKey"
-															label="Private key"
+															label={t("label_privkey")}
 															type="password"
 															id="importedPrivKey"
 															value={this.state.password}
@@ -288,16 +281,16 @@ class SignUp extends React.Component {
 									<Grid item xs={12}>
 										<FormControlLabel
 											control={<Checkbox value="newsletter" color="primary" name="newsletter" checked={this.state.newsletter} onChange={this.handleInputChange} />}
-											label="I want to receive inspiration, marketing promotions and updates via email."
+											label={t("checkbox_newsletter")}
 										/>
 									</Grid>
 									<Grid item xs={12}>
 										<FormControlLabel
 											control={<Checkbox value="privacyPolicy" color="primary" name="privacyPolicy" checked={this.state.privacyPolicy} onChange={this.handleInputChange} />}
-											label={<span>I agree with <Link href="/privacy-policy.pdf">NeoLogin's privacy policy</Link> and <Link href="/NeoLogin-EndUserLicenseAgreement.pdf">license agreement</Link>.</span>}
+											label={<span>{t("checkbox_privacy_0_5")}<Link href="/privacy-policy.pdf">{t("checkbox_privacy_1_5")}</Link>{t("checkbox_privacy_2_5")}<Link href="/NeoLogin-EndUserLicenseAgreement.pdf">{t("checkbox_privacy_3_5")}</Link>.</span>}
 										/>
 										{this.state.privacyPolicy ? null :
-											<FormHelperText error={true}>You must agree to the privacy policy and license agreement</FormHelperText>
+											<FormHelperText error={true}>{t("helper_privacy")}</FormHelperText>
 										}
 									</Grid>
 								</Grid>
@@ -308,16 +301,16 @@ class SignUp extends React.Component {
 									color="primary"
 									className={classes.submit}
 								>
-									Sign Up
+									{t("button_singUp")}
 								</Button>
 								<Typography component="p">
-									Upon registration, you will download a file which contains your private key. You will need it in case you ever lose or forget your NeoLogin password, so save it well!
+									{t("info_registration")}
 								</Typography>
 								<Grid container justify="flex-end">
 									<Grid item>
 										<Link href="#" variant="body2" onClick={this.state.signInClick}>
-											Already have an account? Sign in
-									</Link>
+											{t("link_signIn")}
+										</Link>
 									</Grid>
 								</Grid>
 							</form>
@@ -358,4 +351,4 @@ SignUp.propTypes = {
 	classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SignUp);
+export default withTranslation("signUp_form")(withStyles(styles)(SignUp))

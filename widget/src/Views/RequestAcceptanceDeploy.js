@@ -1,6 +1,6 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-
+import { withTranslation } from 'react-i18next';
 import Brand from './Brand'
 import ReactDOM from 'react-dom'
 
@@ -19,6 +19,7 @@ class RequestAcceptanceDeploy extends React.Component {
   }
 
   render() {
+    const { t } = this.props
     return (
       <div>
         <Brand closeWidget={() => { this.props.reject(); this.unmountComponent(); }} reqNumber={parseInt(this.props.contid.split('-')[1]) + 1} />
@@ -29,8 +30,8 @@ class RequestAcceptanceDeploy extends React.Component {
           alignItems="center"
           style={{ height: '100%', padding: '1em' }}
         >
-          <Grid item xs style={{textAlign:'center'}}>
-            <p style={{ fontSize: '0.85em' }}>This dApp has requested permission to deploy a smart contract.</p>
+          <Grid item xs style={{ textAlign: 'center' }}>
+            <p style={{ fontSize: '0.85em' }}>{t("info_deploy")}</p>
           </Grid>
           <Grid item xs style={{ width: '100%' }}>
             <Grid
@@ -60,7 +61,7 @@ class RequestAcceptanceDeploy extends React.Component {
                   this.props.resolve('resolveincomponent')
                   this.unmountComponent()
                 }}>
-                  Accept
+                  {t("button_accept")}
                 </button>
               </Grid>
               <Grid item xs>
@@ -68,8 +69,8 @@ class RequestAcceptanceDeploy extends React.Component {
                   this.props.reject()
                   this.unmountComponent()
                 }}>
-                  Reject
-            </button>
+                  {t("button_reject")}
+                </button>
               </Grid>
             </Grid>
           </Grid>
@@ -79,4 +80,4 @@ class RequestAcceptanceDeploy extends React.Component {
   }
 }
 
-export default RequestAcceptanceDeploy;
+export default withTranslation()(RequestAcceptanceDeploy);

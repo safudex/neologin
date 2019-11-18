@@ -9,9 +9,11 @@
     "@material-ui/icons": "^4.2.1",
     "amazon-cognito-identity-js": "^3.0.15",
     "cryptr": "^4.0.2",
+    "i18next": "^19.0.0",
     "qrcode": "^1.4.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-i18next": "^11.2.1",
     "react-scripts": "3.1.1",
     "zxcvbn": "^4.4.2"
   },

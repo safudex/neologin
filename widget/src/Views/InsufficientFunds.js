@@ -1,6 +1,6 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-
+import { withTranslation } from 'react-i18next';
 import Brand from './Brand'
 import ReactDOM from 'react-dom'
 
@@ -18,7 +18,9 @@ class InsufficientFunds extends React.Component {
     this.props.closeWidget()
   }
 
+
   render() {
+    const { t } = this.props
     return (
       <div>
         <Brand closeWidget={() => { this.props.reject(); this.unmountComponent(); }} reqNumber={parseInt(this.props.contid.split('-')[1]) + 1} />
@@ -36,12 +38,12 @@ class InsufficientFunds extends React.Component {
             <span style={{ fontSize: '0.85em' }}>{this.props.address}</span>
           </Grid>
           <Grid item xs>
-            <p style={{ fontSize: '0.85em' }}>You have not enough funds. Scan the above QR code to get your address.</p>
+            <p style={{ fontSize: '0.85em' }}>{t("info_notFounds")}</p>
           </Grid>
-        </Grid >
+        </Grid>
       </div >
     );
   }
 }
 
-export default InsufficientFunds;
+export default withTranslation()(InsufficientFunds);

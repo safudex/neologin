@@ -5,9 +5,8 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
-
+import { withTranslation } from 'react-i18next';
 import logo from './logoboxtxt.png';
-
 import { forgotPassword, updatePrivkey } from './loginAPI';
 
 const styles = (theme => ({
@@ -97,7 +96,7 @@ class LostPassword extends React.Component {
 			})
 				.catch(err => {
 					this.setState({
-						wrongEmail: "Email is not registered"
+						wrongEmail: this.props.t("wrongEmail")
 					});
 					console.log(err)
 				});
@@ -160,6 +159,7 @@ class LostPassword extends React.Component {
 
 	render() {
 		let body = null;
+		const { t, classes } = this.props
 		if (!this.state.emailCompleted) {
 			body = <div>
 				<TextField
@@ -168,7 +168,7 @@ class LostPassword extends React.Component {
 					required
 					fullWidth
 					id="email"
-					label="Email"
+					label={t("label_email")}
 					name="email"
 					value={this.state.email}
 					autoFocus
@@ -185,12 +185,12 @@ class LostPassword extends React.Component {
 					required
 					fullWidth
 					id="code"
-					label="Code"
+					label={t("label_code")}
 					name="code"
 					autoFocus
 					value={this.state.code}
 					error={this.state.wrongCode ? true : null}
-					helperText={this.state.wrongCode ? this.state.wrongCode : "Input the code received through email."}
+					helperText={this.state.wrongCode ? this.state.wrongCode : t("helper_code")}
 					onChange={this.handleInputChange}
 				/>
 				<TextField
@@ -199,11 +199,11 @@ class LostPassword extends React.Component {
 					required
 					fullWidth
 					id="privkey"
-					label="Private Key"
+					label={t("label_privKey")}
 					name="privkey"
 					autoFocus
 					value={this.state.privkey}
-					helperText="You can find the code for this field in the file that was downloaded when you registered for NeoLogin. Please make sure that the code you are inputting is effecively the same that you downloaded, as it will become the private key associated with this account."
+					helperText={t("helper_privKey")}
 					onChange={this.handleInputChange}
 				/>
 				<TextField
@@ -212,7 +212,7 @@ class LostPassword extends React.Component {
 					required
 					fullWidth
 					name="password"
-					label="New Password"
+					label={t("label_newPassword")}
 					type="password"
 					id="password"
 					autoComplete="current-password"
@@ -221,31 +221,30 @@ class LostPassword extends React.Component {
 				/>
 			</div>
 		}
-		
+
 		const goBackButton = <button className='buttonContinue buttonBack' onClick={this.state.goBackClick}>
-			Go back to sign in
+			{t("button_goBack")}
 		</button>
 
-		const { classes } = this.props;
 		return (
 			<Container component="main" maxWidth="xs">
 				<CssBaseline />
 				<div className={classes.paper}>
 					<img src={logo} style={{ height: '5em', marginBottom: '5em' }} />
 					<Typography component="h1" variant="h5" style={{ color: '#6A737D' }}>
-						Reset password
+						{t("link_resetPassword")}
 					</Typography>
 					{this.state.codeCompleted ?
 						<div>
 							<Typography component="h2" variant="h5">
-								Password recovery succeeded
-						</Typography>
+								{t("info_resetOk")}
+							</Typography>
 							{goBackButton}
 						</div> :
 						<form className={classes.form} onSubmit={this.handleSubmit}>
 							{body}
 							<button className='buttonContinue' type="submit" style={{ margin: '0.5rem 0' }}>
-								RESET PASSWORD
+								{t("button_resetPassword")}
 							</button>
 							{goBackButton}
 						</form>
@@ -260,4 +259,4 @@ LostPassword.propTypes = {
 	classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(LostPassword);
+export default withTranslation("lostPassword")(withStyles(styles)(LostPassword))

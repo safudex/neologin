@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import { withTranslation } from 'react-i18next';
 
-export default function VerifyEmail({ verifyCode, navigateBack, wrongEmailCode }) {
+function VerifyEmail({ verifyCode, navigateBack, wrongEmailCode, t }) {
 
   const [input, setInput] = useState('');
 
@@ -19,7 +14,7 @@ export default function VerifyEmail({ verifyCode, navigateBack, wrongEmailCode }
 
   return (
     <>
-      <span style={{ fontSize: '2rem', marginBottom: '2rem' }}>Verify email address</span>
+      <span style={{ fontSize: '2rem', marginBottom: '2rem' }}>{t("tittle")}</span>
       <TextField
         variant="outlined"
         margin="normal"
@@ -27,15 +22,17 @@ export default function VerifyEmail({ verifyCode, navigateBack, wrongEmailCode }
         fullWidth
         key="emailCode"
         id="emailCode"
-        label="Verification code"
+        label={t("label_verificationCode")}
         name="emailCode"
         autoFocus
         error={wrongEmailCode ? true : null}
-        helperText={wrongEmailCode ? "Wrong code" : "Input the the code sent to your email"}
+        helperText={wrongEmailCode ? t("helperWrongEmailCode") : t("helperCode")}
         onChange={handleInputChange}
       />
-      <button className='buttonContinue' type="submit" style={{ margin: '1rem 0' }} onClick={() => verifyCode(input)}>Verify</button>
-      <button className='buttonContinue buttonBack' onClick={() => navigateBack()}>Back to settings</button>
+<button className='buttonContinue' type="submit" style={{ margin: '1rem 0' }} onClick={() => verifyCode(input)}>{t("button_verify")}</button>
+      <button className='buttonContinue buttonBack' onClick={() => navigateBack()}>{t("button_goBack")}</button>
     </>
   );
 }
+
+export default withTranslation("verifyEmail")(VerifyEmail)

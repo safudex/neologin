@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import QRCode from 'qrcode'
+import { withTranslation } from 'react-i18next';
 
 function drawQR(secret, email) {
   let canvas = document.getElementById('secretqr')
@@ -16,7 +16,7 @@ function drawQR(secret, email) {
   })
 }
 
-export default function TOTPQR({ secretTOTP, navigateBack, verifyCode, wrongMFACode, email }) {
+function TOTPQR({ secretTOTP, navigateBack, verifyCode, wrongMFACode, email, t }) {
 
   const [input, setInput] = useState('');
 
@@ -30,7 +30,7 @@ export default function TOTPQR({ secretTOTP, navigateBack, verifyCode, wrongMFAC
 
   return (
     <>
-      <span style={{ fontSize: '2rem', marginBottom: '2rem' }}>Enable TOTP</span>
+      <span style={{ fontSize: '2rem', marginBottom: '2rem' }}>{t("tittle")}</span>
       <canvas id="secretqr" />
       <TextField
         variant="outlined"
@@ -39,15 +39,17 @@ export default function TOTPQR({ secretTOTP, navigateBack, verifyCode, wrongMFAC
         fullWidth
         key="MFACode"
         id="MFACode"
-        label="TOTP code"
+        label={t("label_totp")}
         name="MFACode"
         autoFocus
         error={wrongMFACode ? true : null}
-        helperText={wrongMFACode ? "Wrong code" : "Input the the time-based code from your authenticator App"}
+        helperText={wrongMFACode ? t("helper_wrongMFA") : "Input the the time-based code from your authenticator App"}
         onChange={handleInputChange}
       />
-      <button className='buttonContinue' type="submit" style={{ margin: '1rem 0' }} onClick={() => verifyCode(input)}>Verify</button>
-      <button className='buttonContinue buttonBack' onClick={() => navigateBack()}>Back to settings</button>
+      <button className='buttonContinue' type="submit" style={{ margin: '1rem 0' }} onClick={() => verifyCode(input)}>{t("button_verify")}</button>
+      <button className='buttonContinue buttonBack' onClick={() => navigateBack()}>{t("button_goBack")}</button>
     </ >
   );
 }
+
+export default withTranslation("TOTPQR")(TOTPQR)

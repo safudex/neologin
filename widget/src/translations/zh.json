@@ -1,0 +1,19 @@
+{
+    "common": {
+        "info_requestAcceptance": "此DApp正在请求访问你的线上钱包",
+        "info_login": "要继续，请登陆NeoLogin",
+        "info_noFounds": "你没有足够的资产。扫描下方的QR码获取你的地址",
+        "info_send": "此DApp已请求发送权限 ",
+        "info_invoke": "此dApp已请求调用智能合约权限。",
+        "warning_invoke": "将在此交易中使用的GAS和NEO数额无法估算，请确保这是合法的交易。",
+        "info_signMsg": "此dApp想要对消息签名",
+        "info_deploy": "此dApp已请求部署智能合约权限。",
+        "info_invokeMulti": "此dApp已请求调用以下智能合约权限",
+        "button_accept": "接受",
+        "button_reject": "拒绝",
+        "button_continue": "继续"
+    },
+    "inverse": {
+        "link_language": "Switch to EN"
+    }
+}

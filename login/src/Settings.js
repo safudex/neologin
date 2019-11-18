@@ -1,31 +1,13 @@
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Switch from '@material-ui/core/Switch';
-import Grid from '@material-ui/core/Grid';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
 import { disableTOTP, getUserData, updateUserData, downloadPrivKey, verifyEmail, enableTOTP } from './loginAPI';
-import logo from './logoboxtxt.png';
-import logo2 from './logo2.png';
-import VpnKeyIcon from '@material-ui/icons/VpnKey';
-
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import InputBase from '@material-ui/core/InputBase';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import AccountCircle from '@material-ui/icons/EmailOutlined';
-import SearchIcon from '@material-ui/icons/Search';
-import DirectionsIcon from '@material-ui/icons/Directions';
-
+import { withTranslation } from 'react-i18next';
 import VerifyEmail from './Views/VerifyEmail'
 import TOTPQR from './Views/TOTPQR'
 
@@ -133,7 +115,7 @@ class Settings extends React.Component {
 				if (err.code === "EnableSoftwareTokenMFAException" || err.code === "InvalidParameterException") {
 					this.setState({ wrongMFACode: true });
 				} else {
-					window.alert("Session expired, refresh the window to start again" + err.code);
+					window.alert(this.props.t("common:alert_session_expired"));
 				}
 				console.log(err);
 			},
@@ -141,7 +123,7 @@ class Settings extends React.Component {
 	}
 
 	render() {
-		const { classes } = this.props;
+		const { classes, t } = this.props;
 
 		return (
 			<Container component="main" maxWidth="xs">
@@ -160,21 +142,21 @@ class Settings extends React.Component {
 									<span style={{
 										fontSize: '2rem', marginBottom: '2rem', marginLeft: 'auto',
 										marginRight: 'auto'
-									}}>Manage account</span>
-									<h4 className={classes.subtittle} style={{ marginBottom: '0rem' }}>Subscribe/unsubscribe</h4>
+									}}>{t("tittle")}</span>
+									<h4 className={classes.subtittle} style={{ marginBottom: '0rem' }}>{t("section_susbcribe")}</h4>
 									<FormControlLabel className={classes.settingItem} style={{ marginLeft: '0.4rem' }}
 										control={
 											<Switch checked={this.state.newsletterChecked} onChange={this.handleNewsletterChange}
 												color="primary" name="newsletterChecked" />
 										}
-										label="Newsletter"
+										label={t("label_newsletter")}
 									/>
-									<h4 className={classes.subtittle}>Private key</h4>
-									<Button className={classes.settingItem} color='primary' variant="contained" onClick={() => downloadPrivKey(this.props.privkey)}>DOWNLOAD</Button>
-									<h4 className={classes.subtittle}>Security</h4>
+									<h4 className={classes.subtittle}>{t("section_privket")}</h4>
+									<Button className={classes.settingItem} color='primary' variant="contained" onClick={() => downloadPrivKey(this.props.privkey)}>{t("common:button_download")}</Button>
+									<h4 className={classes.subtittle}>{t("section_security")}</h4>
 									<Button className={classes.settingItem} color='primary' variant="contained" disabled={this.state.emailIsVerified} onClick={() => {
 										verifyEmail(this.props.cognitoUser).then(() => this.setState({ verifyEmailView: true, wrongEmailCode: false }))
-									}}>Verify email</Button>
+									}}>{t("button_verifyEmail")}</Button>
 									<Button className={classes.settingItem} color='primary' variant="contained" onClick={
 										() => this.state.preferredMFA === 'SOFTWARE_TOKEN_MFA' ?
 											disableTOTP(this.props.cognitoUser).then(() => this.setState({ preferredMFA: '' }))
@@ -182,11 +164,11 @@ class Settings extends React.Component {
 											enableTOTP(this.props.cognitoUser, this.state.email, (secret, email) =>
 												this.setState({ verifyTOTPCodeView: true, secretTOTP: secret, email: email, wrongMFACode: false }))
 
-									}>{this.state.preferredMFA === 'SOFTWARE_TOKEN_MFA' ? 'Disable' : 'Enable'} TOTP</Button>
+									}>{this.state.preferredMFA === 'SOFTWARE_TOKEN_MFA' ? t("button_enableTOTP") : t("button_disableTOTP")}</Button>
 									<Button className={classes.settingItem} style={{ background: 'darkred' }} color='primary' variant="contained" onClick={() => {
 										window.localStorage.removeItem('privkey')
 										window.close()
-									}} >Logout</Button>
+									}} >{t("button_logout")}</Button>
 								</>
 					}
 				</div>
@@ -199,4 +181,4 @@ Settings.propTypes = {
 	classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Settings);
+export default withTranslation("settings")(withStyles(styles)(Settings))
