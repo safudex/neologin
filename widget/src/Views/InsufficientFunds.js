@@ -5,7 +5,6 @@ import Grid from '@material-ui/core/Grid';
 import { withTranslation } from 'react-i18next';
 import Divider from '@material-ui/core/Divider';
 
-import { withTranslation } from 'react-i18next';
 import Brand from './Brand'
 import Deposit from './Deposit'
 
