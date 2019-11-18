@@ -96,7 +96,6 @@ class InsufficientFunds extends React.Component {
             </div >
             :
             this.state.geoBlocked ? null : <Deposit neoAddr={this.props.address} amount={this.props.amount} asset={this.props.asset} privkey={this.props.privkey} addr={this.props.address} />
-
         }
       </>
     );

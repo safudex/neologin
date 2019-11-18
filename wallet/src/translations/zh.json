@@ -4,7 +4,7 @@
         "txt_login": "登陆",
         "menu_settings": "设置",
         "menu_issues": "报告错误",
-        "info_0founds": "目前你没有资产",
+        "info_noFunds": "目前你没有资产",
         "mainNet": "MainNet",
         "testNet": "TestNet",
         "subtittle_sendAsset": "发送资产到",
