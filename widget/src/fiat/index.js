@@ -5,8 +5,6 @@ import TOKENS from './tokens'
 import { GAS2NEO, getOrderBook } from '../swapAPI'
 import { getBalance } from '../conn'
 
-import '../carbon/test.js'
-
 const Tx = require('ethereumjs-tx').Transaction
 
 export async function getFinalAmount(amount, asset, id) {
