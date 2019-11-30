@@ -169,7 +169,6 @@ async function disconnect() {
 	if(acct === null){
 		throw "User has not logged in";
 	}
-	window.localStorage.removeItem('privkey');
 	acct = null;
 }
 
