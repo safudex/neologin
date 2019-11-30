@@ -2,6 +2,8 @@
     "common": {
         "downloadedPKFileTxt": "此文件包含你的私人密钥，在你丢失或者遗忘NeoLogin密码时将需要他。\n此文件必须保存在安全的地方以及不跟任何人分享，否则你会将你的资金和线上钱包置于被盗窃的风险之下。\n私人密钥 : {{privkey}} ",
         "button_download": "下载",
+        "menu_issues": "报告错误",
+        "info_noFunds": "目前你没有资产",
         "alert_session_expired": "会话已过期，请刷新页面重新登陆"
     },
     "TOTPQR": {
