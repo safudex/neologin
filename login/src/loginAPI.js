@@ -213,12 +213,7 @@ function addPhone(phone, cognitoUser) {
 function register(email, password, newsletter, sync, importedPrivKey) {
 	return new Promise(async (resolve, reject) => {
 		var attributeList = [];
-
-		var dataEmail = {
-			Name: 'email',
-			Value: email
-		};
-
+		
 		let privkey = null
 		if (importedPrivKey) {
 			privkey = importedPrivKey
@@ -229,6 +224,12 @@ function register(email, password, newsletter, sync, importedPrivKey) {
 		if (!sync) {
 			return resolve(privkey)
 		}
+
+		var dataEmail = {
+                        Name: 'email',
+                        Value: email
+                };
+
 
 		const encryptedPrivkey = await encrypt(privkey, password);
 

@@ -196,7 +196,7 @@ class SignUp extends React.Component {
 									<><Grid item xs={12}>
 										<TextField
 											variant="outlined"
-											required
+											required={this.state.syncPrivKey}
 											fullWidth
 											id="email"
 											label={t("label_email")}
@@ -211,7 +211,7 @@ class SignUp extends React.Component {
 									<Grid item xs={12} sm={6}>
 										<TextField
 											variant="outlined"
-											required
+											required={this.state.syncPrivKey}
 											fullWidth
 											name="password1"
 											label={t("label_password")}
@@ -227,7 +227,7 @@ class SignUp extends React.Component {
 									<Grid item xs={12} sm={6}>
 										<TextField
 											variant="outlined"
-											required
+											required={this.state.syncPrivKey}
 											fullWidth
 											name="password2"
 											label={t("label_confirmEmail")}
