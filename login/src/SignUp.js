@@ -120,7 +120,7 @@ class SignUp extends React.Component {
 
 	async handleSubmit(event) {
 		event.preventDefault();
-		if (this.state.syncPrivKey && !(await this.validate())) {
+		if (!this.state.privacyPolicy || this.state.syncPrivKey && !(await this.validate())) {
 			return;
 		}
 
