@@ -253,7 +253,7 @@ class SignIn extends React.Component {
 								<Grid item style={{ textAlign: 'center', marginTop: '1rem' }}>
 									<Link href="#" variant="body2" onClick={() => i18n.changeLanguage(i18n.language === 'zh' ? 'en' : 'zh')}>
 										<span style={{ color: '#2e5aac' }}>{t("inverse:link_language")}</span>
-									</Link>
+									</Link>{'\u00A0'}
 									<Link target="_blank" rel="noopener" variant="body2" href="https://github.com/safudex/neologin/issues">
 										<span style={{ color: '#2e5aac' }}>{t("common:menu_issues")}</span>
 									</Link>
