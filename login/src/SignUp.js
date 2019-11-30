@@ -191,7 +191,9 @@ class SignUp extends React.Component {
 					) : (
 							<form className={classes.form} onSubmit={this.handleSubmit}>
 								<Grid container spacing={2}>
-									<Grid item xs={12}>
+									{
+									this.state.syncPrivKey ?
+									<><Grid item xs={12}>
 										<TextField
 											variant="outlined"
 											required
@@ -237,7 +239,9 @@ class SignUp extends React.Component {
 											helperText={this.state.wrongPassword2}
 											onChange={this.handleInputChange}
 										/>
-									</Grid>
+									</Grid></>
+									:null
+									}
 									<Grid item xs={12}>
 										<div className={classes.root}>
 											<p style={{ margin: '0', cursor: 'pointer', color: '#78818c' }} onClick={() => this.setState({ showMore: !this.state.showMore })}>Advanced settings</p>
