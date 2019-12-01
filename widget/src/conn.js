@@ -189,6 +189,7 @@ const rpcUrls = {
 };
 
 //Update networks so if the hard-coded ones are taken down or have downtime the rest continue working fine -> Commented because it leads to mixed content problems
+/*
 supportedNetworks.map(network => {
 	const provider = new api.neoscan.instance(network);
 	provider.getRPCEndpoint()
@@ -197,6 +198,7 @@ supportedNetworks.map(network => {
 		})
 		.catch(e => e);
 })
+*/
 
 
 // See https://github.com/CityOfZion/neon-js/blob/master/examples/browser/README.md
