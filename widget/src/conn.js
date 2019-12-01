@@ -185,7 +185,7 @@ const providerInfo = {
 
 const rpcUrls = {
 	"MainNet": "https://seed4.cityofzion.io",
-	"TestNet": "https://test4.cityofzion.io",
+	"TestNet": "http://seed9.ngd.network:20332",
 };
 
 //Update networks so if the hard-coded ones are taken down or have downtime the rest continue working fine -> Commented because it leads to mixed content problems
