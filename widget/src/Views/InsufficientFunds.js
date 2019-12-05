@@ -68,7 +68,7 @@ class InsufficientFunds extends React.Component {
                   <span style={{ fontSize: '0.85em' }}>{this.props.address}</span>
                 </Grid>
                 <Grid item xs>
-                  <p style={{ fontSize: '0.85em' }}>{t("info_notFounds")}</p>
+                  <p style={{ fontSize: '0.85em' }}>{t("info_notEnoughFunds")}</p>
                 </Grid>
                 <Grid item style={{ width: '100%', marginBottom: '15px' }}>
                   <Grid container direction='row' alignItems='center' justify='center' style={{ width: '100%', textAlign: 'center' }}>

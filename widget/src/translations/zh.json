@@ -2,7 +2,7 @@
     "common": {
         "info_requestAcceptance": "此DApp正在请求访问你的线上钱包",
         "info_login": "要继续，请登陆NeoLogin",
-        "info_noFounds": "你没有足够的资产。扫描下方的QR码获取你的地址",
+        "info_notEnoughFunds": "你没有足够的资产。扫描下方的QR码获取你的地址",
 		"info_titleNoFunds": "资产不足",
 		"info_or": "或者",
 		"info_topup": "充值 （即将开放）",
