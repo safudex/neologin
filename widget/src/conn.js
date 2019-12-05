@@ -453,7 +453,7 @@ async function send(sendArgs) {
 	}
 }
 
-function calculateUTXOs(transaction, balance, fee, asset, amount, network, displayInsufficientFundsView) {
+function calculateUTXOs(transaction, balance, fee, asset, amount, network) {
 	try {
 		if (fee) {
 			return transaction.calculate(balance, null, Number(fee))
@@ -599,7 +599,7 @@ async function invoke(invokeArgs) {
 			if (invokeArgs.attachedAssets) {
 				addAssets(transaction, invokeArgs.attachedAssets, invokeArgs.scriptHash);
 			}
-			calculateUTXOs(transaction, balance, invokeArgs.fee, invokeArgs.asset, invokeArgs.amount, invokeArgs.network, displayInsufficientFundsView);
+			calculateUTXOs(transaction, balance, invokeArgs.fee, invokeArgs.asset, invokeArgs.amount, invokeArgs.network);
 		}
 		if (invokeArgs.txHashAttributes) {
 			addHashAttributes(transaction, invokeArgs.txHashAttributes);
