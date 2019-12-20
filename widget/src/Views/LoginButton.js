@@ -33,9 +33,9 @@ function LoginButton({ closeWidget, t, i18n }) {
           </button>
         </Grid>
         <Grid item xs>
-          <Link href="#" variant="body2" onClick={() => i18n.changeLanguage(i18n.language === 'zh' ? 'en' : 'zh')}>
+          <span className="cursorOnHover" variant="body2" onClick={() => i18n.changeLanguage(i18n.language === 'zh' ? 'en' : 'zh')}>
             <p style={{ color: '#2e5aac', marginBottom: '0' }}>{t("inverse:link_language")}</p>
-          </Link>
+          </span>
         </Grid>
       </Grid >
     </div>
