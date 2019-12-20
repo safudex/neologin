@@ -15,6 +15,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00369a', end
 -webkit-text-fill-color: transparent;
 }
 
+.cursorOnHover:hover{
+	cursor:pointer;
+}
+
 .brand:hover{
     cursor: pointer;
 }
