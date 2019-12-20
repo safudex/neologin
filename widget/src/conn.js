@@ -321,6 +321,14 @@ export async function getBalance(balanceArgs) {
 	}
 }
 
+function normalizeArg(arg){
+	if(arg.type === "Address"){
+		return sc.ContractParam.byteArray(arg.value, "address")
+	} else {
+		return arg
+	}
+}
+
 // Does NOT need to be accepted
 function getStorage(storageArgs) {
 	return rpcCall("getStorage", [storageArgs.scriptHash, storageArgs.key], storageArgs.network, (res) => { return { result: (res === null ? "" : res) } });
@@ -336,7 +344,7 @@ function invokeRead(invokeArgs) {
 			// name of operation to perform.
 			operation: invokeArgs.operation,
 			// any optional arguments to pass in. If null, use empty array.
-			args: invokeArgs.args,
+			args: invokeArgs.args.map(normalizeArg),
 		}
 
 		script = sc.createScript(props);
@@ -586,7 +594,7 @@ async function invoke(invokeArgs) {
 		const script = Neon.create.script({
 			scriptHash: invokeArgs.scriptHash,
 			operation: invokeArgs.operation,
-			args: invokeArgs.args
+			args: invokeArgs.args.map(normalizeArg)
 		});
 		let transaction = new tx.InvocationTransaction({
 			script: script,
@@ -621,7 +629,7 @@ async function invokeMulti(invokeMultiArgs) {
 		const script = Neon.create.script(...invokeMultiArgs.invokeArgs.map(arg => ({
 			scriptHash: arg.scriptHash,
 			operation: arg.operation,
-			args: arg.args
+			args: arg.args.map(normalizeArg)
 		})));
 		let transaction = new tx.InvocationTransaction({
 			script: script,
