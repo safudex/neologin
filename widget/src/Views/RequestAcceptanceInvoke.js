@@ -46,20 +46,19 @@ class RequestAcceptanceInvoke extends React.Component {
               <div>
                 <span style={{ fontSize: '0.85em', display: 'block' }}>Network: {this.props.network}</span>
                 {
-                  (this.props.invokeArgs.attachedAssets !== undefined) ?
-                    ["NEO", "GAS"].map((asset, i) =>
-                      (this.props.invokeArgs.attachedAssets[asset]) ?
-                        <span key={i} style={{ fontSize: '0.85em', display: 'block' }}>Amount: {this.props.invokeArgs.attachedAssets[asset]} {asset}</span>
-                        : null
-                    )
-                    : null
-
-                }
-                <span style={{ fontSize: '0.85em', display: 'block' }}>Fee: {this.props.invokeArgs.fee || 0} GAS</span>
-                {
                   this.props.goodEstimation ?
                     <span style={{ fontSize: '0.85em', display: 'block', color: '#B33A3A' }}>{t("warning_invoke")}</span>
-                    : null
+						: 
+                  	((this.props.invokeArgs.attachedAssets !== undefined) ?
+                  	  ["NEO", "GAS"].map((asset, i) =>
+                  	    (this.props.invokeArgs.attachedAssets[asset]) ?
+                  	      <span key={i} style={{ fontSize: '0.85em', display: 'block' }}>Amount: {this.props.invokeArgs.attachedAssets[asset]} {asset}</span>
+                  	      : null
+                  	  )
+					  : []
+					).concat(
+                		<span style={{ fontSize: '0.85em', display: 'block' }}>Fee: {this.props.invokeArgs.fee || 0} GAS</span>
+					)
                 }
               </div>
             </Grid>
