@@ -21,8 +21,9 @@
 						<ul>
 							<li><a href="#intro">Try me</a></li>
 							<li><a href="#one">Quickstart</a></li>
-							<li><a href="#two">How it works</a></li>
-							<!--<li><a href="#three">Get in touch</a></li>-->
+							<li><a href="#two">What is NeoLogin</a></li>
+							<li><a href="#three">How it works</a></li>
+							<li><a href="#four">Get in touch</a></li>
 						</ul>
 					</nav>
 				</div>
@@ -38,7 +39,7 @@
 							<p>A simple and easy to integrate wallet provider<br />
 							for NEO dApps.</p>
 							<ul class="actions">
-								<li><a class="button primary" onclick="window.neologin.getAccount().then(({ address }) => window.setTimeout(()=>alert('Your address is:\n' + address), 10))">Try me</a></li>
+								<li><a class="button primary" onclick="window.neologin.getAccount().then(({ address }) => window.setTimeout(()=>alert('You just created a NeoLogin account! Now you, as a user, have logged into the dApp and can start sending transactions and interacting with the blockchain.\nIntegrate NeoLogin into your dApp to provide a low-friction experience like this one for your users.'), 10))">Try me</a></li>
 							</ul>
 						</div>
 					</section>
@@ -105,6 +106,32 @@ neologin.getAccount()
 				<!-- Two -->
 					<section id="two" class="wrapper style3 fade-up">
 						<div class="inner">
+							<h2>What is NeoLogin</h2>
+							<p style="margin: 0 0 0.5em 0;">
+							NeoLogin is a new wallet solution for the Neo ecosystem. NeoLogin is different from any other wallet out there: It has been created to make access to decentralized applications (dApps) and games on Neo as easy as possible.<br>
+							<br>
+							Currently, adoption of blockchain-based dApps and games is still very low, and the user experience is pretty bad.<br>
+							<br>
+							To use a dApp/game on Neo for the first time, new users (who aren’t familiar with crypto/Neo) currently have to:
+							</p>
+							<ul>
+								<li>Learn about blockchain/private key management in order to understand why they need a wallet</li>
+								<li>Research different types of wallets: paper wallets, custodial wallets, noncustodial wallets, software wallets, hardware wallets, etc.</li>
+								<li>Pick a wallet provider and download their software/mobile app/extension</li>
+								<li>Create an account on an exchange to buy NEO/GAS</li>
+								<li>Transfer this NEO/GAS to their new wallet</li>
+								<li>Connect the wallet to the dApp/game</li>
+								<li>Use the dApp / play the game</li>
+							</ul>
+							<p>
+							In short: currently, the user experience is pretty terrible. We aim to fix this. We envision a world where users don’t have to know anything about blockchain to try out a dApp/blockchain-game. We want an ecosystem where users don’t have to go to an exchange to buy NEO/GAS and they don’t have to download third-party software wallets first.<br>
+							<br>
+							This is why we have built NeoLogin: a simple and secure wallet solution that is built into dApps and games on NeoLogin.
+							</p>
+						</div>
+					</section>
+					<section id="three" class="wrapper style1 fade-up">
+						<div class="inner">
 							<h2>How it works</h2>
 							<p>NeoLogin encrypts the user's private key with their password (making sure that it has enough entropy to prevent password cracking attacks) on sign up and proceeds to store the encrypted private key on it's servers.<br>
 							Every time a user logs in, the private key is downloaded and decrypted in the browser client, therefore the server never gets to know the decryption password nor the private key itself.<br>
@@ -151,14 +178,12 @@ neologin.getAccount()
 					</section>
 
 				<!-- Three -->
-				<!--
-					<section id="three" class="wrapper style1 fade-up">
+					<section id="four" class="wrapper style2 fade-up">
 						<div class="inner">
 							<h2>Get in touch</h2>
-							<p>Phasellus convallis elit id ullamcorper pulvinar. Duis aliquam turpis mauris, eu ultricies erat malesuada quis. Aliquam dapibus, lacus eget hendrerit bibendum, urna est aliquam sem, sit amet imperdiet est velit quis lorem.</p>
 							<div class="split style1">
 								<section>
-									<form method="post" action="#">
+									<form method="POST" action="https://formspree.io/mqkeqojl">
 										<div class="fields">
 											<div class="field half">
 												<label for="name">Name</label>
@@ -181,27 +206,18 @@ neologin.getAccount()
 								<section>
 									<ul class="contact">
 										<li>
-											<h3>Address</h3>
-											<span>12345 Somewhere Road #654<br />
-											Nashville, TN 00000-0000<br />
-											USA</span>
-										</li>
-										<li>
 											<h3>Email</h3>
-											<a href="#">user@untitled.tld</a>
+											<a href="mailto:hi@neologin.io">hi@neologin.io</a>
 										</li>
 										<li>
-											<h3>Phone</h3>
-											<span>(000) 000-0000</span>
+											<h3>Telegram</h3>
+											<a href="https://t.me/corollari">@corollari</a>
 										</li>
 										<li>
 											<h3>Social</h3>
 											<ul class="icons">
-												<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-												<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-												<li><a href="#" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-												<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-												<li><a href="#" class="icon brands fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+												<li><a href="https://twitter.com/neologin" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+												<li><a href="https://github.com/safudex/neologin" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
 											</ul>
 										</li>
 									</ul>
@@ -209,7 +225,6 @@ neologin.getAccount()
 							</div>
 						</div>
 					</section>
-				-->
 
 			</div>
 
@@ -232,7 +247,7 @@ neologin.getAccount()
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
-			<script src="/neologin.js"></script>
+			<script src="https://neologin.io/neologin.js"></script>
 
 	</body>
 </html>
