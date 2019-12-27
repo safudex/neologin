@@ -77,30 +77,35 @@ class RequestAcceptanceInvokeMulti extends React.Component {
                                     this.props.goodEstimation ?
                                         <span style={{ fontSize: '0.85em', display: 'block', color: '#B33A3A' }}>The amount of GAS or NEO that will be spent on this transaction could not be estimated, please make sure that this is a legitimate transaction</span>
 										:
-										<>
-                                		    (this.props.invokeMultiArgs.invokeArgs[this.state.actualIndex].attachedAssets !== undefined) ?
-                                		        ["NEO", "GAS"].map((asset, i) =>
-                                		            <span key={i} style={{ fontSize: '0.85em', display: 'block' }}>
-                                		                Amount: {(this.props.invokeMultiArgs.invokeArgs[this.state.actualIndex].attachedAssets[asset]) ?
-                                		                    this.props.invokeMultiArgs.invokeArgs[this.state.actualIndex].attachedAssets[asset] : 0} {asset}</span>
-                                		        )
-                                		        : (<>
-                                		            <span style={{ fontSize: '0.85em', display: 'block' }}>
-                                		                Amount: {0} {'NEO'}</span>
-                                		            <span style={{ fontSize: '0.85em', display: 'block' }}>
-														Amount: {0} {'GAS'}</span>
-													</>)
-                                   			 ["NEO", "GAS"].map((asset, i) => {
-                                   			     let total = 0;
-                                   			     this.props.invokeMultiArgs.invokeArgs.forEach(element => {
+										(<>
+											{
+												[(this.props.invokeMultiArgs.invokeArgs[this.state.actualIndex].attachedAssets !== undefined) ?
+													["NEO", "GAS"].map((asset, i) =>
+														<span key={i} style={{ fontSize: '0.85em', display: 'block' }}>
+															Amount: {(this.props.invokeMultiArgs.invokeArgs[this.state.actualIndex].attachedAssets[asset]) ?
+																	this.props.invokeMultiArgs.invokeArgs[this.state.actualIndex].attachedAssets[asset] : 0} {asset}</span>
+													)
+													: (<>
+														<span style={{ fontSize: '0.85em', display: 'block' }}>
+															Amount: {0} {'NEO'}
+														</span>
+														<span style={{ fontSize: '0.85em', display: 'block' }}>
+															Amount: {0} {'GAS'}
+														</span>
+														</>),
+													["NEO", "GAS"].map((asset, i) => {
+														let total = 0;
+														this.props.invokeMultiArgs.invokeArgs.forEach(element => {
 
-                                   			         if (element.attachedAssets && element.attachedAssets[asset])
-                                   			             total += parseFloat(element.attachedAssets[asset])
-                                   			     })
-                                   			     return (< span key={i} style={{ fontSize: '0.85em', display: 'block' }}>Total amount: {total} {asset}</span>)
-                                   			 })
-                                			<span style={{ fontSize: '0.85em', display: 'block' }}>Fee: {this.props.invokeMultiArgs.fee || 0} GAS</span>
-										</>
+															if (element.attachedAssets && element.attachedAssets[asset])
+																total += parseFloat(element.attachedAssets[asset])
+														})
+														return (< span key={i} style={{ fontSize: '0.85em', display: 'block' }}>Total amount: {total} {asset}</span>)
+													}), 
+														<span style={{ fontSize: '0.85em', display: 'block' }}>Fee: {this.props.invokeMultiArgs.fee || 0} GAS</span>
+												]
+											}
+										</>)
                                 }
                             </div>
                         </Grid>
