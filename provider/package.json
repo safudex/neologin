@@ -5,7 +5,7 @@
   "main": "index.js",
   "files": [
     "index.js",
-	"constants.js"
+    "constants.js"
   ],
   "scripts": {
     "build": "webpack",
@@ -31,7 +31,7 @@
     "penpal": "^4.1.1"
   },
   "devDependencies": {
-    "webpack": "^4.39.3",
-    "webpack-cli": "^3.3.8"
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
   }
 }
