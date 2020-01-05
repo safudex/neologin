@@ -76,7 +76,7 @@ It's based in the following AWS resources:
 - SES for the email sending
 - SNS for the SMS sending
 
-In order to use all of this, you must have to contact Amazon support in order to get:
+In order to use all of this, you have to contact Amazon support in order to get:
 - The sandbox restrictions on SES lifted
 - Increased SMS spending limit on SNS
 - Verified the address and domain (in order to get DKIM) from where you plan to send the emails
