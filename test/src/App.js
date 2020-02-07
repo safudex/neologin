@@ -334,11 +334,17 @@ function App() {
             }>getApplicationLog</button>
           </div>
           <div>
-            <button onClick={() => neologin.send({
-              fromAddress: 'ATpKTfUCoBm7PDQ38CrtJ7mDEa34gra4uf',
+            <button onClick={() => neologin.getAccount()
+              .then((account) => {
+                const {
+                  address,
+                  label,
+                } = account;
+				  neologin.send({
+              fromAddress: address,
               toAddress: 'AZ3dTfNQzjwsqcDTbozu6F1HwHedSxZ5Ry',
               asset: 'GAS',
-              amount: '0.0001',
+              amount: '100000',
               remark: 'Hash puppy clothing purchase. Invoice#abc123',
               fee: '0.0001',
               network: 'TestNet',
@@ -368,6 +374,7 @@ function App() {
                     break;
                 }
               })
+			  })
             }>send</button>
           </div>
           <div>
