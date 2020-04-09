@@ -1,5 +1,4 @@
 import connectToChild from 'penpal/lib/connectToChild';
-import base58 from 'bs58'; //TODO: Remove dependency
 import SHA256 from 'crypto-js/sha256';
 import hexEncoding from 'crypto-js/enc-hex';
 import { ArgumentDataType, EventName } from './constants';
@@ -170,7 +169,7 @@ neologin.utils = {
 	reverseHex,
 	// Functions taken directly from o3's implementation (MIT licensed)
 	address2scriptHash: (address) => {
-		const hash = base58.decode(address).toString('hex'); //TODO: Replace with base58tohex
+		const hash = base58tohex(address);
 		return hash.substr(2, 40);
 	},
 	scriptHash2address: (scriptHash) => {
@@ -179,10 +178,37 @@ neologin.utils = {
 		const firstSha = sha256(ADDR_VERSION + scriptHash);
 		const secondSha = sha256(firstSha);
 		const shaChecksum = secondSha.substr(0, 8);
-		const arrayBuffer = Buffer.from(ADDR_VERSION + scriptHash + shaChecksum, "hex");
-		return base58.encode(arrayBuffer);
+		const hex = "0x" + ADDR_VERSION + scriptHash + shaChecksum;
+		return hextobase58(hex);
 	}
 };
+
+const Base58alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+
+// Needed to fix build systems that don't recognize the latest JS build-ins
+/* global BigInt */
+
+// TODO: Fix leading zeros
+function hextobase58(hex) {
+    let decimal = BigInt(hex);
+    let base58 = "";
+    while(decimal > 0){
+        base58 += Base58alphabet[decimal % BigInt(58)];
+        decimal /= BigInt(58);
+    }   
+    return base58.split("").reverse().join("");
+}
+
+// TODO: Fix leading zeros
+function base58tohex(base58) {
+    let decimal = BigInt(0);
+    let power = BigInt(1);
+    for(let i=base58.length-1; i>=0; i--){
+        decimal += BigInt(Base58alphabet.indexOf(base58[i]))*power;
+        power*=BigInt(58);
+    }
+    return decimal.toString(16);
+}
 
 // CONSTANTS
 
