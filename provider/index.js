@@ -51,10 +51,57 @@ function removeEventListener(ev) {
 const iframe = document.createElement('iframe');
 iframe.src = 'https://neologin.io/widget/';
 
-document.addEventListener("DOMContentLoaded", () => {
+const iframeDeskStyle = {
+	position: 'fixed',
+	top: '1.5rem',
+	right: '1.5rem',
+	boxShadow: '0 5px 40px rgba(0,0,0,.16)',
+	borderRadius: '4px',
+	border: '0',
+	width: '375px',
+	background: 'white',
+	"z-index": 99999,
+}
+
+const iframeMobileStyle = {
+	position: 'fixed',
+	bottom: '0',
+	boxShadow: '0 5px 40px rgba(0,0,0,.16)',
+	borderRadius: '0px',
+	width: '100%',
+	border: '0',
+	background: 'white',
+	"z-index": 99999,
+}
+
+function setIframeStyle() {
+	// Get width and height of the window excluding scrollbars
+	const w = document.documentElement.clientWidth;
+	const h = document.documentElement.clientHeight;
+
+	//Adapt iframe to window
+	let iframeStyle = w > 576 ? iframeDeskStyle : iframeMobileStyle;
+	let actualHeight = iframe.style['height']
+	iframe.style = null;
+	for (let style in iframeStyle) {
+		iframe.style[style] = iframeStyle[style];
+	}
+	iframe.style['height'] = actualHeight
+}
+
+const appendIframe = () => {
 	document.body.appendChild(iframe);
-	getWindowSize();
-});
+	setIframeStyle();
+};
+if (document.readyState === "complete"
+	|| document.readyState === "loaded"
+	|| document.readyState === "interactive") {
+	appendIframe();
+} else {
+	document.addEventListener("DOMContentLoaded", () => {
+		appendIframe();
+	});
+}
 
 const connection = connectToChild({
 	// The iframe to which a connection should be made
@@ -79,39 +126,6 @@ for (let i = 0; i < promiseMethods.length; i++) {
 	};
 }
 
-var iframeDeskStyle = {
-	position: 'fixed',
-	top: '1.5rem',
-	right: '1.5rem',
-	boxShadow: '0 5px 40px rgba(0,0,0,.16)',
-	borderRadius: '4px',
-	border: '0',
-	width: '375px',
-	background: 'white',
-	"z-index": 99999,
-}
-
-var iframeMobileStyle = {
-	position: 'fixed',
-	bottom: '0',
-	boxShadow: '0 5px 40px rgba(0,0,0,.16)',
-	borderRadius: '0px',
-	width: '100%',
-	border: '0',
-	background: 'white',
-	"z-index": 99999,
-}
-
-function setIframeStyle(w, h) {
-	let iframeStyle = w > 576 ? iframeDeskStyle : iframeMobileStyle;
-	let actualHeight = iframe.style['height']
-	iframe.style = null;
-	for (let style in iframeStyle) {
-		iframe.style[style] = iframeStyle[style];
-	}
-	iframe.style['height'] = actualHeight
-}
-
 function displayWidget(widgetHeight) {
 	iframe.style['height'] = widgetHeight + 'px';
 }
@@ -125,14 +139,7 @@ function closeWidget() {
 	iframe.style['height'] = '0px';
 }
 
-function getWindowSize() {
-	// Get width and height of the window excluding scrollbars
-	var w = document.documentElement.clientWidth;
-	var h = document.documentElement.clientHeight;
-	setIframeStyle(w, h)
-}
-
-window.addEventListener("resize", getWindowSize);
+window.addEventListener("resize", setIframeStyle);
 closeWidget()
 
 // UTILS
