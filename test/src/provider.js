@@ -1,1 +1,1 @@
-C:/Users/Salah/Desktop/hj/n5/neologin/provider/index.js
+../../provider/index.js
