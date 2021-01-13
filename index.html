@@ -1,0 +1,181 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>NeoLogin</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Sidebar -->
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+						<ul>
+							<li><a href="#intro">Try me</a></li>
+							<li><a href="#one">Quickstart</a></li>
+							<li><a href="#two">What is NeoLogin</a></li>
+							<li><a href="#three">How it works</a></li>
+							<li><a href="#four">Get in touch</a></li>
+						</ul>
+					</nav>
+				</div>
+			</section>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Intro -->
+					<section id="intro" class="wrapper style1 fullscreen fade-up">
+						<div class="inner">
+							<h1>NeoLogin</h1>
+							<p>A simple and easy to integrate wallet provider<br />
+							for NEO dApps.</p>
+							<ul class="actions">
+								<li><a class="button primary" onclick="window.neologin.getAccount().then(({ address }) => window.setTimeout(()=>alert('You just created a NeoLogin account! Now you, as a user, have logged into the dApp and can start sending transactions and interacting with the blockchain.\nIntegrate NeoLogin into your dApp to provide a low-friction experience like this one for your users.'), 10))">Try me</a></li>
+							</ul>
+						</div>
+					</section>
+
+				<!-- One -->
+					<section id="one" class="wrapper style2 fade-up">
+						<div class="inner">
+							<h2>Quickstart</h2>
+							<h4>Install</h4>
+							<pre><code>npm install neologin</code></pre>
+							<h4>Use</h4>
+<pre><code>import neologin from 'neologin';
+
+neologin.getAccount()
+.then(({ address }) =>
+    console.log(address);
+);</code></pre>
+							<ul class="actions">
+								<li><a href="/api" class="button primary">Full API</a></li>
+								<li><a href="/wallet" class="button">Wallet</a></li>
+								<li><a href="/testbed" class="button">API Testbed</a></li>
+							</ul>
+						</div>
+				<!-- Two -->
+					<section id="two" class="wrapper style3 fade-up">
+						<div class="inner">
+							<h2>What is NeoLogin</h2>
+							<p style="margin: 0 0 0.5em 0;">
+							NeoLogin is a new wallet solution for the Neo ecosystem. NeoLogin is different from any other wallet out there: It has been created to make access to decentralized applications (dApps) and games on Neo as easy as possible.<br>
+							<br>
+							Currently, adoption of blockchain-based dApps and games is still very low, and the user experience is pretty bad.<br>
+							<br>
+							To use a dApp/game on Neo for the first time, new users (who aren’t familiar with crypto/Neo) currently have to:
+							</p>
+							<ul>
+								<li>Learn about blockchain/private key management in order to understand why they need a wallet</li>
+								<li>Research different types of wallets: paper wallets, custodial wallets, noncustodial wallets, software wallets, hardware wallets, etc.</li>
+								<li>Pick a wallet provider and download their software/mobile app/extension</li>
+								<li>Create an account on an exchange to buy NEO/GAS</li>
+								<li>Transfer this NEO/GAS to their new wallet</li>
+								<li>Connect the wallet to the dApp/game</li>
+								<li>Use the dApp / play the game</li>
+							</ul>
+							<p>
+							In short: currently, the user experience is pretty terrible. We aim to fix this by helping developers. We envision a world where users don’t have to know anything about blockchain to try out a dApp/blockchain-game. We want an ecosystem where users don’t have to go to an exchange to buy NEO/GAS and they don’t have to download third-party software wallets first.<br>
+							<br>
+							This is why we have built NeoLogin: a simple and secure wallet solution that is built into dApps and games on NeoLogin.
+							</p>
+						</div>
+					</section>
+					<section id="three" class="wrapper style1 fade-up">
+						<div class="inner">
+							<h2>How it works</h2>
+							<p>NeoLogin encrypts the user's private key with their password (making sure that it has enough entropy to prevent password cracking attacks) on sign up and proceeds to store the encrypted private key on it's servers.<br>
+							Every time a user logs in, the private key is downloaded and decrypted in the browser client, therefore the server never gets to know the decryption password nor the private key itself.<br>
+							<br>
+							This allows NeoLogin to provide the security of a non-custodial wallet coupled with the User Experience of a centralized login solution, as, from the point of view of the user, it works the same way as Google's universal login.</p>
+							<h3>Features</h3>
+							<div class="features">
+								<section>
+									<span class="icon solid major fa-code"></span>
+									<h3>O<sub>3</sub> compatible</h3>
+									<p>Our API is exactly the same that O3 uses, so dApps that already integrate with O3 can add NeoLogin as a wallet provider with 0 work.</p>
+								</section>
+								<section>
+									<span class="icon solid major fa-mobile"></span>
+									<h3>Mobile friendly</h3>
+									<p>NeoLogin is web-based and works prefectly on any device, including mobiles, while keeping the accounts synchronized across devices.</p>
+								</section>
+								<section>
+									<span class="icon solid major fa-lock"></span>
+									<h3>Non-custodial</h3>
+									<p>Because all the private keys stored in our servers are encrypted with the user's passwords we never have access to user funds.</p>
+								</section>
+								<section>
+									<span class="icon solid major fa-rocket"></span>
+									<h3>Install-free</h3>
+									<p>NeoLogin works entirely inside your dApps webpage and requires no installation of extensions or programs for users.</p>
+								</section>
+								<section>
+									<span class="icon solid major fa-shield-alt"></span>
+									<h3>Baked-in 2FA</h3>
+									<p>NeoLogin provides first-class support for TOTP (eg: Google Authenticatior) based 2FA.</p>
+								</section>
+								<section>
+									<i class="icon solid major fa-code-branch"></i>
+									<h3>Open Source</h3>
+									<p>NeoLogin is 100% open source (front-end and back-end) and is served directly from GitHub in order to prevent any code tampering.</p>
+								</section>
+							</div>
+							<ul class="actions">
+								<li><a href="https://github.com/safudex/neologin" class="button">Source code</a></li>
+								<li><a href="https://github.com/safudex/neologin/blob/master/SECURITY.md" class="button">Security analysis</a></li>
+							</ul>
+						</div>
+					</section>
+
+				<!-- Three -->
+					<section id="four" class="wrapper style2 fade-up">
+						<div class="inner">
+							<h2>Get in touch</h2>
+							<div class="style1">
+								<section>
+									<ul class="contact">
+										<li>
+											<h3>Email</h3>
+											<a href="mailto:hi@neologin.io">hi@neologin.io</a>
+										</li>
+										<li>
+											<h3>Telegram</h3>
+											<a href="https://t.me/corollari">@corollari</a>
+										</li>
+										<li>
+											<h3>Social</h3>
+											<ul class="icons">
+												<li><a href="https://twitter.com/neologin" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+												<li><a href="https://github.com/safudex/neologin" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+											</ul>
+										</li>
+									</ul>
+								</section>
+							</div>
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+			<script src="https://neologin.io/neologin.js"></script>
+
+	</body>
+</html>
