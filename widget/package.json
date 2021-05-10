@@ -11,7 +11,7 @@
     "bignumber.js": "^9.0.0",
     "ethereumjs-tx": "^2.1.1",
     "json-stable-stringify": "^1.0.1",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "i18next": "^19.0.0",
     "penpal": "^4.1.1",
     "react": "^16.9.0",
