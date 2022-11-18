@@ -17,7 +17,7 @@
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-i18next": "^11.2.1",
-    "react-scripts": "3.1.1",
+    "react-scripts": "5.0.1",
     "socket.io-client": "^2.3.0",
     "uuid": "^3.3.3",
     "web3": "^1.2.2"
